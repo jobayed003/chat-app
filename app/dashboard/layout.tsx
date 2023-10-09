@@ -6,8 +6,8 @@ import SideBar from '../components/UI/SideBar';
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Grid templateColumns={'1fr 2fr 3fr'} bg={'#034'}>
-      <GridItem h='100vh' borderRight={'1px solid #eee'}>
+    <Grid templateColumns={'.8fr 1.5fr 3fr'} bg={'#eee'}>
+      <GridItem h='100vh'>
         <SideBar />
       </GridItem>
       {children}

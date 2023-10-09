@@ -1,6 +1,9 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
 
 const customTheme = {
+  borders: {
+    side: '1px solid #ddd',
+  },
   colors: {},
   fonts: {
     body: 'Roboto, Opens sans, sans-serif',
@@ -11,10 +14,6 @@ const customTheme = {
         fontFamily: 'body',
       },
       border: '1px solid #ddd',
-      a: {},
-      ul: {},
-      h1: {},
-      p: {},
     },
   },
   fontSizes: {},

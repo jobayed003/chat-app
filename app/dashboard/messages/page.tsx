@@ -1,7 +1,6 @@
 'use client';
 
-import { GridItem, Text } from '@chakra-ui/react';
-import React from 'react';
+import { GridItem } from '@chakra-ui/react';
 import ChatBox from '../../components/Messages/ChatBox';
 import Chats from '../../components/Messages/Chats';
 

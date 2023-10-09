@@ -1,44 +1,53 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React from 'react';
-import { AiFillMessage, AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
-import { MdFolderOpen, MdVerifiedUser } from 'react-icons/md';
+import {
+  AiFillMessage,
+  AiOutlineMessage,
+  AiOutlineSetting,
+} from 'react-icons/ai';
+import { MdFolderOpen } from 'react-icons/md';
 
 const SideBar = () => {
   return (
-    <Flex color={'#000'} direction={'column'} h='100%'>
+    <Grid templateRows={'100px auto'} borderRight={'1px solid #ddd'} h='100%'>
       <Box
-        borderBottom={'1px solid #eee'}
+        borderBottom={'1px solid #ddd'}
         display={'flex'}
         fontSize={'2.5rem'}
+        p={'1.5rem'}
         alignItems={'center'}
-        p='1rem'
-        px='1.5rem'
       >
         <AiFillMessage color='blue' />
         <Text marginLeft={'.5rem'}>chatIT</Text>
       </Box>
-      <Flex h='100%' align={'center'}>
-        <Menus />
-      </Flex>
-      <Flex align={'center'}>
-        <Box p='1rem'>
-          <Image src='/assets/icons/user.png' alt='avatar' width={30} height={30} />
-        </Box>
-        <Box>
-          <Text as='p' m='0'>
-            John
-          </Text>
-          <Link href={'/'}>
-            <Text color={'gray.500'} fontSize={'.9rem'}>
-              Logout
+      <Grid templateRows={'1fr auto'}>
+        <Flex align={'center'} justify={'center'}>
+          <Menus />
+        </Flex>
+        <Flex align={'center'} gap='1rem' p='1rem'>
+          <Box borderRadius={'50%'} overflow={'hidden'}>
+            <Image
+              src='/assets/user.jpeg'
+              alt='avatar'
+              width={40}
+              height={40}
+            />
+          </Box>
+          <Box>
+            <Text as='p' m='0'>
+              John
             </Text>
-          </Link>
-        </Box>
-      </Flex>
-    </Flex>
+            <Link href={'/'}>
+              <Text color={'#aaa'} fontSize={'.9rem'}>
+                Logout
+              </Text>
+            </Link>
+          </Box>
+        </Flex>
+      </Grid>
+    </Grid>
   );
 };
 
