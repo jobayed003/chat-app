@@ -10,6 +10,7 @@ const customTheme = {
       body: {
         fontFamily: 'body',
       },
+      border: '1px solid #ddd',
       a: {},
       ul: {},
       h1: {},
@@ -26,7 +27,7 @@ const customTheme = {
 
 const config: ThemeConfig = {
   initialColorMode: 'dark',
-  useSystemColorMode: false,
+  useSystemColorMode: true,
 };
 
 // 3. extend the theme

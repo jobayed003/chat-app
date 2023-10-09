@@ -7,7 +7,7 @@ import theme from './theme';
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <CacheProvider>
-      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      {/* <ColorModeScript initialColorMode={theme.config.initialColorMode} /> */}
       <ChakraProvider theme={theme}>{children}</ChakraProvider>
     </CacheProvider>
   );

@@ -10,12 +10,12 @@ const Heading = () => {
       <Link href={'/about'}>
         <Button>Go to about</Button>
       </Link>
-      <Link href={'/dashboard'}>
-        <Button>Go to dashboard</Button>
-      </Link>
       <Link href={'/dashboard/messages'}>
         <Button>Go to dashboard</Button>
       </Link>
+      {/* <Link href={'/dashboard/messages'}>
+        <Button>Go to dashboard</Button>
+      </Link> */}
     </>
   );
 };

@@ -1,8 +1,11 @@
+'use client';
+
+import { GridItem, Text } from '@chakra-ui/react';
 import React from 'react';
-import Layout from '../components/dashboard/Layout';
+import Layout from './layout';
 
 const DashboardPage = () => {
-  return <Layout />;
+  return <>{/*  */}</>;
 };
 
 export default DashboardPage;

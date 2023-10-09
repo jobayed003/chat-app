@@ -13,7 +13,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel='shortcut icon' href='/static/favicon.ico' />
       </head>
-
       <body>
         <Providers>{children}</Providers>
       </body>
