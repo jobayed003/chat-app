@@ -12,7 +12,7 @@ const MessagePage = () => {
          <GridItem w='100%'>
             <Chats />
          </GridItem>
-         <GridItem border={borderColor}>
+         <GridItem border={borderColor} height={'100vh'}>
             <ChatBox />
          </GridItem>
       </>

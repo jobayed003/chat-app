@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Button, Flex, Grid, Text, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import DynamicText from '@components/util/DynamicText';
 import { buttonStyles } from '@config/data';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -37,9 +38,7 @@ const SideBar = () => {
                   <Image src='/assets/user.jpeg' alt='avatar' width={40} height={40} />
                </Box>
                <Box>
-                  <Text color={textColor} as='p' m='0'>
-                     John
-                  </Text>
+                  <DynamicText as={'p'} m='0' value={'John'} />
                   <Link href={'/'}>
                      <Text color={'grayText'} fontSize={'.9rem'}>
                         Logout

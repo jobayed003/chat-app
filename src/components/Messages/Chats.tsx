@@ -1,4 +1,5 @@
 import { Box, Flex, Grid, Text, useColorModeValue } from '@chakra-ui/react';
+import DynamicText from '@components/util/DynamicText';
 import { randomName } from '@config/data';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -6,7 +7,6 @@ import { MdLocationPin, MdMessage, MdSearch } from 'react-icons/md';
 
 const Chats = () => {
    const [pinnedMessages, setPinnedMessages] = useState([]);
-   const textColor = useColorModeValue('colorMode.dark', 'colorMode.light');
    const borderColor = useColorModeValue('light', 'dark');
 
    return (
@@ -17,9 +17,7 @@ const Chats = () => {
             p={'1.5rem'}
             justifyContent={'space-between'}
          >
-            <Text color={textColor} fontSize={'2rem'}>
-               Messages
-            </Text>
+            <DynamicText fontSize='2rem' value={'Messages'} />
             <Flex align={'center'} fontSize={'1.5rem'} gap={'1rem'} color={'grayText'}>
                {/* <Box borderRadius={'50%'} boxShadow={'2xl'} cursor={'pointer'}>
             <MdEdit />
@@ -64,8 +62,6 @@ const PinnedMessages = () => {
 };
 
 const User: React.FC<User> = ({ name, img, lastActive, messageDetails, status }) => {
-   const textColor = useColorModeValue('colorMode.dark', 'colorMode.light');
-
    return (
       <Box>
          <Flex justify={'space-between'} align={'center'}>
@@ -75,23 +71,20 @@ const User: React.FC<User> = ({ name, img, lastActive, messageDetails, status })
                </Box>
 
                <Box>
-                  <Text color={textColor} fontSize={'14px'}>
-                     {name}
-                  </Text>
-                  <Text
+                  <DynamicText fontSize='14px' value={name} />
+                  <DynamicText
                      fontSize={'12px'}
                      color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}
-                  >
-                     {messageDetails.messageStatus === 'typing'
-                        ? 'Typing...'
-                        : messageDetails.lastMessages.slice(-1)}
-                  </Text>
+                     value={
+                        messageDetails.messageStatus === 'typing'
+                           ? 'Typing...'
+                           : messageDetails.lastMessages.slice(-1)
+                     }
+                  />
                </Box>
             </Flex>
             <Flex direction={'column'}>
-               <Text fontSize={'12px'} color={'gray'}>
-                  {messageDetails.sent}
-               </Text>
+               <DynamicText fontSize='12px' color={'gray'} value={messageDetails.sent} />
 
                <Flex
                   bg={'#D34242'}
@@ -102,9 +95,11 @@ const User: React.FC<User> = ({ name, img, lastActive, messageDetails, status })
                   w='15px'
                   h='15px'
                >
-                  <Text fontSize={'12px'} color={'#fff'}>
-                     {messageDetails.lastMessages.length}
-                  </Text>
+                  <DynamicText
+                     fontSize={'12px'}
+                     color={'#fff'}
+                     value={`${messageDetails.lastMessages.length}`}
+                  />
                </Flex>
             </Flex>
          </Flex>

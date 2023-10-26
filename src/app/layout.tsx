@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
+import Providers from '../config/providers';
 import './globals.css';
-import Providers from './providers';
 
 export const metadata = {
    title: 'Chat App',
