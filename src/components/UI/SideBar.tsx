@@ -17,13 +17,7 @@ const SideBar = () => {
 
    return (
       <Grid templateRows={'100px auto'} borderRight={borderColor} h='100%'>
-         <Box
-            borderBottom={borderColor}
-            display={'flex'}
-            fontSize={'2.5rem'}
-            p={'1.5rem'}
-            alignItems={'center'}
-         >
+         <Box borderBottom={borderColor} display={'flex'} fontSize={'2.5rem'} p={'1.5rem'} alignItems={'center'}>
             <AiFillMessage color='blue' />
             <Text color={textColor} marginLeft={'.5rem'}>
                chatIT

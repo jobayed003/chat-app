@@ -9,3 +9,5 @@ type User = {
    };
    status: string;
 };
+
+type ChildrenType = { children?: ReactElement | ReactElement[] };

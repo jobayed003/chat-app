@@ -1,5 +1,5 @@
-import Heading from '../components/Heading/Heading';
+import Home from '@components/Heading/Home';
 
-export default function Home() {
-   return <Heading />;
+export default function HomePage() {
+   return <Home />;
 }

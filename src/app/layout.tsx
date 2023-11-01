@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import Providers from '../config/providers';
 import './globals.css';
 
@@ -9,11 +8,6 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-   const cookieStore = cookies();
-   const defaultTheme = 'dark';
-   const uiColorMode =
-      (cookieStore.get('chakra-ui-color-mode')?.value as 'light' | 'dark') || defaultTheme;
-
    return (
       <html lang='en'>
          <head>

@@ -11,12 +11,15 @@ import {
 } from '@chakra-ui/react';
 import DynamicText from '@components/util/DynamicText';
 import User from '@components/util/User';
+import AppContext from '@context/StateProvider';
 import Image from 'next/image';
+import { useContext } from 'react';
 import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 
 const ChatBox = () => {
    const borderColor = useColorModeValue('light', 'dark');
-   const bgColor = useColorModeValue('bgColor', 'dark');
+   const bgColor = useColorModeValue('bgColor', '#2E333D');
+   const { clicked } = useContext(AppContext);
 
    return (
       <Grid templateRows={'100px 1fr auto'} height={'100%'}>
@@ -27,7 +30,7 @@ const ChatBox = () => {
                </Box>
                <Box>
                   <DynamicText as={'p'} m='0' value={'Hossain'} />
-                  <DynamicText color={'#2F9167'} fontSize={'12px'} value={'Typing...'} />
+                  <DynamicText color={'#2F9167'} fontSize={'12px'} value={'Online'} />
 
                   {/* <Text fontSize={'12px'} color={'#aaa'}>
             {messageDetails.messageStatus === 'typing'
@@ -37,7 +40,7 @@ const ChatBox = () => {
                </Box>
             </Flex>
          </GridItem>
-         <Box bg={bgColor}>
+         <Box bg={useColorModeValue('bgColor', 'dark')}>
             <Box>
                <User name='Hossain' imgSrc={'/assets/user.jpeg'} messages={messages} />
                <User name='John' imgSrc={'/assets/user.jpeg'} messages={messages} />
@@ -52,7 +55,8 @@ const ChatBox = () => {
                   <Input
                      color='#aaa'
                      border={'none'}
-                     bg={'bgColor'}
+                     bg={bgColor}
+                     _focusVisible={{ boxShadow: 'none' }}
                      sx={{
                         borderRadius: '50px',
                      }}

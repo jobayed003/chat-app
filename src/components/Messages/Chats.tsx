@@ -11,12 +11,7 @@ const Chats = () => {
 
    return (
       <Grid templateRows={'100px 1fr'}>
-         <Flex
-            borderBlockEnd={borderColor}
-            align={'center'}
-            p={'1.5rem'}
-            justifyContent={'space-between'}
-         >
+         <Flex borderBlockEnd={borderColor} align={'center'} p={'1.5rem'} justifyContent={'space-between'}>
             <DynamicText fontSize='2rem' value={'Messages'} />
             <Flex align={'center'} fontSize={'1.5rem'} gap={'1rem'} color={'grayText'}>
                {/* <Box borderRadius={'50%'} boxShadow={'2xl'} cursor={'pointer'}>
@@ -28,8 +23,8 @@ const Chats = () => {
             </Flex>
          </Flex>
          {pinnedMessages.length > 0 && <PinnedMessages />}
-         <Box p='1.5rem'>
-            <Flex align={'center'} gap='.5rem' color={'grayText'} fontSize={'.8rem'}>
+         <Box>
+            <Flex align={'center'} gap='.5rem' color={'grayText'} fontSize={'.8rem'} p='1.5rem'>
                <MdMessage />
                <Text>All Messages</Text>
             </Flex>
@@ -40,7 +35,7 @@ const Chats = () => {
                   status={user.status}
                   messageDetails={user.messageDetails}
                   img={user.img}
-                  lastActive={'d'}
+                  lastActive={'4 minute ago'}
                />
             ))}
          </Box>
@@ -61,9 +56,9 @@ const PinnedMessages = () => {
    );
 };
 
-const User: React.FC<User> = ({ name, img, lastActive, messageDetails, status }) => {
+const User = ({ name, img, lastActive, messageDetails, status }: User) => {
    return (
-      <Box>
+      <Box cursor={'pointer'} _active={{ bg: '#2E333D' }} _hover={{ bg: '#2E333D' }} px='1rem'>
          <Flex justify={'space-between'} align={'center'}>
             <Flex py='1rem' align={'center'} gap='.8rem'>
                <Box borderRadius={'50%'} overflow={'hidden'}>
@@ -76,9 +71,7 @@ const User: React.FC<User> = ({ name, img, lastActive, messageDetails, status })
                      fontSize={'12px'}
                      color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}
                      value={
-                        messageDetails.messageStatus === 'typing'
-                           ? 'Typing...'
-                           : messageDetails.lastMessages.slice(-1)
+                        messageDetails.messageStatus === 'typing' ? 'Typing...' : messageDetails.lastMessages.slice(-1)
                      }
                   />
                </Box>
@@ -95,11 +88,7 @@ const User: React.FC<User> = ({ name, img, lastActive, messageDetails, status })
                   w='15px'
                   h='15px'
                >
-                  <DynamicText
-                     fontSize={'12px'}
-                     color={'#fff'}
-                     value={`${messageDetails.lastMessages.length}`}
-                  />
+                  <DynamicText fontSize={'12px'} color={'#fff'} value={`${messageDetails.lastMessages.length}`} />
                </Flex>
             </Flex>
          </Flex>
