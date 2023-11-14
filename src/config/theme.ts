@@ -4,13 +4,15 @@ const colors = {
       dark: '#000',
       light: '#eee',
    },
-   'grayText': '#aaa',
-   bgColor: '#F6F8FC',
+   grayText: '#aaa',
+   bgDark: '#aaa',
+   bgWhite: '#F6F8FC',
+   textDark: '#1A202C',
 };
 
 const borders = {
-   'light': '1px solid #EDF1F8',
-   'dark': '1px solid #000',
+   light: '1px solid #EDF1F8',
+   dark: '1px solid #000',
 };
 
 const config: ThemeConfig = {

@@ -1,6 +1,5 @@
 'use client';
 
-import { redirect } from 'next/navigation';
 import { createContext, useEffect, useState } from 'react';
 
 type ContextType = {
@@ -20,7 +19,7 @@ export const AppContextProvider = ({ children }: ChildrenType) => {
    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
    useEffect(() => {
-      if (!isAuthenticated) redirect('/auth/login');
+      // if (!isAuthenticated) redirect('/auth/login');
    }, []);
 
    const contextValue = {

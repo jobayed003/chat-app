@@ -1,9 +1,7 @@
-import React from 'react';
+import Auth from '@components/Auth/Auth';
 
-type Props = {};
-
-const LoginPage = (props: Props) => {
-   return <div>LoginPage</div>;
+const LoginPage = () => {
+   return <Auth />;
 };
 
 export default LoginPage;

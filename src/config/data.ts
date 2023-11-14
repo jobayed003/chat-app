@@ -56,5 +56,14 @@ export const buttonStyles = {
       background: '#F4F4F4',
    },
 };
+
+export const inputStyles = {
+   boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
+   borderRadius: '20px',
+   _placeholder: { color: '#aaa' },
+   _focus: { boxShadow: '0' },
+   _focusVisible: { boxShadow: '0' },
+   _active: { boxShadow: '0' },
+};
+
 const uniqueId = Math.random().toString(16).slice(2);
-console.log(uniqueId);

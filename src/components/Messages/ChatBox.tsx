@@ -18,7 +18,7 @@ import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 
 const ChatBox = () => {
    const borderColor = useColorModeValue('light', 'dark');
-   const bgColor = useColorModeValue('bgColor', '#2E333D');
+   const bgColor = useColorModeValue('bgWhite', '#2E333D');
    const { clicked } = useContext(AppContext);
 
    return (
@@ -40,7 +40,7 @@ const ChatBox = () => {
                </Box>
             </Flex>
          </GridItem>
-         <Box bg={useColorModeValue('bgColor', 'dark')}>
+         <Box bg={useColorModeValue('bgWhite', 'dark')}>
             <Box>
                <User name='Hossain' imgSrc={'/assets/user.jpeg'} messages={messages} />
                <User name='John' imgSrc={'/assets/user.jpeg'} messages={messages} />

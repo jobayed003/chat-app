@@ -1,7 +1,7 @@
 import './globals.css';
 
 export const metadata = {
-   title: 'Login Page',
+   title: 'Login | chatIt',
    description: 'Personal chatting app created by github user jobayed003',
    keywords: 'chat app, video calling app, javascript',
 };
