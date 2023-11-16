@@ -2,6 +2,8 @@
 
 import { Box, Flex } from '@chakra-ui/react';
 import DynamicText from '@components/util/DynamicText';
+import { app } from '@firebase/config';
+import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import { usePathname } from 'next/navigation';
 import { AiFillMessage, AiOutlineGithub, AiOutlineGoogle } from 'react-icons/ai';
 import Login from './Login';
@@ -11,6 +13,7 @@ type Props = {};
 
 const Auth = (props: Props) => {
    const path = usePathname().replace('/auth/', '');
+   const auth = getAuth(app);
 
    return (
       <Flex justify={'center'} align={'center'} h={'100vh'}>
@@ -33,8 +36,20 @@ const Auth = (props: Props) => {
             <Box mx='auto'>
                <DynamicText color='graytext' value={`Or ${path.charAt(0).toUpperCase() + path.slice(1)} with`} />
                <Flex fontSize={'2rem'} justify={'center'} gap='.5rem' mt='.5rem'>
-                  <AiOutlineGoogle cursor={'pointer'} />
-                  <AiOutlineGithub cursor={'pointer'} />
+                  <AiOutlineGoogle
+                     cursor={'pointer'}
+                     onClick={() => {
+                        const provider = new GoogleAuthProvider();
+                        signInWithPopup(auth, provider);
+                     }}
+                  />
+                  <AiOutlineGithub
+                     cursor={'pointer'}
+                     onClick={() => {
+                        const provider = new GithubAuthProvider();
+                        signInWithRedirect(auth, provider);
+                     }}
+                  />
                </Flex>
             </Box>
          </Flex>

@@ -5,9 +5,8 @@ import { Button, Flex, Input, InputGroup, InputLeftElement, Stack } from '@chakr
 import DynamicText from '@components/util/DynamicText';
 import Inputs from '@components/util/Inputs';
 import { inputStyles } from '@config/data';
-
 import { app } from '@firebase/config';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithPopup } from 'firebase/auth';
 import { ChangeEvent, useState } from 'react';
 import { AiOutlineMail, AiOutlineUser } from 'react-icons/ai';
 
@@ -19,6 +18,8 @@ const Signup = ({ url }: { url: string }) => {
       const userCredential = await createUserWithEmailAndPassword(auth, userCred.email, userCred.password);
       const user = userCredential.user;
    };
+
+   const handleGoogleSign = () => {};
 
    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       setUserCred((prev) => ({ ...prev, [e.target.id]: e.target.value }));
