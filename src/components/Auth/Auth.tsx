@@ -2,9 +2,11 @@
 
 import { Box, Flex } from '@chakra-ui/react';
 import DynamicText from '@components/util/DynamicText';
+import AuthContext from '@context/AuthProvider';
 import { app } from '@firebase/config';
-import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup, signInWithRedirect } from 'firebase/auth';
+import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 import { usePathname } from 'next/navigation';
+import { useContext } from 'react';
 import { AiFillMessage, AiOutlineGithub, AiOutlineGoogle } from 'react-icons/ai';
 import Login from './Login';
 import Signup from './Signup';
@@ -12,6 +14,8 @@ import Signup from './Signup';
 type Props = {};
 
 const Auth = (props: Props) => {
+   const { userDetails, setUserDetails } = useContext(AuthContext);
+
    const path = usePathname().replace('/auth/', '');
    const auth = getAuth(app);
 
@@ -38,16 +42,22 @@ const Auth = (props: Props) => {
                <Flex fontSize={'2rem'} justify={'center'} gap='.5rem' mt='.5rem'>
                   <AiOutlineGoogle
                      cursor={'pointer'}
-                     onClick={() => {
+                     onClick={async () => {
                         const provider = new GoogleAuthProvider();
-                        signInWithPopup(auth, provider);
+                        const { user } = await signInWithPopup(auth, provider);
+                        setUserDetails({ name: user.displayName, email: user.email, profilePic: user.photoURL });
                      }}
                   />
                   <AiOutlineGithub
                      cursor={'pointer'}
-                     onClick={() => {
+                     onClick={async () => {
                         const provider = new GithubAuthProvider();
-                        signInWithRedirect(auth, provider);
+
+                        const { user } = await signInWithPopup(auth, provider);
+
+                        setUserDetails({ name: user.displayName, email: user.email, profilePic: user.photoURL });
+
+                        // setUserDetails({ name: user.displayName, email: user.email, profilePic: user.photoURL });
                      }}
                   />
                </Flex>

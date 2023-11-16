@@ -1,17 +1,25 @@
 'use client';
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { app } from '@firebase/config';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
 
 type ContextType = {
    isAuthenticated: boolean;
 
-   userDetails: { name: string; email: string; password: string };
+   userDetails: {
+      name?: string | null | undefined;
+      email: string | null | undefined;
+      password: string | null | undefined;
+      profilePic?: string | null | undefined;
+   };
+
    setUserDetails: Dispatch<
       SetStateAction<{
-         name: string;
-         email: string;
-         password: string;
+         name?: string | null;
+         email: string | null;
+         password?: string;
+         profilePic?: string | null;
       }>
    >;
 };
@@ -23,6 +31,7 @@ const initContextType: ContextType = {
       name: '',
       email: '',
       password: '',
+      profilePic: '',
    },
    setUserDetails: () => {},
 };
@@ -31,9 +40,21 @@ const AuthContext = createContext<ContextType>(initContextType);
 
 export const AuthContextProvider = ({ children }: ChildrenType) => {
    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-   const [userDetails, setUserDetails] = useState({ name: '', email: '', password: '' });
+   const [userDetails, setUserDetails] = useState({ name: '', email: '', password: '', profilePic: '' });
+   const auth = getAuth(app);
+   const router = useRouter();
 
-   useEffect(() => {}, []);
+   useEffect(() => {
+      onAuthStateChanged(auth, async (user) => {
+         if (!user) {
+            router.push('/auth/signup');
+            return;
+         } else {
+            setIsAuthenticated(true);
+            router.push('/dashboard/messages');
+         }
+      });
+   }, []);
 
    const contextValue = {
       userDetails,
@@ -42,6 +63,7 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
       setUserDetails,
       setIsAuthenticated,
    };
+   // @ts-ignore
    return <AuthContext.Provider value={contextValue}>{children} </AuthContext.Provider>;
 };
 

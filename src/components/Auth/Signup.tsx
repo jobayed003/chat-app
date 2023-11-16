@@ -6,20 +6,21 @@ import DynamicText from '@components/util/DynamicText';
 import Inputs from '@components/util/Inputs';
 import { inputStyles } from '@config/data';
 import { app } from '@firebase/config';
-import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, useState } from 'react';
 import { AiOutlineMail, AiOutlineUser } from 'react-icons/ai';
 
 const Signup = ({ url }: { url: string }) => {
    const [userCred, setUserCred] = useState({ name: '', email: '', password: '', profilePicture: '' });
+   const router = useRouter();
    const auth = getAuth(app);
 
    const handleSubmit = async () => {
       const userCredential = await createUserWithEmailAndPassword(auth, userCred.email, userCred.password);
       const user = userCredential.user;
+      router.push('/dashboard/messages');
    };
-
-   const handleGoogleSign = () => {};
 
    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       setUserCred((prev) => ({ ...prev, [e.target.id]: e.target.value }));

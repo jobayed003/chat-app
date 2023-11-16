@@ -8,18 +8,21 @@ import { inputStyles } from '@config/data';
 import { app } from '@firebase/config';
 
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 import { ChangeEvent, useState } from 'react';
 import { AiOutlineMail } from 'react-icons/ai';
 
 const Login = ({ url }: { url: string }) => {
    const [userCred, setUserCred] = useState({ name: '', email: '', password: '', profilePicture: '' });
+   const router = useRouter();
 
    const auth = getAuth(app);
 
    const handleSubmit = async () => {
       const userCredential = await signInWithEmailAndPassword(auth, userCred.email, userCred.password);
       const user = userCredential.user;
+      router.push('/dashboard/messages');
    };
 
    const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
