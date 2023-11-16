@@ -1,3 +1,4 @@
+import { AuthContextProvider } from '@context/AuthProvider';
 import Providers from '../config/providers';
 import './globals.css';
 
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <link rel='shortcut icon' href='/static/favicon.ico' />
          </head>
          <body>
-            <Providers>{children}</Providers>
+            <AuthContextProvider>
+               <Providers>{children}</Providers>
+            </AuthContextProvider>
          </body>
       </html>
    );

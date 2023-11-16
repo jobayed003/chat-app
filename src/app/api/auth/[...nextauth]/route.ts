@@ -1,5 +1,4 @@
 import NextAuth from 'next-auth';
-import { Profile, Session } from 'next-auth/core/types';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 
@@ -15,16 +14,15 @@ const handler = NextAuth({
       }),
    ],
    callbacks: {
-      async session({ session }: Session) {
-         return session;
-      },
-
-      async signIn({ account, profile }: Profile) {
-         if (account.provider === 'google') {
-            return profile.email_verified && profile.email.endsWith('@google.com');
-         }
-         return true;
-      },
+      // async session({ session }: Session) {
+      //    return session;
+      // },
+      // async signIn({ account, profile }: Profile) {
+      //    if (account.provider === 'google') {
+      //       return profile.email_verified && profile.email.endsWith('@google.com');
+      //    }
+      //    return true;
+      // },
    },
 });
 

@@ -1,9 +1,11 @@
 'use client';
-
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
 
 type ContextType = {
    isAuthenticated: boolean;
+
    userDetails: { name: string; email: string; password: string };
    setUserDetails: Dispatch<
       SetStateAction<{
@@ -16,6 +18,7 @@ type ContextType = {
 
 const initContextType: ContextType = {
    isAuthenticated: false,
+
    userDetails: {
       name: '',
       email: '',
@@ -37,6 +40,7 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
       isAuthenticated,
 
       setUserDetails,
+      setIsAuthenticated,
    };
    return <AuthContext.Provider value={contextValue}>{children} </AuthContext.Provider>;
 };

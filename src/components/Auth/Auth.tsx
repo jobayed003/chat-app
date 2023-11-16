@@ -3,8 +3,7 @@
 import { Box, Flex } from '@chakra-ui/react';
 import DynamicText from '@components/util/DynamicText';
 import { usePathname } from 'next/navigation';
-
-import { AiFillMessage } from 'react-icons/ai';
+import { AiFillMessage, AiOutlineGithub, AiOutlineGoogle } from 'react-icons/ai';
 import Login from './Login';
 import Signup from './Signup';
 
@@ -21,7 +20,7 @@ const Auth = (props: Props) => {
             minW={'20%'}
             p='1rem'
             borderRadius={'20px'}
-            gap={'3rem'}
+            gap={'1.5rem'}
             overflow={'hidden'}
             position={'relative'}
          >
@@ -30,6 +29,14 @@ const Auth = (props: Props) => {
                <AiFillMessage color='blue' fontSize={'5rem'} />
             </Box>
             {path === 'login' ? <Login url={path} /> : <Signup url={path} />}
+
+            <Box mx='auto'>
+               <DynamicText color='graytext' value={`Or ${path.charAt(0).toUpperCase() + path.slice(1)} with`} />
+               <Flex fontSize={'2rem'} justify={'center'} gap='.5rem' mt='.5rem'>
+                  <AiOutlineGoogle cursor={'pointer'} />
+                  <AiOutlineGithub cursor={'pointer'} />
+               </Flex>
+            </Box>
          </Flex>
       </Flex>
    );

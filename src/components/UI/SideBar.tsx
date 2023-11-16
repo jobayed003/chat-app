@@ -34,7 +34,7 @@ const SideBar = () => {
                <Box>
                   <DynamicText as={'p'} m='0' value={'John'} />
                   <Link href={'/'}>
-                     <Text color={'grayText'} fontSize={'.9rem'}>
+                     <Text color={'graytext'} fontSize={'.9rem'}>
                         Logout
                      </Text>
                   </Link>

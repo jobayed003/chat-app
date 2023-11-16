@@ -19,9 +19,9 @@ const Inputs = ({ value, placeholder, type, id, onChange }: Props) => {
       <InputGroup>
          <InputRightElement>
             {!isClicked ? (
-               <AiOutlineEye color='grayText' cursor={'pointer'} onClick={(e) => setIsClicked(!isClicked)} />
+               <AiOutlineEye color='graytext' cursor={'pointer'} onClick={(e) => setIsClicked(!isClicked)} />
             ) : (
-               <AiOutlineEyeInvisible color='grayText' cursor={'pointer'} onClick={(e) => setIsClicked(!isClicked)} />
+               <AiOutlineEyeInvisible color='graytext' cursor={'pointer'} onClick={(e) => setIsClicked(!isClicked)} />
             )}
          </InputRightElement>
          <Input
@@ -33,7 +33,7 @@ const Inputs = ({ value, placeholder, type, id, onChange }: Props) => {
             onChange={onChange}
          />
          <InputLeftElement fontSize='1rem'>
-            <AiOutlineLock color='grayText' cursor={'pointer'} />
+            <AiOutlineLock color='graytext' cursor={'pointer'} />
          </InputLeftElement>
       </InputGroup>
    );
