@@ -1,32 +1,16 @@
-import { As, ResponsiveValue, Text, useColorModeValue } from '@chakra-ui/react';
+import { Text, TextProps, useColorModeValue } from '@chakra-ui/react';
 
-type DynamicTextProps = {
-   value: string | string[];
-   color?: string;
-   as?: As | undefined;
-   m?: string;
-   mb?: string;
-   fontSize?: string;
-   fontWeight?: string;
-   textAlign?: ResponsiveValue<CanvasTextAlign> | undefined;
-   order?: string;
-};
+interface DynamicTextProps extends TextProps {
+   // value: string | string[];
+   // color?: string;
+}
 
-const DynamicText = ({ value, color, fontSize, as, m, mb, fontWeight, textAlign, order }: DynamicTextProps) => {
+const DynamicText = (props: DynamicTextProps) => {
    const textColor = useColorModeValue('colorMode.dark', 'colorMode.light');
 
    return (
-      <Text
-         as={as}
-         textAlign={textAlign}
-         m={m}
-         color={color !== undefined ? color : textColor}
-         fontSize={fontSize}
-         fontWeight={fontWeight}
-         order={order}
-         mb={mb}
-      >
-         {value}
+      <Text color={props.color !== undefined ? props.color : textColor} {...props}>
+         {props.children}
       </Text>
    );
 };

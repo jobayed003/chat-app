@@ -3,31 +3,55 @@
 import { Link } from '@chakra-ui/next-js';
 import { Button, Flex, Input, InputGroup, InputLeftElement, Stack } from '@chakra-ui/react';
 import DynamicText from '@components/util/DynamicText';
+import { FileInput } from '@components/util/FileInput';
 import Inputs from '@components/util/Inputs';
 import { inputStyles } from '@config/data';
-import { app } from '@firebase/config';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { auth, db } from '@firebase/config';
+import { uploadImg } from '@firebase/uploadImg';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useState } from 'react';
 import { AiOutlineMail, AiOutlineUser } from 'react-icons/ai';
 
 const Signup = ({ url }: { url: string }) => {
-   const [userCred, setUserCred] = useState({ name: '', email: '', password: '', profilePicture: '' });
+   const [userCred, setUserCred] = useState({ name: '', email: '', password: '', profilePicture: [] });
    const router = useRouter();
-   const auth = getAuth(app);
 
    const handleSubmit = async () => {
       const userCredential = await createUserWithEmailAndPassword(auth, userCred.email, userCred.password);
-      const user = userCredential.user;
+
+      const url = await uploadImg(userCred.profilePicture[0]);
+      const { user } = userCredential;
+
+      updateProfile(user, {
+         displayName: userCred.name,
+         photoURL: url,
+      });
+
+      const userCopy = {
+         name: userCred.name,
+         email: userCred.email,
+         profilePic: url,
+         timestamp: serverTimestamp(),
+      };
+
+      await setDoc(doc(db, 'users', user.uid), {
+         ...userCopy,
+      });
       router.push('/dashboard/messages');
    };
 
    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       setUserCred((prev) => ({ ...prev, [e.target.id]: e.target.value }));
    };
+   const getFileName = async (file: []) => {
+      setUserCred((prev) => ({ ...prev, profilePicture: file }));
+   };
+
    return (
       <>
-         <Stack my='2rem' zIndex={'11'} gap={'1rem'}>
+         <Stack zIndex={'11'} gap={'1rem'}>
             <InputGroup>
                <Input
                   sx={inputStyles}
@@ -40,6 +64,9 @@ const Signup = ({ url }: { url: string }) => {
                   <AiOutlineUser color='#aaa' cursor={'pointer'} />
                </InputLeftElement>
             </InputGroup>
+            {/* Drag and Drop File upload */}
+            <FileInput getFileName={getFileName} />
+
             <InputGroup>
                <Input
                   sx={inputStyles}
@@ -70,12 +97,13 @@ const Signup = ({ url }: { url: string }) => {
             py='.5rem'
             _hover={{ color: '#aaa', bg: '#2D3748' }}
             onClick={handleSubmit}
+            isDisabled={Object.values(userCred).includes('') && userCred.profilePicture.length !== undefined}
          >
             Register
          </Button>
 
          <Flex justify={'center'} gap='.5rem'>
-            <DynamicText value={'Already Have an Account?'} color='graytext' />
+            <DynamicText color='graytext'>Already Have an Account?</DynamicText>
             <Link href={`/auth/${url === 'signup' ? 'login' : url}`} color='blue'>
                Login Here
             </Link>

@@ -1,8 +1,14 @@
 import Auth from '@components/Auth/Auth';
+import { Metadata, ResolvingMetadata } from 'next';
 
-type Props = {};
+type Props = {
+   params: { id: string };
+};
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+   return { title: 'Signup | chatIT' };
+}
 
-const SignupPage = (props: Props) => {
+const SignupPage = () => {
    return <Auth />;
 };
 

@@ -5,23 +5,24 @@ import { Button, Flex, Input, InputGroup, InputLeftElement, Stack } from '@chakr
 import DynamicText from '@components/util/DynamicText';
 import Inputs from '@components/util/Inputs';
 import { inputStyles } from '@config/data';
-import { app } from '@firebase/config';
+import { auth } from '@firebase/config';
 
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 import { ChangeEvent, useState } from 'react';
 import { AiOutlineMail } from 'react-icons/ai';
 
-const Login = ({ url }: { url: string }) => {
-   const [userCred, setUserCred] = useState({ name: '', email: '', password: '', profilePicture: '' });
+type LoginProps = {
+   url: string;
+};
+
+const Login = ({ url }: LoginProps) => {
+   const [userCred, setUserCred] = useState({ email: '', password: '' });
    const router = useRouter();
 
-   const auth = getAuth(app);
-
    const handleSubmit = async () => {
-      const userCredential = await signInWithEmailAndPassword(auth, userCred.email, userCred.password);
-      const user = userCredential.user;
+      await signInWithEmailAndPassword(auth, userCred.email, userCred.password);
       router.push('/dashboard/messages');
    };
 
@@ -61,13 +62,14 @@ const Login = ({ url }: { url: string }) => {
             px='3rem'
             py='.5rem'
             onClick={handleSubmit}
+            isDisabled={Object.values(userCred).includes('')}
             _hover={{ color: '#aaa', bg: '#2D3748' }}
          >
             Login
          </Button>
 
          <Flex justify={'center'} gap='.5rem'>
-            <DynamicText value={'New to chatIT?'} color='graytext' />
+            <DynamicText color='graytext'>New to chatIT?</DynamicText>
             <Link href={`/auth/${url === 'login' ? 'signup' : url}`} color='blue'>
                Register Here
             </Link>

@@ -1,27 +1,29 @@
 'use client';
 
-import { Box, Button, Flex, Grid, Text, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import DynamicText from '@components/util/DynamicText';
 import { buttonStyles } from '@config/data';
+import AuthContext from '@context/AuthProvider';
+import { app } from '@firebase/config';
+import { getAuth, signOut } from 'firebase/auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useContext } from 'react';
 import { AiFillMessage, AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
 const SideBar = () => {
    const { colorMode, toggleColorMode } = useColorMode();
-
-   const textColor = useColorModeValue('colorMode.dark', 'colorMode.light');
+   const { userDetails } = useContext(AuthContext);
+   const auth = getAuth(app);
    const borderColor = useColorModeValue('light', 'dark');
 
    return (
       <Grid templateRows={'100px auto'} borderRight={borderColor} h='100%'>
          <Box borderBottom={borderColor} display={'flex'} fontSize={'2.5rem'} p={'1.5rem'} alignItems={'center'}>
             <AiFillMessage color='blue' />
-            <Text color={textColor} marginLeft={'.5rem'}>
-               chatIT
-            </Text>
+            <DynamicText marginLeft={'.5rem'}>chatIT</DynamicText>
          </Box>
          <Grid templateRows={'1fr auto'}>
             <Flex align={'center'} justify={'center'}>
@@ -29,14 +31,23 @@ const SideBar = () => {
             </Flex>
             <Flex align={'center'} gap='1rem' p='1rem'>
                <Box borderRadius={'50%'} overflow={'hidden'}>
-                  <Image src='/assets/user.jpeg' alt='avatar' width={40} height={40} />
+                  {userDetails.profilePic !== null && (
+                     <Image src={userDetails.profilePic} alt='avatar' width={40} height={40} />
+                  )}
                </Box>
                <Box>
-                  <DynamicText as={'p'} m='0' value={'John'} />
-                  <Link href={'/'}>
-                     <Text color={'graytext'} fontSize={'.9rem'}>
+                  <DynamicText as={'p'} m='0'>
+                     {userDetails.name}
+                  </DynamicText>
+                  <Link
+                     href={'/auth/login'}
+                     onClick={async () => {
+                        await signOut(auth);
+                     }}
+                  >
+                     <DynamicText color={'graytext'} fontSize={'.9rem'}>
                         Logout
-                     </Text>
+                     </DynamicText>
                   </Link>
                </Box>
                <Button ml={'auto'} style={{ ...buttonStyles }} onClick={toggleColorMode}>

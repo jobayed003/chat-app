@@ -1,6 +1,6 @@
 'use client';
-import { app } from '@firebase/config';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
 
@@ -8,18 +8,16 @@ type ContextType = {
    isAuthenticated: boolean;
 
    userDetails: {
-      name?: string | null | undefined;
-      email: string | null | undefined;
-      password: string | null | undefined;
-      profilePic?: string | null | undefined;
+      name: string;
+      email: string;
+      profilePic: string;
    };
 
    setUserDetails: Dispatch<
       SetStateAction<{
-         name?: string | null;
-         email: string | null;
-         password?: string;
-         profilePic?: string | null;
+         name: string;
+         email: string;
+         profilePic: string;
       }>
    >;
 };
@@ -30,7 +28,6 @@ const initContextType: ContextType = {
    userDetails: {
       name: '',
       email: '',
-      password: '',
       profilePic: '',
    },
    setUserDetails: () => {},
@@ -40,8 +37,7 @@ const AuthContext = createContext<ContextType>(initContextType);
 
 export const AuthContextProvider = ({ children }: ChildrenType) => {
    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-   const [userDetails, setUserDetails] = useState({ name: '', email: '', password: '', profilePic: '' });
-   const auth = getAuth(app);
+   const [userDetails, setUserDetails] = useState({ name: '', email: '', profilePic: '' });
    const router = useRouter();
 
    useEffect(() => {
@@ -51,9 +47,12 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
             return;
          } else {
             setIsAuthenticated(true);
+
+            setUserDetails({ name: user.displayName!, email: user.email!, profilePic: user.photoURL || '' });
             router.push('/dashboard/messages');
          }
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
    const contextValue = {
@@ -64,7 +63,7 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
       setIsAuthenticated,
    };
    // @ts-ignore
-   return <AuthContext.Provider value={contextValue}>{children} </AuthContext.Provider>;
+   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContext;

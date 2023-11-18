@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import DynamicText from '@components/util/DynamicText';
 import User from '@components/util/User';
+import AuthContext from '@context/AuthProvider';
 import AppContext from '@context/StateProvider';
 import Image from 'next/image';
 import { useContext } from 'react';
@@ -19,6 +20,7 @@ import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 const ChatBox = () => {
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
+   const { userDetails } = useContext(AuthContext);
    const { clicked } = useContext(AppContext);
 
    return (
@@ -29,8 +31,12 @@ const ChatBox = () => {
                   <Image src='/assets/user.jpeg' alt='avatar' width={40} height={40} />
                </Box>
                <Box>
-                  <DynamicText as={'p'} m='0' value={'Hossain'} />
-                  <DynamicText color={'#2F9167'} fontSize={'12px'} value={'Online'} />
+                  <DynamicText as={'p'} m='0'>
+                     Hossain
+                  </DynamicText>
+                  <DynamicText color={'#2F9167'} fontSize={'12px'}>
+                     Online
+                  </DynamicText>
 
                   {/* <Text fontSize={'12px'} color={'#aaa'}>
             {messageDetails.messageStatus === 'typing'
@@ -43,7 +49,8 @@ const ChatBox = () => {
          <Box bg={useColorModeValue('bgWhite', 'dark')}>
             <Box>
                <User name='Hossain' imgSrc={'/assets/user.jpeg'} messages={messages} />
-               <User name='John' imgSrc={'/assets/user.jpeg'} messages={messages} />
+               {/* <User name='John' imgSrc={'/assets/user.jpeg'} messages={messages} /> */}
+               <User name={userDetails.name} imgSrc={userDetails.profilePic} messages={messages} />
             </Box>
          </Box>
          <GridItem>

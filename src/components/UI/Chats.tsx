@@ -12,7 +12,7 @@ const Chats = () => {
    return (
       <Grid templateRows={'100px 1fr'}>
          <Flex borderBlockEnd={borderColor} align={'center'} p={'1.5rem'} justifyContent={'space-between'}>
-            <DynamicText fontSize='2rem' value={'Messages'} />
+            <DynamicText fontSize='2rem'>Messages</DynamicText>
             <Flex align={'center'} fontSize={'1.5rem'} gap={'1rem'} color={'grayText'}>
                {/* <Box borderRadius={'50%'} boxShadow={'2xl'} cursor={'pointer'}>
             <MdEdit />
@@ -66,18 +66,16 @@ const User = ({ name, img, lastActive, messageDetails, status }: User) => {
                </Box>
 
                <Box>
-                  <DynamicText fontSize='14px' value={name} />
-                  <DynamicText
-                     fontSize={'12px'}
-                     color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}
-                     value={
-                        messageDetails.messageStatus === 'typing' ? 'Typing...' : messageDetails.lastMessages.slice(-1)
-                     }
-                  />
+                  <DynamicText fontSize='14px'>{name}</DynamicText>
+                  <DynamicText fontSize={'12px'} color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}>
+                     {messageDetails.messageStatus === 'typing' ? 'Typing...' : messageDetails.lastMessages.slice(-1)}
+                  </DynamicText>
                </Box>
             </Flex>
             <Flex direction={'column'}>
-               <DynamicText fontSize='12px' color={'gray'} value={messageDetails.sent} />
+               <DynamicText fontSize='12px' color={'gray'}>
+                  {messageDetails.sent}
+               </DynamicText>
 
                <Flex
                   bg={'#D34242'}
@@ -88,7 +86,9 @@ const User = ({ name, img, lastActive, messageDetails, status }: User) => {
                   w='15px'
                   h='15px'
                >
-                  <DynamicText fontSize={'12px'} color={'#fff'} value={`${messageDetails.lastMessages.length}`} />
+                  <DynamicText fontSize={'12px'} color={'#fff'}>
+                     {`${messageDetails.lastMessages.length}`}
+                  </DynamicText>
                </Flex>
             </Flex>
          </Flex>

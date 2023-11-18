@@ -1,22 +1,17 @@
-'use client';
+import Messages from '@components/Layout/Messages';
+import { Metadata, ResolvingMetadata } from 'next';
 
-import { GridItem, useColorModeValue } from '@chakra-ui/react';
-import ChatBox from '@components/Messages/ChatBox';
-import Chats from '@components/Messages/Chats';
+type Props = {
+   params: { id: string };
+};
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+   const id = params.id;
+
+   return { title: 'Message | chatIT' };
+}
 
 const MessagePage = () => {
-   const borderColor = useColorModeValue('light', 'dark');
-
-   return (
-      <>
-         <GridItem w='100%'>
-            <Chats />
-         </GridItem>
-         <GridItem border={borderColor} height={'100vh'}>
-            <ChatBox />
-         </GridItem>
-      </>
-   );
+   return <Messages />;
 };
 
 export default MessagePage;
