@@ -4,6 +4,10 @@ const colors = {
       dark: '#000',
       light: '#eee',
    },
+   colors: {
+      primary: '#FB8E0B',
+      secondary: 'rgba(253, 96, 3, 1)',
+   },
    graytext: '#aaa',
    bgDark: '#aaa',
    bgWhite: '#F6F8FC',

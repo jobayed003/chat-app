@@ -1,3 +1,4 @@
+import { ClerkProvider } from '@clerk/nextjs';
 import { AuthContextProvider } from '@context/AuthProvider';
 import Providers from '../config/providers';
 import './globals.css';
@@ -10,15 +11,17 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
    return (
-      <html lang='en'>
-         <head>
-            <link rel='shortcut icon' href='/static/favicon.ico' />
-         </head>
-         <body>
-            <AuthContextProvider>
-               <Providers>{children}</Providers>
-            </AuthContextProvider>
-         </body>
-      </html>
+      <ClerkProvider>
+         <AuthContextProvider>
+            <html lang='en'>
+               <head>
+                  <link rel='shortcut icon' href='/static/favicon.ico' />
+               </head>
+               <body>
+                  <Providers>{children}</Providers>
+               </body>
+            </html>
+         </AuthContextProvider>
+      </ClerkProvider>
    );
 }

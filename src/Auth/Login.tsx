@@ -20,8 +20,10 @@ type LoginProps = {
 const Login = ({ url }: LoginProps) => {
    const [userCred, setUserCred] = useState({ email: '', password: '' });
    const router = useRouter();
+   const [isLoading, setIsLoading] = useState(false);
 
    const handleSubmit = async () => {
+      setIsLoading(true);
       await signInWithEmailAndPassword(auth, userCred.email, userCred.password);
       router.push('/dashboard/messages');
    };
@@ -65,7 +67,7 @@ const Login = ({ url }: LoginProps) => {
             isDisabled={Object.values(userCred).includes('')}
             _hover={{ color: '#aaa', bg: '#2D3748' }}
          >
-            Login
+            {isLoading ? 'Loading...' : 'Login'}
          </Button>
 
          <Flex justify={'center'} gap='.5rem'>

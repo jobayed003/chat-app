@@ -1,4 +1,4 @@
-import Home from '@components/Heading/Home';
+import Home from '@components/Layout/Home';
 
 import { Metadata, ResolvingMetadata } from 'next';
 

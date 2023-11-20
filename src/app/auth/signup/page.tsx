@@ -1,4 +1,4 @@
-import Auth from '@components/Auth/Auth';
+import AuthLayout from '@Auth/AuthLayout';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {
@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
 }
 
 const SignupPage = () => {
-   return <Auth />;
+   return <AuthLayout />;
 };
 
 export default SignupPage;

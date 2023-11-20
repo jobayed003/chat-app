@@ -9,7 +9,7 @@ import { AiFillMessage, AiOutlineGithub, AiOutlineGoogle } from 'react-icons/ai'
 import Login from './Login';
 import Signup from './Signup';
 
-const Auth = () => {
+const AuthLayout = () => {
    const path = usePathname().replace('/auth/', '');
 
    return (
@@ -56,4 +56,4 @@ const Auth = () => {
    );
 };
 
-export default Auth;
+export default AuthLayout;

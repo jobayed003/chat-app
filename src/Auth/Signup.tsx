@@ -6,17 +6,19 @@ import DynamicText from '@components/util/DynamicText';
 import { FileInput } from '@components/util/FileInput';
 import Inputs from '@components/util/Inputs';
 import { inputStyles } from '@config/data';
+import AuthContext from '@context/AuthProvider';
 import { auth, db } from '@firebase/config';
 import { uploadImg } from '@firebase/uploadImg';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
 import { AiOutlineMail, AiOutlineUser } from 'react-icons/ai';
 
 const Signup = ({ url }: { url: string }) => {
    const [userCred, setUserCred] = useState({ name: '', email: '', password: '', profilePicture: [] });
    const router = useRouter();
+   const [isLoading, setIsLoading] = useState(false);
 
    const handleSubmit = async () => {
       const userCredential = await createUserWithEmailAndPassword(auth, userCred.email, userCred.password);
@@ -99,7 +101,7 @@ const Signup = ({ url }: { url: string }) => {
             onClick={handleSubmit}
             isDisabled={Object.values(userCred).includes('') && userCred.profilePicture.length !== undefined}
          >
-            Register
+            {isLoading ? 'Loading...' : 'Register'}
          </Button>
 
          <Flex justify={'center'} gap='.5rem'>

@@ -11,6 +11,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
 }
 
 const MessagePage = () => {
+   // if (!user) return <div>Not logged in</div>;
    return <Messages />;
 };
 

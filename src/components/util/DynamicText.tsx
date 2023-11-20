@@ -1,11 +1,6 @@
 import { Text, TextProps, useColorModeValue } from '@chakra-ui/react';
 
-interface DynamicTextProps extends TextProps {
-   // value: string | string[];
-   // color?: string;
-}
-
-const DynamicText = (props: DynamicTextProps) => {
+const DynamicText = (props: TextProps) => {
    const textColor = useColorModeValue('colorMode.dark', 'colorMode.light');
 
    return (
