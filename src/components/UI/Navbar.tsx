@@ -14,36 +14,13 @@ import {
 } from '@chakra-ui/react';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
+import { NavLink } from '@components/util/NavLink';
 import { buttonStyles } from '@config/data';
 import Link from 'next/link';
 import { AiOutlineBars, AiOutlineClose } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
-interface Props {
-   children: React.ReactNode;
-}
-
 const Links = ['About', 'Blog', 'Contact'];
-
-const NavLink = (props: Props) => {
-   const { children } = props;
-
-   return (
-      <Link href={'/' + children}>
-         <DynamicText
-            px={2}
-            py={1}
-            rounded={'md'}
-            cursor={'pointer'}
-            _hover={{
-               bg: useColorModeValue('gray.200', 'gray.700'),
-            }}
-         >
-            {children}
-         </DynamicText>
-      </Link>
-   );
-};
 
 export default function NavBar() {
    const { colorMode, toggleColorMode } = useColorMode();
@@ -62,7 +39,12 @@ export default function NavBar() {
             <HStack spacing={8} alignItems={'center'}>
                <Box>
                   <Flex fontSize={'2.5rem'} align={'center'}>
-                     <DynamicText marginLeft={'.5rem'} color={'colors.secondary'}>
+                     <DynamicText
+                        marginLeft={'.5rem'}
+                        color={'colors.secondary'}
+                        fontFamily={'DM Sans'}
+                        fontWeight={'bold'}
+                     >
                         <Text as={'span'} color={'colors.primary'}>
                            chat
                         </Text>
@@ -85,7 +67,9 @@ export default function NavBar() {
                      <FaMoon fontSize={'1.5rem'} color={'rgb(160, 174, 192)'} />
                   )}
                </Button>
-               <Link href='/signin'>Login</Link>
+               <Link href='/signin'>
+                  <DynamicText>Login</DynamicText>
+               </Link>
                <Link href={'/signup'}>
                   <DynamicButton>Signup</DynamicButton>
                </Link>

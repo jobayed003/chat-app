@@ -2,13 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans&family=Kurale&family=Poppins:wght@200;300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&family=Poppins:wght@200;300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans&family=Poppins:wght@200;300;400;500;700&display=swap');
-
 :root {
    --max-width: 1100px;
    --border-radius: 12px;
-   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono',
-      'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono',
-      'Courier New', monospace;
+   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono',
+      'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
    --foreground-rgb: 0, 0, 0;
    --background-start-rgb: 214, 219, 220;
@@ -26,15 +24,7 @@
 
    --tile-start-rgb: 239, 245, 249;
    --tile-end-rgb: 228, 232, 233;
-   --tile-border: conic-gradient(
-      #00000080,
-      #00000040,
-      #00000030,
-      #00000020,
-      #00000010,
-      #00000010,
-      #00000080
-   );
+   --tile-border: conic-gradient(#00000080, #00000040, #00000030, #00000020, #00000010, #00000010, #00000080);
 
    --callout-rgb: 238, 240, 241;
    --callout-border-rgb: 172, 175, 176;

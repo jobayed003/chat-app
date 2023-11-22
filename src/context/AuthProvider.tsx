@@ -34,11 +34,7 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
    const { isAuthenticated, userDetails } = useAuthState();
 
    useEffect(() => {
-      const fetchUser = async () => {
-         // const user = await currentUser();
-         // console.log(user);
-         // await fetchData('users', auth.currentUser?.uid);
-      };
+      const fetchUser = async () => {};
       fetchUser();
    }, []);
 

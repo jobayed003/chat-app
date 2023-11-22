@@ -10,8 +10,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
    return { title: 'Message | chatIT' };
 }
 
-const MessagePage = () => {
-   // if (!user) return <div>Not logged in</div>;
+const MessagePage = async () => {
    return <Messages />;
 };
 

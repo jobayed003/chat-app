@@ -3,10 +3,11 @@ import DynamicText from '@components/util/DynamicText';
 import { randomName } from '@config/data';
 import Image from 'next/image';
 import { useState } from 'react';
-import { MdLocationPin, MdMessage, MdSearch } from 'react-icons/md';
+import { MdMessage, MdSearch } from 'react-icons/md';
 
 const Chats = () => {
    const [pinnedMessages, setPinnedMessages] = useState([]);
+   const [messages, setMessages] = useState([]);
    const borderColor = useColorModeValue('light', 'dark');
 
    return (
@@ -22,7 +23,6 @@ const Chats = () => {
                </Box>
             </Flex>
          </Flex>
-         {pinnedMessages.length > 0 && <PinnedMessages />}
          <Box>
             <Flex align={'center'} gap='.5rem' color={'grayText'} fontSize={'.8rem'} p='1.5rem'>
                <MdMessage />
@@ -44,17 +44,6 @@ const Chats = () => {
 };
 
 export default Chats;
-
-const PinnedMessages = () => {
-   return (
-      <Box p='1.5rem'>
-         <Flex align={'center'} gap='.5rem' color={'gray'} fontSize={'.8rem'}>
-            <MdLocationPin />
-            <Text>Pinned Message</Text>
-         </Flex>
-      </Box>
-   );
-};
 
 const User = ({ name, img, lastActive, messageDetails, status }: User) => {
    return (
@@ -95,3 +84,14 @@ const User = ({ name, img, lastActive, messageDetails, status }: User) => {
       </Box>
    );
 };
+
+// const PinnedMessages = () => {
+//    return (
+//       <Box p='1.5rem'>
+//          <Flex align={'center'} gap='.5rem' color={'gray'} fontSize={'.8rem'}>
+//             <MdLocationPin />
+//             <Text>Pinned Message</Text>
+//          </Flex>
+//       </Box>
+//    );
+// };

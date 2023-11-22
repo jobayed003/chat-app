@@ -15,9 +15,7 @@ const AppContext = createContext<ContextType>(initContextType);
 export const AppContextProvider = ({ children }: ChildrenType) => {
    const [clicked, setClicked] = useState<boolean>(false);
 
-   useEffect(() => {
-      // if (!isAuthenticated) redirect('/auth/login');
-   }, []);
+   useEffect(() => {}, []);
 
    const contextValue = {
       clicked,

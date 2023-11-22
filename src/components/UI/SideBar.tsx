@@ -1,22 +1,18 @@
 'use client';
 
 import { Box, Button, Flex, Grid, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { UserButton, useAuth, useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
 import { buttonStyles } from '@config/data';
-import AuthContext from '@context/AuthProvider';
-import { app } from '@firebase/config';
-import { getAuth, signOut } from 'firebase/auth';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useContext } from 'react';
 import { AiFillMessage, AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
 const SideBar = () => {
    const { colorMode, toggleColorMode } = useColorMode();
-   const { userDetails } = useContext(AuthContext);
-   const auth = getAuth(app);
+   const { signOut } = useAuth();
+   const { user } = useUser();
    const borderColor = useColorModeValue('light', 'dark');
 
    return (
@@ -31,20 +27,13 @@ const SideBar = () => {
             </Flex>
             <Flex align={'center'} gap='1rem' p='1rem'>
                <Box borderRadius={'50%'} overflow={'hidden'}>
-                  {userDetails.profilePic !== null && (
-                     <Image src={userDetails.profilePic} alt='avatar' width={40} height={40} />
-                  )}
+                  <UserButton />
                </Box>
                <Box>
                   <DynamicText as={'p'} m='0'>
-                     {userDetails.name}
+                     {user?.username}
                   </DynamicText>
-                  <Link
-                     href={'/auth/login'}
-                     onClick={async () => {
-                        await signOut(auth);
-                     }}
-                  >
+                  <Link href={'/auth/login'} onClick={() => signOut()}>
                      <DynamicText color={'graytext'} fontSize={'.9rem'}>
                         Logout
                      </DynamicText>

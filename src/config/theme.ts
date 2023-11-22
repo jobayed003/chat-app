@@ -6,6 +6,7 @@ const colors = {
    },
    colors: {
       primary: '#FB8E0B',
+
       secondary: 'rgba(253, 96, 3, 1)',
    },
    graytext: '#aaa',

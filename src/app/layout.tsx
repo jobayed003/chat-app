@@ -1,13 +1,25 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import { AuthContextProvider } from '@context/AuthProvider';
+import { Metadata, ResolvingMetadata } from 'next';
+import { headers } from 'next/headers';
 import Providers from '../config/providers';
 import './globals.css';
 
-export const metadata = {
-   title: 'ChatIT | Dashboard',
-   description: 'Personal chatting app created by github user jobayed003',
-   keywords: 'chat app, video calling app, javascript',
+type Props = {
+   params: { id: string };
 };
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+   const headersList = headers();
+   const pathname = headersList.get('x-invoke-path') || 'chatIT';
+   const pathSegments = pathname.split('/').filter((segment) => segment !== ''); // Split pathname into segments and remove empty segments
+   const title = pathSegments.join(' | ');
+
+   return {
+      title,
+      description: 'Personal chatting app created by github user jobayed003',
+      keywords: 'chat app, video calling app, javascript',
+   };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
    return (

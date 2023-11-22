@@ -12,16 +12,58 @@ import {
 import DynamicText from '@components/util/DynamicText';
 import User from '@components/util/User';
 import AuthContext from '@context/AuthProvider';
-import AppContext from '@context/StateProvider';
 import Image from 'next/image';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
+import { MdSend } from 'react-icons/md';
+import { io } from 'socket.io-client';
 
 const ChatBox = () => {
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
    const { userDetails } = useContext(AuthContext);
-   const { clicked } = useContext(AppContext);
+   const [messages, setMessages] = useState([]);
+   const [currentMessage, setCurrentMessage] = useState('');
+
+   const socket = io();
+   // const socket = socketClient();
+
+   // Replace with your server URL
+   useEffect(() => {
+      // Create a socket connection
+      // socket.on('connect', () => {
+      //    console.log('Connected to Socket.IO server');
+      // });
+
+      // // Listen for incoming messages
+      // socket.on('receive', (message) => {
+      //    console.log(message);
+      //    // Update message state
+      //    setMessages((prevMessages) => [...prevMessages, message]);
+      // });
+
+      socketInit();
+      // Clean up the socket connection on unmount
+      return () => {
+         socket.disconnect();
+      };
+   }, []);
+
+   async function socketInit() {
+      // await fetch('/api/socket');
+
+      socket.on('receive', (message: string) => {
+         console.log(message);
+      });
+   }
+
+   const sendMessage = () => {
+      // Send the message to the server
+
+      socket.emit('send', currentMessage);
+      // Clear the currentMessage state
+      setCurrentMessage('');
+   };
 
    return (
       <Grid templateRows={'100px 1fr auto'} height={'100%'}>
@@ -50,7 +92,10 @@ const ChatBox = () => {
             <Box>
                <User name='Hossain' imgSrc={'/assets/user.jpeg'} messages={messages} />
                {/* <User name='John' imgSrc={'/assets/user.jpeg'} messages={messages} /> */}
-               <User name={userDetails.name} imgSrc={userDetails.profilePic} messages={messages} />
+               {/* <User name={userDetails.name} imgSrc={userDetails.profilePic} messages={messages} /> */}
+               {messages.map((message, index) => (
+                  <p key={index}>{message}</p>
+               ))}
             </Box>
          </Box>
          <GridItem>
@@ -67,10 +112,16 @@ const ChatBox = () => {
                      sx={{
                         borderRadius: '50px',
                      }}
+                     pr={'6.5rem'}
+                     value={currentMessage}
+                     onChange={(e) => setCurrentMessage(e.target.value)}
                      placeholder={'Type a message'}
                      _placeholder={{ color: '#aaa', fontSize: '.9rem' }}
                   />
-                  <InputRightElement fontSize='1rem' gap={'1rem'} mr='1rem'>
+                  <InputRightElement mr='3.5rem'>
+                     <MdSend color='#aaa' cursor={'pointer'} onClick={(e) => sendMessage()} />
+                  </InputRightElement>
+                  <InputRightElement gap='.5rem' mr='1rem'>
                      <FaRegSmile color='#aaa' cursor={'pointer'} />
                      <FaRegImage color='#aaa' cursor={'pointer'} />
                   </InputRightElement>

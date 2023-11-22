@@ -12,12 +12,7 @@ const useAuthState = () => {
       onAuthStateChanged(auth, async (user) => {
          if (user) {
             setIsAuthenticated(true);
-            // const userData = await fetchData('users', user.uid);
-
-            // setUserDetails({ name: userData.name, email: userData.email, profilePic: userData.profilePic });
-            // router.push('/dashboard/messages');
          } else {
-            // router.push('/auth/signup');
          }
       });
       // eslint-disable-next-line react-hooks/exhaustive-deps

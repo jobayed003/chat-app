@@ -2,7 +2,9 @@
 
 import { Grid, GridItem } from '@chakra-ui/react';
 
+import { useUser } from '@clerk/nextjs';
 import { AppContextProvider } from '@context/StateProvider';
+import { redirect } from 'next/navigation';
 import React from 'react';
 import SideBar from '../UI/SideBar';
 
