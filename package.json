@@ -14,7 +14,6 @@
       "@clerk/nextjs": "^4.27.1",
       "@emotion/react": "^11.10.6",
       "@emotion/styled": "^11.10.6",
-      "@mailchimp/mailchimp_transactional": "^1.0.50",
       "@types/node": "^20.8.10",
       "eslint": "8.38.0",
       "eslint-config-next": "^14.0.1",
@@ -22,10 +21,8 @@
       "framer-motion": "^6.5.1",
       "moment": "^2.29.4",
       "next": "^14.0.1",
-      "next-auth": "^4.24.5",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
-      "react-dropzone": "^14.2.3",
       "react-icons": "^4.8.0",
       "socket.io": "^4.7.2",
       "socket.io-client": "^4.7.2"

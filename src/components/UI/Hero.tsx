@@ -6,6 +6,7 @@ import DynamicText from '@components/util/DynamicText';
 import Card from '@components/util/Card';
 import DynamicImage from '@components/util/DynamicImage';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { AiFillStar, AiTwotoneStar } from 'react-icons/ai';
 import { FaArrowRight } from 'react-icons/fa';
@@ -50,7 +51,7 @@ const Hero = (props: Props) => {
    return (
       <Layout sx={{ mt: '1rem' }}>
          <motion.div variants={leftVariants} initial='hidden' animate={'visible'} style={{ marginTop: '4rem' }}>
-            <Box justifySelf={'start'} alignSelf={'center'} width={'35%'} ml='2.5rem'>
+            <Box justifySelf={'start'} alignSelf={'center'} w='40%' ml='2.5rem'>
                <Flex direction={'column'} justify='center' gap='1.9rem'>
                   <DynamicText fontSize='50px' fontWeight={'700'} lineHeight={'60px'}>
                      Start chatting with friends, anytime, anywhere with chatIT
@@ -96,10 +97,25 @@ const Hero = (props: Props) => {
             </Box>
          </motion.div>
          <motion.div variants={rightVariants} initial='hidden' animate={'visible'}>
-            <Box justifySelf={'center'} position={'relative'}>
-               <Box borderRadius={'5px'} overflow={'hidden'}>
-                  <img src={'/assets/hero.png'} alt='hero img' width={'600px'} />
+            <Box justifySelf={'center'} position={'relative'} mt={'4rem'}>
+               <Box width='100%' height={'100%'}>
+                  <Image
+                     src={'/assets/hero.png'}
+                     alt='hero img'
+                     sizes='(max-width: 768px) 100vw,
+                     (max-width: 1200px) 60vw,
+                     33vw'
+                     width={400}
+                     height={200}
+                     style={{ height: '100%', width: '100%' }}
+
+                     // sizes='600px'
+                     // // sizes='40vw'
+                     // style={{ width: '100%', height: 'auto', marginLeft: '8rem' }}
+                     // style={{ marginLeft: '10rem' }}
+                  />
                </Box>
+
                <Card
                   imgsrc='/assets/card1.png'
                   bottom='12%'

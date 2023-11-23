@@ -13,6 +13,7 @@ const SideBar = () => {
    const { colorMode, toggleColorMode } = useColorMode();
    const { signOut } = useAuth();
    const { user } = useUser();
+   const router = useRouter();
    const borderColor = useColorModeValue('light', 'dark');
 
    return (
@@ -31,7 +32,7 @@ const SideBar = () => {
                   <DynamicText as={'p'} m='0'>
                      {user?.username}
                   </DynamicText>
-                  <Link href={'/auth/login'} onClick={() => signOut()}>
+                  <Link href={'/signin'} onClick={() => signOut()}>
                      <DynamicText color={'graytext'} fontSize={'.9rem'}>
                         Logout
                      </DynamicText>
