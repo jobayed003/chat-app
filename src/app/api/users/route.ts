@@ -1,10 +1,9 @@
 import { clerkClient } from '@clerk/nextjs';
 import { db } from '@firebase/config';
 import { collection, doc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET = async (req: NextRequest, res: NextResponse) => {
    try {
       let data: any = [];
 

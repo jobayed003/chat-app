@@ -6,7 +6,7 @@ type Props = {
    params: { userId: string };
 };
 
-export async function getUser(userId: string) {
+async function getUser(userId: string) {
    const user = await clerkClient.users.getUser(userId);
 
    return user;
