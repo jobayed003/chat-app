@@ -22,9 +22,7 @@ const SideBar = () => {
             <DynamicText marginLeft={'.5rem'}>chatIT</DynamicText>
          </Box>
          <Grid templateRows={'1fr auto'}>
-            <Flex align={'center'} justify={'center'}>
-               <Menus />
-            </Flex>
+            <Menus />
             <Flex align={'center'} gap='1rem' p='1rem'>
                <Box borderRadius={'50%'} overflow={'hidden'}>
                   <UserButton />
@@ -55,7 +53,7 @@ const SideBar = () => {
 export default SideBar;
 
 const Menus = () => {
-   const pathName = usePathname().replace('/dashboard/', '');
+   const pathName = usePathname()?.split('/');
    const router = useRouter();
    const textColor = useColorModeValue('colorMode.dark', 'colorMode.light');
 
@@ -65,17 +63,20 @@ const Menus = () => {
    ];
 
    return (
-      <Flex p='2rem' pt='0' gap='4rem' flexDir='column'>
+      <Flex pt='0' gap='4rem' flexDir='column' align='center' justify='center'>
          {option.map((el) => (
             <Flex
-               color={pathName === el.name.toLowerCase() ? '#eee' : textColor}
-               bg={pathName === el.name.toLowerCase() ? 'blue.800' : ''}
+               _active={{ bg: '#2E333D' }}
+               _hover={{ bg: '#2E333D' }}
+               color={pathName?.includes(el.name.toLowerCase()) ? '#eee' : textColor}
+               bg={pathName?.includes(el.name.toLowerCase()) ? '#2E333D' : ''}
                key={Math.random()}
                align={'center'}
+               justify={'center'}
                gap={4}
-               borderRadius={'20px'}
+               w='100%'
                p='.5rem'
-               px='1.5rem'
+               px='0rem'
                cursor={'pointer'}
                onClick={() => router.push(`/dashboard/${el.name.toLowerCase()}`)}
             >

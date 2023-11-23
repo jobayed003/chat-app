@@ -7,10 +7,12 @@ export const fetchData = async (collec, id) => {
 
    if (id) {
       const docSnap = await getDoc(docRef);
-      return docSnap.data() || { name: '', email: '', profilePic: '' };
+      return docSnap.data() || 'No data found';
    } else {
       querySnapshot.forEach((doc) => {
-         return { id: doc.id, data: doc.data() } || {};
+         console.log(doc);
+
+         return { id: doc.id, data: doc.data() } || 'No data found';
       });
    }
 };

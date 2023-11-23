@@ -1,23 +1,44 @@
 import { Box, Divider, Flex } from '@chakra-ui/react';
 import Layout from '@components/Layout/Layout';
+import { useIsVisible } from '@components/hooks/useIsVisible';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 import { NavLink } from '@components/util/NavLink';
+import { variants } from '@config/data';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useRef } from 'react';
 import { AiFillFacebook, AiOutlineGithub, AiOutlineInstagram, AiOutlineTwitter } from 'react-icons/ai';
+import { FaArrowRight } from 'react-icons/fa';
 
 type Props = {};
 
 const Footer = (props: Props) => {
+   const ref = useRef(null);
+   const isVisibile = useIsVisible(ref);
    return (
       <Flex flexDir={'column'} gap='1.5rem' py='2rem'>
-         <Layout>
-            <DynamicText fontSize={'2rem'} fontWeight={'700'} width={'30%'} textAlign={'center'}>
-               Ready to grow your connection? Start with chatIT, become faster every second
-            </DynamicText>
-         </Layout>
-         <Layout>
-            <DynamicButton>Start chatting now</DynamicButton>
-         </Layout>
+         <Box ref={ref}>
+            {isVisibile && (
+               <motion.div variants={variants} initial='hidden' animate={'visible'}>
+                  <Layout sx={{ mb: '2rem' }}>
+                     <DynamicText fontSize={'2rem'} fontWeight={'700'} width={'30%'} textAlign={'center'}>
+                        Ready to grow your connection? Start with chatIT, become faster every second
+                     </DynamicText>
+                  </Layout>
+                  <Layout>
+                     <Link href='/signup'>
+                        <DynamicButton>
+                           Start chatting now
+                           <DynamicText as='span' ml='.3rem'>
+                              <FaArrowRight />
+                           </DynamicText>
+                        </DynamicButton>
+                     </Link>
+                  </Layout>
+               </motion.div>
+            )}
+         </Box>
 
          <FooterBar />
          <Box px={'15.5rem'}>

@@ -1,20 +1,24 @@
 'use client';
 
-import { GridItem, useColorModeValue } from '@chakra-ui/react';
-import ChatBox from '@components/UI/ChatBox';
+import { Flex, GridItem } from '@chakra-ui/react';
 import Chats from '@components/UI/Chats';
+import DynamicText from '@components/util/DynamicText';
+import { useParams } from 'next/navigation';
 
-const Messages = () => {
-   const borderColor = useColorModeValue('light', 'dark');
-
+const Messages = ({ children }: ChildrenType) => {
+   const params = useParams();
    return (
       <>
          <GridItem w='100%'>
             <Chats />
          </GridItem>
-         <GridItem border={borderColor} height={'100vh'}>
-            <ChatBox />
-         </GridItem>
+         {children}
+
+         {!params?.userId && (
+            <Flex justify={'center'} align='center'>
+               <DynamicText fontSize='2rem'>Start chatting with friends</DynamicText>
+            </Flex>
+         )}
       </>
    );
 };

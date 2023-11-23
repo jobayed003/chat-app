@@ -4,7 +4,6 @@ import type { Server as HTTPServer } from 'http';
 import type { Socket as NetSocket } from 'net';
 import type { NextApiResponse } from 'next';
 import type { Server as IOServer } from 'socket.io';
-import { Server } from 'socket.io';
 
 export const config = {
    api: {
@@ -58,7 +57,7 @@ interface NextApiResponseWithSocket extends NextApiResponse {
    res.socket.server.io = io;
    res.status(201).json({ success: true, message: 'Socket is started', socket: `:${PORT + 1}` });
 } */
-export default function SocketHandler(req, res: NextApiResponseWithSocket) {
+/* export default function SocketHandler(req, res: NextApiResponseWithSocket) {
    if (res.socket.server.io) {
       console.log('Already set up');
       res.end();
@@ -78,3 +77,4 @@ export default function SocketHandler(req, res: NextApiResponseWithSocket) {
    console.log('Setting up socket');
    res.end();
 }
+ */

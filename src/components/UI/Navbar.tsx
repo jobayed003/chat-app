@@ -12,11 +12,13 @@ import {
    useColorModeValue,
    useDisclosure,
 } from '@chakra-ui/react';
+import { useIsVisible } from '@components/hooks/useIsVisible';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 import { NavLink } from '@components/util/NavLink';
 import { buttonStyles } from '@config/data';
 import Link from 'next/link';
+import { useRef } from 'react';
 import { AiOutlineBars, AiOutlineClose } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
@@ -25,10 +27,17 @@ const Links = ['About', 'Blog', 'Contact'];
 export default function NavBar() {
    const { colorMode, toggleColorMode } = useColorMode();
    const { isOpen, onOpen, onClose } = useDisclosure();
+   const ref = useRef(null);
+   const isVisible = useIsVisible(ref);
 
    return (
-      <Box bg={useColorModeValue('colormode.light', 'colormode.dark')} px={4} pt='.5rem' pb='1rem'>
-         <Flex h={16} alignItems={'center'} justifyContent={'space-around'}>
+      <Box bg={useColorModeValue('colormode.light', 'colormode.dark')} px={4} pt='.5rem' pb='1rem' ref={ref}>
+         <Flex
+            h={16}
+            alignItems={'center'}
+            justifyContent={'space-around'}
+            // position={!isVisible ? 'fixed' : 'relative'}
+         >
             <IconButton
                size={'sm'}
                icon={isOpen ? <AiOutlineClose fontSize={'1.5rem'} /> : <AiOutlineBars fontSize={'1.5rem'} />}

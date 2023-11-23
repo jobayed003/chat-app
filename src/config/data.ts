@@ -66,4 +66,21 @@ export const inputStyles = {
    _active: { boxShadow: '0' },
 };
 
+export const variants = {
+   hidden: {
+      opacity: 0,
+      y: 100,
+      transition: {
+         duration: 0.5,
+      },
+   },
+   visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+         duration: 0.5,
+      },
+   },
+};
+
 // const uniqueId = Math.random().toString(16).slice(2);
