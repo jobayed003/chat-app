@@ -12,3 +12,11 @@ type User = {
 };
 
 type ChildrenType = { children?: React.ReactNode };
+
+interface MessageDetails {
+   id: string;
+   user: { email: string; name: string; imgsrc: string };
+   sender: { email: string; seen: boolean };
+   message: string;
+   sent: string;
+}

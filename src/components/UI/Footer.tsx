@@ -31,7 +31,7 @@ const Footer = (props: Props) => {
                         <DynamicButton>
                            Start chatting now
                            <DynamicText as='span' ml='.3rem'>
-                              <FaArrowRight />
+                              <FaArrowRight color='#fff' />
                            </DynamicText>
                         </DynamicButton>
                      </Link>

@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 
@@ -63,7 +63,7 @@ const Hero = (props: Props) => {
                      <DynamicButton alignSelf={'center'} mr='auto'>
                         Start chatting now
                         <DynamicText as='span' ml='.3rem'>
-                           <FaArrowRight />
+                           <FaArrowRight color='#fff' />
                         </DynamicText>
                      </DynamicButton>
                   </Link>

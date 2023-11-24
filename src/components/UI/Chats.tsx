@@ -3,49 +3,20 @@
 import { Box, Flex, Grid, GridItem, Text, useColorModeValue } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
+import AuthContext from '@context/AuthProvider';
+import AppContext from '@context/StateProvider';
 import moment from 'moment';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { MdMessage, MdSearch } from 'react-icons/md';
 
 const Chats = () => {
-   const [pinnedMessages, setPinnedMessages] = useState([]);
-   const [messages, setMessages] = useState([]);
-   const [users, setUsers] = useState<[]>([]);
+   const { messageDetails } = useContext(AppContext);
+   const { users, setUsers } = useContext(AuthContext);
 
    const borderColor = useColorModeValue('light', 'dark');
    const { user } = useUser();
-
-   const createUser = async () => {
-      const response = await fetch('/api/users', {
-         method: 'POST',
-         body: JSON.stringify({
-            name: user?.fullName,
-            email: user?.primaryEmailAddress?.emailAddress,
-            userName: user?.username,
-            imageUrl: user?.imageUrl,
-            userId: user?.id,
-         }),
-      });
-
-      if (response.ok) {
-         console.log('Saved');
-      }
-   };
-
-   useEffect(() => {
-      createUser();
-      const fetchUsers = async () => {
-         const response = await fetch('/api/users');
-
-         const users = await response.json();
-         setUsers(users.filter((el) => el.id !== user.id));
-      };
-
-      fetchUsers();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [user]);
 
    const compareDates = (millis1) => {
       const present = Date.now();
@@ -88,7 +59,9 @@ const Chats = () => {
                         status={'online'}
                         img={user.imageUrl}
                         messageDetails={{
-                           lastMessages: 'Joined ' + compareDates(user.createdAt).difference.humanize() + ' ago',
+                           lastMessages:
+                              messageDetails.message ||
+                              'Joined ' + compareDates(user.createdAt).difference.humanize() + ' ago',
                         }}
                         lastActive={compareDates(1700746673468).difference.humanize()}
                         userId={user.id}

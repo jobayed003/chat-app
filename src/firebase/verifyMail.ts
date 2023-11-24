@@ -1,6 +1,6 @@
 const mailchimp = require('@mailchimp/mailchimp_transactional')(process.env.MAILCHIMP_API_KEY);
 
-const message = {
+const messages = {
    from_email: 'hello@example.com',
    subject: 'Hello world',
    text: 'Welcome to Mailchimp Transactional!',
@@ -14,7 +14,7 @@ const message = {
 
 async function run() {
    const response = await mailchimp.messages.send({
-      message,
+      messages,
    });
    console.log(response);
 }

@@ -22,6 +22,10 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
    };
 }
 
+// const getEvent = async (id) => {
+//    await pusherServer.trigger(id, 'messages');
+// };
+
 const ChatBoxPage = async ({
    params,
 }: {
@@ -30,8 +34,10 @@ const ChatBoxPage = async ({
       slug: string;
    };
 }) => {
-   const { imageUrl, username } = await getUser(params?.userId);
-   return <ChatBox name={username || ''} imageUrl={imageUrl} />;
+   const { imageUrl, username, emailAddresses } = await getUser(params?.userId);
+   return (
+      <ChatBox name={username || ''} email={emailAddresses[0].emailAddress} imageUrl={imageUrl} id={params.userId} />
+   );
 };
 
 export default ChatBoxPage;

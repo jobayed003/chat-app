@@ -1,16 +1,16 @@
 import { clerkClient } from '@clerk/nextjs';
 import { db } from '@firebase/config';
-import { collection, doc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
    try {
-      let data: any = [];
+      // let data: any = [];
 
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      querySnapshot.forEach((doc) => {
-         data.push(doc.data());
-      });
+      // const querySnapshot = await getDocs(collection(db, 'users'));
+      // querySnapshot.forEach((doc) => {
+      //    data.push(doc.data());
+      // });
 
       const users = await clerkClient.users.getUserList();
 

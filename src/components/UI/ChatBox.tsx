@@ -10,61 +10,66 @@ import {
    InputRightElement,
    useColorModeValue,
 } from '@chakra-ui/react';
+import { useUser } from '@clerk/nextjs';
 import { useIsOnline } from '@components/hooks/useIsOnline';
 import DynamicText from '@components/util/DynamicText';
+import MessageBox from '@components/util/MessageBox';
+import { messageDetailsInitState } from '@config/app';
+import AppContext from '@context/StateProvider';
+import { pusherClient } from '@libs/pusher';
+import moment from 'moment';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 import { MdSend } from 'react-icons/md';
 
-type Props = {
+type ChatBoxProps = {
    name: string;
    imageUrl: string;
+   id: string;
+   email: string;
 };
 
-const ChatBox = ({ name, imageUrl }: Props) => {
+const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
-   const [messages, setMessages] = useState([]);
+   const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
    const [currentMessage, setCurrentMessage] = useState('');
+   const { setMessageDetails } = useContext(AppContext);
+
    const isOnline = useIsOnline();
+   const { user } = useUser();
 
-   // const socket = io();
-   // const socket = socketClient();
+   const currentUserEmail = user?.primaryEmailAddress?.emailAddress!;
 
-   // Replace with your server URL
    useEffect(() => {
-      // Create a socket connection
-      // socket.on('connect', () => {
-      //    console.log('Connected to Socket.IO server');
-      // });
+      pusherClient.subscribe('test');
 
-      // // Listen for incoming messages
-      // socket.on('receive', (message) => {
-      //    console.log(message);
-      //    // Update message state
-      //    setMessages((prevMessages) => [...prevMessages, message]);
-      // });
-
-      // socketInit();
-      // Clean up the socket connection on unmount
-      return () => {
-         // socket.disconnect();
+      const messageHandler = (data: MessageDetails) => {
+         setMessageDetails(data);
+         setMessages((prevMessages) => [...prevMessages, data]);
       };
-   }, []);
 
-   async function socketInit() {
-      // await fetch('/api/socket');
-      // socket.on('receive', (message: string) => {
-      //    console.log(message);
-      // });
-   }
+      pusherClient.bind('newMessage', messageHandler);
 
-   const sendMessage = () => {
-      // Send the message to the server
+      return () => {
+         pusherClient.unsubscribe('test');
+         pusherClient.unbind('newMessage', messageHandler);
+      };
+   }, [id]);
 
-      // socket.emit('send', currentMessage);
-      // Clear the currentMessage state
+   const sendMessage = async () => {
+      await fetch('/api/messages', {
+         method: 'POST',
+         body: JSON.stringify({
+            id,
+            user: { email: currentUserEmail, name: user?.username, imgsrc: user?.imageUrl },
+            sender: { email: currentUserEmail, seen: false },
+            message: currentMessage,
+            sent: moment().format('hh:mm a'),
+         }),
+      });
+
       setCurrentMessage('');
    };
 
@@ -83,24 +88,22 @@ const ChatBox = ({ name, imageUrl }: Props) => {
                      <DynamicText color={'#2F9167'} fontSize={'12px'}>
                         {isOnline ? 'Online' : 'Offline'}
                      </DynamicText>
-
-                     {/* <Text fontSize={'12px'} color={'#aaa'}>
-            {messageDetails.messageStatus === 'typing'
-              ? 'Typing'
-              : messageDetails.lastMessages.slice(-1)}
-          </Text> */}
                   </Box>
                </Flex>
             </GridItem>
-            <Box bg={useColorModeValue('bgWhite', 'dark')}>
-               {/*  <Box>
-                  <User name={name} imgSrc={imageUrl} messages={messages} />
-                  {/* <User name='John' imgSrc={'/assets/user.jpeg'} messages={messages} /> 
-                  {/* <User name={userDetails.name} imgSrc={userDetails.profilePic} messages={messages} /> 
-                  {messages.map((message, index) => (
-                     <p key={index}>{message}</p>
+            <Box bg={useColorModeValue('bgWhite', 'dark')} overflowY={'scroll'}>
+               {messages
+                  .filter((el) => el.message !== '')
+                  .map((msgCnt) => (
+                     <MessageBox
+                        img={msgCnt.user.imgsrc}
+                        name={msgCnt.user.name}
+                        message={msgCnt.message}
+                        key={msgCnt + msgCnt.user.name}
+                        isOwnMessage={currentUserEmail === msgCnt.sender.email}
+                        sent={msgCnt.sent}
+                     />
                   ))}
-               </Box> */}
             </Box>
             <GridItem>
                <Box p='1rem'>
@@ -112,6 +115,12 @@ const ChatBox = ({ name, imageUrl }: Props) => {
                         color='#aaa'
                         border={'none'}
                         bg={bgColor}
+                        onKeyDown={(e) => {
+                           if (e.key === 'Enter') {
+                              setCurrentMessage('');
+                              sendMessage();
+                           }
+                        }}
                         _focusVisible={{ boxShadow: 'none' }}
                         sx={{
                            borderRadius: '50px',
@@ -123,7 +132,14 @@ const ChatBox = ({ name, imageUrl }: Props) => {
                         _placeholder={{ color: '#aaa', fontSize: '.9rem' }}
                      />
                      <InputRightElement mr='3.5rem'>
-                        <MdSend color='#aaa' cursor={'pointer'} onClick={(e) => sendMessage()} />
+                        <MdSend
+                           color='#aaa'
+                           cursor={'pointer'}
+                           onClick={() => {
+                              setCurrentMessage('');
+                              sendMessage();
+                           }}
+                        />
                      </InputRightElement>
                      <InputRightElement gap='.5rem' mr='1rem'>
                         <FaRegSmile color='#aaa' cursor={'pointer'} />
@@ -139,4 +155,4 @@ const ChatBox = ({ name, imageUrl }: Props) => {
 
 export default ChatBox;
 
-const messages = ['Hello Test', 'Test', 'Send Me Message'];
+// const messages = ['Hello Test', 'Test', 'Send Me Message'];
