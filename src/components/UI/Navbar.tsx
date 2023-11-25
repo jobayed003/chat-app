@@ -12,11 +12,11 @@ import {
    useColorModeValue,
    useDisclosure,
 } from '@chakra-ui/react';
-import { useIsVisible } from '@components/hooks/useIsVisible';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 import { NavLink } from '@components/util/NavLink';
 import { buttonStyles } from '@config/data';
+import { useIsVisible } from '@hooks/useIsVisible';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { AiOutlineBars, AiOutlineClose } from 'react-icons/ai';

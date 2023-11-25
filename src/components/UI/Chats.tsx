@@ -5,18 +5,24 @@ import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
 import AuthContext from '@context/AuthProvider';
 import AppContext from '@context/StateProvider';
+import useConversationId from '@hooks/useConversationId';
+import { useIsOnline } from '@hooks/useIsOnline';
+import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MdMessage, MdSearch } from 'react-icons/md';
 
 const Chats = () => {
    const { messageDetails } = useContext(AppContext);
-   const { users, setUsers } = useContext(AuthContext);
+   const [message, setMessage] = useState({});
 
+   const { users } = useContext(AuthContext);
+   const isOnline = useIsOnline();
    const borderColor = useColorModeValue('light', 'dark');
    const { user } = useUser();
+   const { id } = useConversationId();
 
    const compareDates = (millis1) => {
       const present = Date.now();
@@ -32,15 +38,31 @@ const Chats = () => {
       };
    };
 
+   useEffect(() => {
+      const messageHandler = (data: MessageDetails) => {
+         setMessage(data);
+      };
+
+      const handleEvent = () => {
+         pusherClient.subscribe(id);
+         pusherClient.bind('newMessage', messageHandler);
+      };
+      id && handleEvent();
+      return () => {
+         pusherClient.unsubscribe(id);
+         pusherClient.unbind('newMessage', messageHandler);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [id]);
+
+   // console.log(message);
+
    return (
       <GridItem w='100%' borderRight={borderColor} h='100vh'>
          <Grid templateRows={'100px 1fr'}>
             <Flex borderBlockEnd={borderColor} align={'center'} p={'1.5rem'} justifyContent={'space-between'}>
                <DynamicText fontSize='2rem'>Messages</DynamicText>
                <Flex align={'center'} fontSize={'1.5rem'} gap={'1rem'} color={'grayText'}>
-                  {/* <Box borderRadius={'50%'} boxShadow={'2xl'} cursor={'pointer'}>
-            <MdEdit />
-          </Box> */}
                   <Box cursor={'pointer'}>
                      <MdSearch fontSize={'1.5rem'} />
                   </Box>
@@ -52,19 +74,22 @@ const Chats = () => {
                   <Text>All Messages</Text>
                </Flex>
                {user &&
-                  users.map((user) => (
+                  users.map((signedUser) => (
                      <ChatUser
                         key={Math.random()}
-                        name={user.username}
-                        status={'online'}
-                        img={user.imageUrl}
+                        name={signedUser.username}
+                        email={signedUser.emailAddresses[0].emailAddress}
+                        status={isOnline ? 'Online' : 'Offline'}
+                        img={signedUser.imageUrl}
                         messageDetails={{
-                           lastMessages:
-                              messageDetails.message ||
-                              'Joined ' + compareDates(user.createdAt).difference.humanize() + ' ago',
+                           sent: message.sent,
+                           lastMessage:
+                              message.messsage ||
+                              'Joined ' + compareDates(signedUser.createdAt).difference.humanize() + ' ago',
                         }}
                         lastActive={compareDates(1700746673468).difference.humanize()}
-                        userId={user.id}
+                        userId={signedUser.id}
+                        currentUser={user}
                      />
                   ))}
             </Box>
@@ -75,15 +100,43 @@ const Chats = () => {
 
 export default Chats;
 
-const ChatUser = ({ name, img, lastActive, messageDetails, status, userId }: User) => {
+const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUser }: User) => {
    const router = useRouter();
+
+   const { isLoading, setIsLoading } = useContext(AppContext);
+
+   const bgColor = useColorModeValue('#ddd', '#2E333D');
+
+   const handleClick = async () => {
+      try {
+         setIsLoading(true);
+         const res = await fetch('/api/conversation', {
+            method: 'POST',
+            body: JSON.stringify({
+               senderId: currentUser.id,
+               receiverId: userId,
+               users: [userId, currentUser.id],
+            }),
+         });
+         if (res.ok) {
+            const { conversationId } = await res.json();
+
+            router.push(`/dashboard/messages/${conversationId}`);
+         }
+      } catch (error) {
+         console.log(error);
+      }
+   };
+
    return (
       <Box
          cursor={'pointer'}
-         _active={{ bg: '#2E333D' }}
-         _hover={{ bg: '#2E333D' }}
+         _active={{ bg: bgColor }}
+         _hover={{ bg: bgColor }}
          px='1rem'
-         onClick={() => router.push(`/dashboard/messages/${userId}`)}
+         onClick={(e) => {
+            !isLoading && handleClick();
+         }}
       >
          <Flex justify={'space-between'} align={'center'}>
             <Flex py='1rem' align={'center'} gap='.8rem'>
@@ -93,18 +146,19 @@ const ChatUser = ({ name, img, lastActive, messageDetails, status, userId }: Use
 
                <Box>
                   <DynamicText fontSize='14px'>{name}</DynamicText>
-                  {/* <DynamicText color={'gray'} fontSize='12px'>
-                     {lastActive}
-                  </DynamicText> */}
-                  <DynamicText fontSize={'12px'} color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}>
-                     {messageDetails.messageStatus === 'typing' ? 'Typing...' : messageDetails?.lastMessages}
+                  <DynamicText color={'gray'} fontSize='12px'>
+                     {messageDetails?.lastMessage}
                   </DynamicText>
+
+                  {/* <DynamicText fontSize={'12px'} color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}>
+                     {messageDetails.messageStatus === 'typing' ? 'Typing...' : messageDetails?.lastMessages}
+                  </DynamicText> */}
                </Box>
             </Flex>
             <Flex direction={'column'}>
-               <DynamicText fontSize='12px' color={'gray'}>
+               {/* <DynamicText fontSize='12px' color={'gray'}>
                   {messageDetails?.sent}
-               </DynamicText>
+               </DynamicText> */}
 
                {/* <Flex
                   bg={'#D34242'}

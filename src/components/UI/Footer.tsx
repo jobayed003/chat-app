@@ -1,10 +1,10 @@
 import { Box, Divider, Flex } from '@chakra-ui/react';
 import Layout from '@components/Layout/Layout';
-import { useIsVisible } from '@components/hooks/useIsVisible';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 import { NavLink } from '@components/util/NavLink';
 import { variants } from '@config/data';
+import { useIsVisible } from '@hooks/useIsVisible';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRef } from 'react';

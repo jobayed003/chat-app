@@ -1,8 +1,8 @@
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
-import { useIsVisible } from '@components/hooks/useIsVisible';
 import Card from '@components/util/Card';
 import DynamicText from '@components/util/DynamicText';
 import { variants } from '@config/data';
+import { useIsVisible } from '@hooks/useIsVisible';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import Layout from '../Layout/Layout';

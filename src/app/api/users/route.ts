@@ -1,6 +1,4 @@
-import { clerkClient } from '@clerk/nextjs';
-import { db } from '@firebase/config';
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { auth, clerkClient, currentUser } from '@clerk/nextjs';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
@@ -21,21 +19,19 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 };
 
 export async function POST(req: NextRequest) {
-   const data = await req.json();
-   // if (!data.userId) return NextResponse.redirect('/signin');
-
-   const userCopy = {
-      ...data,
-      timestamp: serverTimestamp(),
-   };
-
-   await setDoc(doc(db, 'users', data.userId), {
-      ...userCopy,
-   });
-
-   const params = { firstName: 'John', lastName: 'Wick' };
+   const user = await currentUser();
+   const { sessionId, userId } = auth();
+   let newUser;
+   // const newUser = await prisma.user.create({
+   //    data: {
+   //       userId: userId!,
+   //       email: user?.emailAddresses[0].emailAddress!,
+   //       session: sessionId!,
+   //       username: user?.username!,
+   //       imageUrl: user?.imageUrl!,
+   //    },
+   // });
 
    // const user = await clerkClient.users.updateUser(data.userId, params);
-
-   return NextResponse.json({ message: 'User saved successfully!' });
+   return NextResponse.json({ message: 'User saved successfully!', user: newUser });
 }

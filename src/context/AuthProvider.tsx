@@ -1,6 +1,6 @@
 'use client';
 import { useUser } from '@clerk/nextjs';
-import useAuthState from '@components/hooks/useAuthState';
+import useAuthState from '@hooks/useAuthState';
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
 
 type ContextType = {
@@ -33,25 +33,7 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
    const [users, setUsers] = useState<[]>([]);
    const { user } = useUser();
 
-   const createUser = async () => {
-      const response = await fetch('/api/users', {
-         method: 'POST',
-         body: JSON.stringify({
-            name: user?.fullName,
-            email: user?.primaryEmailAddress?.emailAddress,
-            userName: user?.username,
-            imageUrl: user?.imageUrl,
-            userId: user?.id,
-         }),
-      });
-
-      if (response.ok) {
-         console.log('Saved');
-      }
-   };
-
    useEffect(() => {
-      // createUser();
       const fetchUsers = async () => {
          const response = await fetch('/api/users');
 

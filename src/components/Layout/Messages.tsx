@@ -14,7 +14,7 @@ const Messages = ({ children }: ChildrenType) => {
          </GridItem>
          {children}
 
-         {!params?.userId && (
+         {!params?.conversationId && (
             <Flex justify={'center'} align='center'>
                <DynamicText fontSize='2rem'>Start chatting with friends</DynamicText>
             </Flex>

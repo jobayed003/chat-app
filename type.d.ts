@@ -5,7 +5,7 @@ type User = {
    userId: string;
    messageDetails?: {
       messageStatus?: string;
-      lastMessages?: string[];
+      lastMessage?: string;
       sent?: string;
    };
    status: string;

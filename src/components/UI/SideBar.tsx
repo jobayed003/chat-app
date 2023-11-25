@@ -6,7 +6,7 @@ import DynamicText from '@components/util/DynamicText';
 import { buttonStyles } from '@config/data';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { AiFillMessage, AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
+import { AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
 const SideBar = () => {
@@ -19,7 +19,6 @@ const SideBar = () => {
    return (
       <Grid templateRows={'100px auto'} borderRight={borderColor} h='100%'>
          <Box borderBottom={borderColor} display={'flex'} fontSize={'2.5rem'} p={'1.5rem'} alignItems={'center'}>
-            <AiFillMessage color='blue' />
             <DynamicText marginLeft={'.5rem'}>chatIT</DynamicText>
          </Box>
          <Grid templateRows={'1fr auto'}>
@@ -56,7 +55,7 @@ export default SideBar;
 const Menus = () => {
    const pathName = usePathname()?.split('/');
    const router = useRouter();
-   const textColor = useColorModeValue('colorMode.dark', 'colorMode.light');
+   const bgColor = useColorModeValue('#ddd', '#2E333D');
 
    const option = [
       { name: 'Messages', icon: <AiOutlineMessage fontSize={'1.3rem'} /> },
@@ -64,25 +63,25 @@ const Menus = () => {
    ];
 
    return (
-      <Flex pt='0' gap='4rem' flexDir='column' align='center' justify='center'>
+      <Flex pt='0' px='2rem' gap='4rem' flexDir='column' align='center' justify='center'>
          {option.map((el) => (
             <Flex
-               _active={{ bg: '#2E333D' }}
-               _hover={{ bg: '#2E333D' }}
-               color={pathName?.includes(el.name.toLowerCase()) ? '#eee' : textColor}
-               bg={pathName?.includes(el.name.toLowerCase()) ? '#2E333D' : ''}
+               borderRadius={'20px'}
+               _active={{ bg: bgColor }}
+               _hover={{ bg: bgColor }}
+               bg={pathName?.includes(el.name.toLowerCase()) ? bgColor : ''}
                key={Math.random()}
                align={'center'}
                justify={'center'}
                gap={4}
                w='100%'
                p='.5rem'
-               px='0rem'
+               px='0'
                cursor={'pointer'}
                onClick={() => router.push(`/dashboard/${el.name.toLowerCase()}`)}
             >
-               <Box>{el.icon}</Box>
-               <Box fontSize={'1.2rem'}>{el.name}</Box>
+               <DynamicText>{el.icon}</DynamicText>
+               <DynamicText fontSize={'1.2rem'}>{el.name}</DynamicText>
             </Flex>
          ))}
       </Flex>

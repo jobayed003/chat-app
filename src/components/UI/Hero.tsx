@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Flex } from '@chakra-ui/react';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 
 import Card from '@components/util/Card';
-import DynamicImage from '@components/util/DynamicImage';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -68,9 +67,11 @@ const Hero = (props: Props) => {
                      </DynamicButton>
                   </Link>
                   <Flex align={'center'} px='.4rem'>
-                     <DynamicImage imgsrc='/assets/ellipse1.png' width={50} sx={{ zIndex: '2' }} />
-                     <DynamicImage imgsrc='/assets/ellipse2.png' width={50} sx={{ ml: '-1rem', zIndex: '1' }} />
-                     <DynamicImage imgsrc='/assets/ellipse3.png' width={50} sx={{ ml: '-1rem' }} />
+                     <AvatarGroup size='md' max={3}>
+                        <Avatar name='Ryan Florence' src='/assets/ellipse1.png' />
+                        <Avatar name='Segun Adebayo' src='/assets/ellipse2.png' />
+                        <Avatar name='Kent Dodds' src='/assets/ellipse3.png' />
+                     </AvatarGroup>
                      <Box ml='1rem'>
                         <DynamicText fontSize={'30px'} fontWeight={'700'}>
                            {new Intl.NumberFormat().format(2291)}
