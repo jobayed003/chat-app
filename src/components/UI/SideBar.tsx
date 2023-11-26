@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Flex, Grid, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, Text, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import { UserButton, useAuth, useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
 import { buttonStyles } from '@config/data';
@@ -55,7 +55,8 @@ export default SideBar;
 const Menus = () => {
    const pathName = usePathname()?.split('/');
    const router = useRouter();
-   const bgColor = useColorModeValue('#ddd', '#2E333D');
+   const bgColor = useColorModeValue('#2D5EFF', '#2E333D');
+   const textColor = useColorModeValue('#fff', 'dark');
 
    const option = [
       { name: 'Messages', icon: <AiOutlineMessage fontSize={'1.3rem'} /> },
@@ -67,9 +68,10 @@ const Menus = () => {
          {option.map((el) => (
             <Flex
                borderRadius={'20px'}
-               _active={{ bg: bgColor }}
-               _hover={{ bg: bgColor }}
+               _active={{ bg: bgColor, color: '#fff' }}
+               _hover={{ bg: bgColor, color: '#fff' }}
                bg={pathName?.includes(el.name.toLowerCase()) ? bgColor : ''}
+               color={pathName?.includes(el.name.toLowerCase()) ? textColor : ''}
                key={Math.random()}
                align={'center'}
                justify={'center'}
@@ -80,8 +82,8 @@ const Menus = () => {
                cursor={'pointer'}
                onClick={() => router.push(`/dashboard/${el.name.toLowerCase()}`)}
             >
-               <DynamicText>{el.icon}</DynamicText>
-               <DynamicText fontSize={'1.2rem'}>{el.name}</DynamicText>
+               <Text>{el.icon}</Text>
+               <Text fontSize={'1.2rem'}>{el.name}</Text>
             </Flex>
          ))}
       </Flex>

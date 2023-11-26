@@ -22,7 +22,7 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
       bottomRef?.current?.scrollIntoView({ behavior: 'smooth' });
    }, []);
 
-   const textColor = useColorModeValue(isOwnMessage ? '#fff' : '#000', isOwnMessage ? '#ddd' : 'gray');
+   const textColor = useColorModeValue(isOwnMessage ? '#fff' : '#000', '#fff');
 
    return (
       <Flex justify={isOwnMessage ? 'end' : ''} align={'center'} px={'2rem'} mx='.2rem' ref={bottomRef}>

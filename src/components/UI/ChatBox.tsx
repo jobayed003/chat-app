@@ -8,13 +8,13 @@ import {
    InputGroup,
    InputLeftElement,
    InputRightElement,
-   Spinner,
    useColorModeValue,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicImage from '@components/util/DynamicImage';
 import DynamicText from '@components/util/DynamicText';
 import MessageBox from '@components/util/MessageBox';
+import Spinners from '@components/util/Spinners';
 import { messageDetailsInitState } from '@config/app';
 import AppContext from '@context/StateProvider';
 import { useIsOnline } from '@hooks/useIsOnline';
@@ -47,6 +47,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
 
    useEffect(() => {
       pusherClient.subscribe(id);
+
       const messageHandler = (data: MessageDetails) => {
          setMessageDetails(data);
          setMessages((prevMessages) => [...prevMessages, data]);
@@ -86,9 +87,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    return (
       <GridItem height={'100vh'}>
          {isLoading ? (
-            <Flex justify={'center'} align={'center'} height={'100vh'}>
-               <Spinner size='xl' />
-            </Flex>
+            <Spinners />
          ) : (
             <Grid templateRows={'100px 1fr auto'} height={'100%'}>
                <GridItem borderBottom={borderColor}>

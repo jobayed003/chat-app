@@ -4,7 +4,6 @@ import Card from '@components/util/Card';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { AiFillStar, AiTwotoneStar } from 'react-icons/ai';
 import { FaArrowRight } from 'react-icons/fa';
@@ -47,8 +46,10 @@ const Hero = () => {
          templateColumns={{ md: '1fr 1fr' }}
          mx={{ xl: '13%', md: '10%' }}
          templateRows={{ base: '1fr auto', sm: '1fr' }}
+         gap={{ base: '2rem', md: '' }}
+         px={{ base: '1rem', md: '0' }}
       >
-         <GridItem display={'flex'} justifyContent={'center'} alignItems={'center'} px={{ base: '1rem', md: '0' }}>
+         <GridItem display={'flex'} justifyContent={'center'} alignItems={'center'}>
             <motion.div
                variants={leftVariants}
                initial='hidden'
@@ -59,7 +60,7 @@ const Hero = () => {
                }}
             >
                <Flex direction={'column'} justify='center' gap='1.9rem' textAlign={'left'}>
-                  <DynamicText fontSize={{ md: '50px', base: '34px' }} fontWeight={'700'} lineHeight={'60px'}>
+                  <DynamicText fontSize={{ md: '50px', base: '34px' }} fontWeight={'700'} lineHeight={{ md: '60px' }}>
                      Start chatting with friends, anytime, anywhere with chatIT
                   </DynamicText>
                   <DynamicText fontWeight='400'>
@@ -73,14 +74,14 @@ const Hero = () => {
                         </DynamicText>
                      </DynamicButton>
                   </Link>
-                  <Flex align={'center'} px='.4rem' flexWrap={'wrap'}>
-                     <Flex>
+                  <Flex align={'center'} px='.4rem' flexWrap={'wrap'} gap={'1rem'}>
+                     <Flex gap='1rem'>
                         <AvatarGroup size='md' max={3}>
                            <Avatar name='Ryan Florence' src='/assets/ellipse1.png' />
                            <Avatar name='Segun Adebayo' src='/assets/ellipse2.png' />
                            <Avatar name='Kent Dodds' src='/assets/ellipse3.png' />
                         </AvatarGroup>
-                        <Box ml='1rem'>
+                        <Box>
                            <DynamicText fontSize={'30px'} fontWeight={'700'}>
                               {new Intl.NumberFormat().format(2291)}
                            </DynamicText>
@@ -88,7 +89,7 @@ const Hero = () => {
                         </Box>
                      </Flex>
 
-                     <Box ml={'1rem'}>
+                     <Box>
                         <DynamicText fontSize={'30px'} fontWeight={'700'}>
                            4.8/5
                         </DynamicText>
@@ -106,36 +107,35 @@ const Hero = () => {
                </Flex>
             </motion.div>
          </GridItem>
-         <GridItem px={{ base: '1rem', md: '0' }} height={{ base: 'min-content', sm: 'auto' }} ml={{ md: '5rem' }}>
+         <GridItem
+            px={{ base: '1rem', md: '0', sm: '2rem' }}
+            height={{ base: 'min-content', sm: 'auto' }}
+            ml={{ md: '0rem' }}
+         >
             <motion.div variants={rightVariants} initial='hidden' animate={'visible'}>
                <Box justifySelf={'center'} position={'relative'} mt={'4rem'}>
                   <Box>
-                     <Image
+                     <img
                         src={'/assets/hero.png'}
+                        width={'100%'}
+                        height={'100%'}
                         alt='hero img'
-                        // sizes='(max-width: 768px) 100vw,
-                        // (max-width: 1200px) 100vw,
-                        // 33vw'
-                        width={400}
-                        height={500}
-                        style={{ height: '100%', width: '100%' }}
+                        style={{ objectFit: 'cover' }}
                      />
                   </Box>
                   <Card
                      imgsrc='/assets/card1.png'
                      bottom={{ md: '12%', base: '5%' }}
-                     left={{ md: '5%', base: '-5%' }}
+                     left={{ md: '5%', base: '5%' }}
                      text='One of the best chatting app.'
                      title='Jenny wilson'
                      boxShadow
-                     w={{ base: '220px', md: '280px' }}
                   />
                   <Card
                      title='Ronald Richards'
                      imgsrc='/assets/card2.png'
-                     right={{ md: '5%', base: '-5%' }}
+                     right={{ md: '5%', base: '5%' }}
                      bottom={{ md: '35%', base: '90%' }}
-                     w={{ base: '220px', md: '280px' }}
                      text='This is the best chatting app by far.'
                      boxShadow
                   />

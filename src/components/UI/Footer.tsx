@@ -8,7 +8,7 @@ import { useIsVisible } from '@hooks/useIsVisible';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRef } from 'react';
-import { AiFillFacebook, AiOutlineGithub, AiOutlineInstagram, AiOutlineTwitter } from 'react-icons/ai';
+import { AiFillLinkedin, AiOutlineGithub, AiOutlineTwitter } from 'react-icons/ai';
 import { FaArrowRight } from 'react-icons/fa';
 
 const Footer = () => {
@@ -65,10 +65,9 @@ export default Footer;
 
 const Links = ['About', 'Works', 'Support'];
 const Icons = [
-   <AiOutlineTwitter key={'twitter'} color='rgba(253, 96, 3, 1)' />,
-   <AiFillFacebook key={'fb'} color='rgba(253, 96, 3, 1)' />,
-   <AiOutlineInstagram key={'insta'} color='rgba(253, 96, 3, 1)' />,
-   <AiOutlineGithub key={'github'} color='rgba(253, 96, 3, 1)' />,
+   { link: 'https://github.com/jobayed003', icon: <AiOutlineGithub /> },
+   { link: 'https://www.linkedin.com/in/jobayed-hossain-a2558521b/', icon: <AiFillLinkedin /> },
+   { link: 'https://twitter.com/jobayed803', icon: <AiOutlineTwitter /> },
 ];
 
 const FooterBar = () => {
@@ -92,7 +91,13 @@ const FooterBar = () => {
                <NavLink key={link}>{link}</NavLink>
             ))}
          </Flex>
-         <Flex gap='1rem'>{Icons.map((icon) => icon)}</Flex>
+         <Flex gap='1rem' cursor={'pointer'} color={'rgba(253, 96, 3, 1)'}>
+            {Icons.map((el) => (
+               <Link href={el.link} key={el.link}>
+                  {el.icon}
+               </Link>
+            ))}
+         </Flex>
       </Flex>
    );
 };

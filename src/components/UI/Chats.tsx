@@ -15,7 +15,7 @@ import { useContext, useEffect, useState } from 'react';
 import { MdMessage, MdSearch } from 'react-icons/md';
 
 const Chats = () => {
-   const { messageDetails } = useContext(AppContext);
+   const { setIsLoading } = useContext(AppContext);
    const [message, setMessage] = useState({});
 
    const { users } = useContext(AuthContext);
@@ -47,6 +47,7 @@ const Chats = () => {
          pusherClient.subscribe(id);
          pusherClient.bind('newMessage', messageHandler);
       };
+
       id && handleEvent();
       return () => {
          pusherClient.unsubscribe(id);
@@ -104,6 +105,7 @@ const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUse
    const router = useRouter();
 
    const { isLoading, setIsLoading } = useContext(AppContext);
+   const { id } = useConversationId();
 
    const bgColor = useColorModeValue('#ddd', '#2E333D');
 
@@ -120,6 +122,11 @@ const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUse
          });
          if (res.ok) {
             const { conversationId } = await res.json();
+
+            if (conversationId === id) {
+               setIsLoading(false);
+               return;
+            }
 
             router.push(`/dashboard/messages/${conversationId}`);
          }

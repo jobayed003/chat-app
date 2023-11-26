@@ -33,13 +33,7 @@ export default function NavBar() {
 
    return (
       <Box px={useBreakpointValue({ base: 1, md: 4 })} pt='.5rem' pb='1rem' ref={ref}>
-         <Flex
-            h={16}
-            alignItems={'center'}
-            justifyContent={'space-around'}
-
-            // position={!isVisible ? 'fixed' : 'relative'}
-         >
+         <Flex h={16} alignItems={'center'} justifyContent={'space-around'}>
             <HStack spacing={8} alignItems={'center'}>
                <Box>
                   <Flex fontSize={'2.5rem'} align={'center'}>
@@ -80,7 +74,7 @@ export default function NavBar() {
                </Flex>
 
                <Link href={'/signup'}>
-                  <DynamicButton>Signup</DynamicButton>
+                  <DynamicButton display={{ base: 'none', md: 'flex' }}>Signup</DynamicButton>
                </Link>
             </Stack>
          </Flex>

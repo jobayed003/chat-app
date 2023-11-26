@@ -1,14 +1,8 @@
 'use client';
-import { Flex, Spinner } from '@chakra-ui/react';
+import Spinners from '@components/util/Spinners';
 
-type Props = {};
-
-const loading = (props: Props) => {
-   return (
-      <Flex justify={'center'} align={'center'} height={'100vh'}>
-         <Spinner size='xl' />
-      </Flex>
-   );
+const loading = () => {
+   return <Spinners />;
 };
 
 export default loading;
