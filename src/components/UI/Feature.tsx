@@ -17,12 +17,12 @@ const Feature = (props: Props) => {
          my='2rem'
          flexDir={'column'}
          gap={'4rem'}
-         px='8rem'
+         px={{ md: '8rem', base: '1rem' }}
          py='3rem'
       >
          <motion.div variants={variants} initial='hidden' animate={'visible'}>
             <Layout>
-               <DynamicText fontSize={'36px'} fontWeight={'700'}>
+               <DynamicText fontSize={'36px'} fontWeight={'700'} textAlign={'center'}>
                   Features for a better experience
                </DynamicText>
             </Layout>
@@ -31,7 +31,12 @@ const Feature = (props: Props) => {
          <Box ref={ref}>
             {isVisible && (
                <motion.div variants={variants} initial='hidden' animate={'visible'}>
-                  <Layout flexOptions={{ flexWrap: 'wrap' }}>
+                  <Flex
+                     gap={'1rem'}
+                     justify={'space-around'}
+                     px={{ md: '1rem' }}
+                     flexDir={{ lg: 'row', base: 'column' }}
+                  >
                      <Card
                         imgsrc='/assets/icon1.png'
                         title={'Video Messsaging'}
@@ -53,7 +58,7 @@ const Feature = (props: Props) => {
                         w='auto'
                         position='relative'
                      />
-                  </Layout>
+                  </Flex>
                </motion.div>
             )}
          </Box>

@@ -7,10 +7,10 @@ type Props = {
    text: string;
    imgsrc: string;
    top?: string;
-   left?: string;
-   right?: string;
-   bottom?: string;
-   w?: string;
+   left?: { md: string; base: string } | string;
+   right?: { md: string; base: string } | string;
+   bottom?: { md: string; base: string } | string;
+   w?: { md: string; base: string } | string;
    position?: any;
    boxShadow?: boolean;
 };

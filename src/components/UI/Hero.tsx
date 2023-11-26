@@ -1,29 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
-import { Avatar, AvatarGroup, Box, Flex } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Flex, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
+import Card from '@components/util/Card';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
-
-import Card from '@components/util/Card';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AiFillStar, AiTwotoneStar } from 'react-icons/ai';
 import { FaArrowRight } from 'react-icons/fa';
-import Layout from '../Layout/Layout';
-
-type Props = {};
 
 const leftVariants = {
    hidden: {
       opacity: 0,
-      x: 0,
+      x: -100,
       transition: {
          duration: 0.5,
       },
    },
    visible: {
       opacity: 1,
-      x: 180,
+      x: 0,
       transition: {
          duration: 0.5,
       },
@@ -32,27 +28,38 @@ const leftVariants = {
 const rightVariants = {
    hidden: {
       opacity: 0,
-      x: 0,
+      x: 100,
       transition: {
          duration: 0.5,
       },
    },
    visible: {
       opacity: 1,
-      x: -180,
+      x: 0,
       transition: {
          duration: 0.5,
       },
    },
 };
-
-const Hero = (props: Props) => {
+const Hero = () => {
    return (
-      <Layout sx={{ mt: '1rem' }}>
-         <motion.div variants={leftVariants} initial='hidden' animate={'visible'} style={{ marginTop: '4rem' }}>
-            <Box justifySelf={'start'} alignSelf={'center'} w='40%' ml='2.5rem'>
-               <Flex direction={'column'} justify='center' gap='1.9rem'>
-                  <DynamicText fontSize='50px' fontWeight={'700'} lineHeight={'60px'}>
+      <Grid
+         templateColumns={{ md: '1fr 1fr' }}
+         mx={{ xl: '13%', md: '10%' }}
+         templateRows={{ base: '1fr auto', sm: '1fr' }}
+      >
+         <GridItem display={'flex'} justifyContent={'center'} alignItems={'center'} px={{ base: '1rem', md: '0' }}>
+            <motion.div
+               variants={leftVariants}
+               initial='hidden'
+               animate={'visible'}
+               style={{
+                  marginTop: '4rem',
+                  width: useBreakpointValue({ '2xl': '100%' }),
+               }}
+            >
+               <Flex direction={'column'} justify='center' gap='1.9rem' textAlign={'left'}>
+                  <DynamicText fontSize={{ md: '50px', base: '34px' }} fontWeight={'700'} lineHeight={'60px'}>
                      Start chatting with friends, anytime, anywhere with chatIT
                   </DynamicText>
                   <DynamicText fontWeight='400'>
@@ -66,18 +73,20 @@ const Hero = (props: Props) => {
                         </DynamicText>
                      </DynamicButton>
                   </Link>
-                  <Flex align={'center'} px='.4rem'>
-                     <AvatarGroup size='md' max={3}>
-                        <Avatar name='Ryan Florence' src='/assets/ellipse1.png' />
-                        <Avatar name='Segun Adebayo' src='/assets/ellipse2.png' />
-                        <Avatar name='Kent Dodds' src='/assets/ellipse3.png' />
-                     </AvatarGroup>
-                     <Box ml='1rem'>
-                        <DynamicText fontSize={'30px'} fontWeight={'700'}>
-                           {new Intl.NumberFormat().format(2291)}
-                        </DynamicText>
-                        <DynamicText color='#aaa'>Happy Customers</DynamicText>
-                     </Box>
+                  <Flex align={'center'} px='.4rem' flexWrap={'wrap'}>
+                     <Flex>
+                        <AvatarGroup size='md' max={3}>
+                           <Avatar name='Ryan Florence' src='/assets/ellipse1.png' />
+                           <Avatar name='Segun Adebayo' src='/assets/ellipse2.png' />
+                           <Avatar name='Kent Dodds' src='/assets/ellipse3.png' />
+                        </AvatarGroup>
+                        <Box ml='1rem'>
+                           <DynamicText fontSize={'30px'} fontWeight={'700'}>
+                              {new Intl.NumberFormat().format(2291)}
+                           </DynamicText>
+                           <DynamicText color='#aaa'>Happy Customers</DynamicText>
+                        </Box>
+                     </Flex>
 
                      <Box ml={'1rem'}>
                         <DynamicText fontSize={'30px'} fontWeight={'700'}>
@@ -95,47 +104,45 @@ const Hero = (props: Props) => {
                      </Box>
                   </Flex>
                </Flex>
-            </Box>
-         </motion.div>
-         <motion.div variants={rightVariants} initial='hidden' animate={'visible'}>
-            <Box justifySelf={'center'} position={'relative'} mt={'4rem'}>
-               <Box width='100%' height={'100%'}>
-                  <Image
-                     src={'/assets/hero.png'}
-                     alt='hero img'
-                     sizes='(max-width: 768px) 100vw,
-                     (max-width: 1200px) 60vw,
-                     33vw'
-                     width={400}
-                     height={200}
-                     style={{ height: '100%', width: '100%' }}
-
-                     // sizes='600px'
-                     // // sizes='40vw'
-                     // style={{ width: '100%', height: 'auto', marginLeft: '8rem' }}
-                     // style={{ marginLeft: '10rem' }}
+            </motion.div>
+         </GridItem>
+         <GridItem px={{ base: '1rem', md: '0' }} height={{ base: 'min-content', sm: 'auto' }} ml={{ md: '5rem' }}>
+            <motion.div variants={rightVariants} initial='hidden' animate={'visible'}>
+               <Box justifySelf={'center'} position={'relative'} mt={'4rem'}>
+                  <Box>
+                     <Image
+                        src={'/assets/hero.png'}
+                        alt='hero img'
+                        // sizes='(max-width: 768px) 100vw,
+                        // (max-width: 1200px) 100vw,
+                        // 33vw'
+                        width={400}
+                        height={500}
+                        style={{ height: '100%', width: '100%' }}
+                     />
+                  </Box>
+                  <Card
+                     imgsrc='/assets/card1.png'
+                     bottom={{ md: '12%', base: '5%' }}
+                     left={{ md: '5%', base: '-5%' }}
+                     text='One of the best chatting app.'
+                     title='Jenny wilson'
+                     boxShadow
+                     w={{ base: '220px', md: '280px' }}
+                  />
+                  <Card
+                     title='Ronald Richards'
+                     imgsrc='/assets/card2.png'
+                     right={{ md: '5%', base: '-5%' }}
+                     bottom={{ md: '35%', base: '90%' }}
+                     w={{ base: '220px', md: '280px' }}
+                     text='This is the best chatting app by far.'
+                     boxShadow
                   />
                </Box>
-
-               <Card
-                  imgsrc='/assets/card1.png'
-                  bottom='12%'
-                  left='5%'
-                  text='One of the best chatting app.'
-                  title='Jenny wilson'
-                  boxShadow
-               />
-               <Card
-                  title='Ronald Richards'
-                  imgsrc='/assets/card2.png'
-                  right='5%'
-                  bottom='35%'
-                  text='This is the best chatting app by far.'
-                  boxShadow
-               />
-            </Box>
-         </motion.div>
-      </Layout>
+            </motion.div>
+         </GridItem>
+      </Grid>
    );
 };
 

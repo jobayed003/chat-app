@@ -11,9 +11,7 @@ import { useRef } from 'react';
 import { AiFillFacebook, AiOutlineGithub, AiOutlineInstagram, AiOutlineTwitter } from 'react-icons/ai';
 import { FaArrowRight } from 'react-icons/fa';
 
-type Props = {};
-
-const Footer = (props: Props) => {
+const Footer = () => {
    const ref = useRef(null);
    const isVisibile = useIsVisible(ref);
    return (
@@ -22,11 +20,16 @@ const Footer = (props: Props) => {
             {isVisibile && (
                <motion.div variants={variants} initial='hidden' animate={'visible'}>
                   <Layout sx={{ mb: '2rem' }}>
-                     <DynamicText fontSize={'2rem'} fontWeight={'700'} width={'30%'} textAlign={'center'}>
+                     <DynamicText
+                        fontSize={'2rem'}
+                        fontWeight={'700'}
+                        textAlign={'center'}
+                        px={{ base: '1rem', md: '32%' }}
+                     >
                         Ready to grow your connection? Start with chatIT, become faster every second
                      </DynamicText>
                   </Layout>
-                  <Layout>
+                  <Flex justifyContent={'center'}>
                      <Link href='/signup'>
                         <DynamicButton>
                            Start chatting now
@@ -35,17 +38,19 @@ const Footer = (props: Props) => {
                            </DynamicText>
                         </DynamicButton>
                      </Link>
-                  </Layout>
+                  </Flex>
                </motion.div>
             )}
          </Box>
-
          <FooterBar />
-         <Box px={'15.5rem'}>
-            <Divider />
-         </Box>
-         <Layout sx={{ px: 0, fontWeight: '400', fontFamily: 'DM Sans' }}>
-            <DynamicText color='#797B89'>&copy; Copyright {new Date(Date.now()).getFullYear()}</DynamicText>
+         <Flex justify={'center'}>
+            <Divider width={{ base: '80%', '2xl': '75%' }} />
+         </Flex>
+
+         <Layout flexOptions={{ alignItems: 'center' }} sx={{ px: 0, fontWeight: '400', fontFamily: 'DM Sans' }}>
+            <DynamicText color='#797B89'>
+               &copy; Copyright {new Date(Date.now()).getFullYear()}, All Rights Reserved
+            </DynamicText>
             <Box />
             <Flex gap='1rem'>
                <DynamicText color='#797B89'>Privacy Policy</DynamicText>
@@ -68,7 +73,14 @@ const Icons = [
 
 const FooterBar = () => {
    return (
-      <Flex align={'center'} justifyContent='space-around' mt='2rem' fontFamily={'DM Sans'}>
+      <Flex
+         align={'center'}
+         justifyContent='space-around'
+         mt='2rem'
+         fontFamily={'DM Sans'}
+         flexDir={{ base: 'column', md: 'row' }}
+         gap='1.9rem'
+      >
          <DynamicText color={'colors.secondary'} fontSize={'2.5rem'} fontWeight={'700'}>
             <DynamicText as={'span'} color={'colors.primary'}>
                chat
