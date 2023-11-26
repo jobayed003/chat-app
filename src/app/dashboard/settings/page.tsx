@@ -1,3 +1,4 @@
+import Settings from '@components/UI/Settings';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {
@@ -9,8 +10,8 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
    return { title: 'Settings | chatIT' };
 }
 
-const Settings = () => {
+const SettingsPage = () => {
    return <Settings />;
 };
 
-export default Settings;
+export default SettingsPage;

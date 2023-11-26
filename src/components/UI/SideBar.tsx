@@ -102,7 +102,7 @@ const Menus = ({ onClose }: { onClose: () => {} }) => {
                px='0'
                cursor={'pointer'}
                onClick={() => {
-                  onClose();
+                  onClose !== undefined && onClose();
                   router.push(`/dashboard/${el.name.toLowerCase()}`);
                }}
             >

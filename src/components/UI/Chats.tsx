@@ -86,17 +86,10 @@ const Chats = () => {
                   <MdMenu />
                </Box>
                <SideNav isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
-               <Flex
-                  align={{ sm: 'center', base: 'start' }}
-                  fontSize={{ md: '2rem', base: '1rem' }}
-                  gap={{ md: '1rem', base: '.5rem' }}
-                  color={'grayText'}
-                  justify={'center'}
-                  flexDir={{ sm: 'row', base: 'column' }}
-               >
-                  <DynamicText fontSize={{ md: '2rem', base: '.8rem' }}>Messages</DynamicText>
+               <DynamicText fontSize={{ md: '2rem', base: '.8rem' }}>Messages</DynamicText>
+               <Box fontSize={{ md: '2rem', base: '1rem' }}>
                   <MdSearch cursor={'pointer'} />
-               </Flex>
+               </Box>
             </Flex>
             <Box>
                <Flex

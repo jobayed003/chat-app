@@ -1,14 +1,20 @@
 'use client';
 
+import { Flex } from '@chakra-ui/react';
 import DynamicButton from '@components/util/DynamicButton';
 import Link from 'next/link';
+import { FaArrowLeft } from 'react-icons/fa';
 
 type Props = {};
 
 const Settings = (props: Props) => {
    return (
       <Link href='/dashboard/messages'>
-         <DynamicButton>Back to messages</DynamicButton>
+         <Flex justify={'center'} align='center' h='100vh'>
+            <DynamicButton>
+               <FaArrowLeft /> Back to messages
+            </DynamicButton>
+         </Flex>
       </Link>
    );
 };
