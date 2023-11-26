@@ -1,6 +1,17 @@
 // @ts-nocheck
 'use client';
-import { Box, Flex, Grid, GridItem, Text, useColorModeValue } from '@chakra-ui/react';
+import {
+   Box,
+   Drawer,
+   DrawerContent,
+   DrawerOverlay,
+   Flex,
+   Grid,
+   GridItem,
+   Text,
+   useColorModeValue,
+   useDisclosure,
+} from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
 import AuthContext from '@context/AuthProvider';
@@ -11,18 +22,22 @@ import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
-import { MdMessage, MdSearch } from 'react-icons/md';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { MdMenu, MdMessage, MdSearch } from 'react-icons/md';
+import SideBar from './SideBar';
 
 const Chats = () => {
    const { setIsLoading } = useContext(AppContext);
    const [message, setMessage] = useState({});
+   const { isOpen, onOpen, onClose } = useDisclosure();
 
    const { users } = useContext(AuthContext);
    const isOnline = useIsOnline();
    const borderColor = useColorModeValue('light', 'dark');
    const { user } = useUser();
    const { id } = useConversationId();
+
+   const btnRef = useRef(null);
 
    const compareDates = (millis1) => {
       const present = Date.now();
@@ -56,21 +71,41 @@ const Chats = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [id]);
 
-   // console.log(message);
-
    return (
       <GridItem w='100%' borderRight={borderColor} h='100vh'>
          <Grid templateRows={'100px 1fr'}>
-            <Flex borderBlockEnd={borderColor} align={'center'} p={'1.5rem'} justifyContent={'space-between'}>
-               <DynamicText fontSize='2rem'>Messages</DynamicText>
-               <Flex align={'center'} fontSize={'1.5rem'} gap={'1rem'} color={'grayText'}>
-                  <Box cursor={'pointer'}>
-                     <MdSearch fontSize={'1.5rem'} />
-                  </Box>
+            <Flex
+               borderBlockEnd={borderColor}
+               align={{ sm: 'center', base: 'start' }}
+               p={{ md: '1.5rem', base: '.5rem' }}
+               flexDir={{ sm: 'row', base: 'column' }}
+               gap={'.5rem'}
+               justifyContent={{ sm: 'space-between', base: 'center' }}
+            >
+               <Box display={{ base: 'block', md: 'none' }} onClick={isOpen ? onClose : onOpen} ref={btnRef}>
+                  <MdMenu />
+               </Box>
+               <SideNav isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
+               <Flex
+                  align={{ sm: 'center', base: 'start' }}
+                  fontSize={{ md: '2rem', base: '1rem' }}
+                  gap={{ md: '1rem', base: '.5rem' }}
+                  color={'grayText'}
+                  justify={'center'}
+                  flexDir={{ sm: 'row', base: 'column' }}
+               >
+                  <DynamicText fontSize={{ md: '2rem', base: '.8rem' }}>Messages</DynamicText>
+                  <MdSearch cursor={'pointer'} />
                </Flex>
             </Flex>
             <Box>
-               <Flex align={'center'} gap='.5rem' color={'grayText'} fontSize={'.8rem'} p='1.5rem'>
+               <Flex
+                  align={'center'}
+                  gap='.5rem'
+                  color={'grayText'}
+                  fontSize={{ md: '.8rem', base: '.6rem' }}
+                  p={{ md: '1.5rem', sm: '1rem', base: '.5rem' }}
+               >
                   <MdMessage />
                   <Text>All Messages</Text>
                </Flex>
@@ -103,11 +138,10 @@ export default Chats;
 
 const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUser }: User) => {
    const router = useRouter();
-
    const { isLoading, setIsLoading } = useContext(AppContext);
    const { id } = useConversationId();
 
-   const bgColor = useColorModeValue('#ddd', '#2E333D');
+   const bgColor = useColorModeValue('#ddd', 'blue.800');
 
    const handleClick = async () => {
       try {
@@ -146,12 +180,12 @@ const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUse
          }}
       >
          <Flex justify={'space-between'} align={'center'}>
-            <Flex py='1rem' align={'center'} gap='.8rem'>
+            <Flex py='1rem' align={'center'} gap={'.8rem'} justify={'center'}>
                <Box borderRadius={'50%'} overflow={'hidden'}>
                   <Image width={45} height={40} alt='user img' src={img} />
                </Box>
 
-               <Box>
+               <Box display={{ md: 'block', base: 'none' }}>
                   <DynamicText fontSize='14px'>{name}</DynamicText>
                   <DynamicText color={'gray'} fontSize='12px'>
                      {messageDetails?.lastMessage}
@@ -196,3 +230,14 @@ const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUse
 //       </Box>
 //    );
 // };
+
+const SideNav = ({ isOpen, onClose, btnRef }: { isOpen: boolean; onClose: () => {}; btnRef: HTMLButtonElement }) => {
+   return (
+      <Drawer isOpen={isOpen} placement='left' onClose={onClose} finalFocusRef={btnRef}>
+         <DrawerOverlay />
+         <DrawerContent width={'80px'}>
+            <SideBar onClose={onClose} />
+         </DrawerContent>
+      </Drawer>
+   );
+};

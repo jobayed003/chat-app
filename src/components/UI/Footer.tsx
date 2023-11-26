@@ -91,7 +91,7 @@ const FooterBar = () => {
                <NavLink key={link}>{link}</NavLink>
             ))}
          </Flex>
-         <Flex gap='1rem' cursor={'pointer'} color={'rgba(253, 96, 3, 1)'}>
+         <Flex gap='1rem' cursor={'pointer'} color={'gray'}>
             {Icons.map((el) => (
                <Link href={el.link} key={el.link}>
                   {el.icon}

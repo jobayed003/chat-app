@@ -85,7 +85,7 @@ const Hero = () => {
                            <DynamicText fontSize={'30px'} fontWeight={'700'}>
                               {new Intl.NumberFormat().format(2291)}
                            </DynamicText>
-                           <DynamicText color='#aaa'>Happy Customers</DynamicText>
+                           <DynamicText color='#aaa'>Happy Users</DynamicText>
                         </Box>
                      </Flex>
 

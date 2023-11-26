@@ -13,7 +13,7 @@ interface MessageBoxTypes {
 
 const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes) => {
    const messageTextBGColor = useColorModeValue(
-      isOwnMessage ? '#2D5EFF' : '#fff',
+      isOwnMessage ? 'colors.primary' : '#fff',
       isOwnMessage ? 'blue.800' : '#2E333D'
    );
    const bottomRef = useRef<HTMLDivElement>(null);
@@ -25,14 +25,25 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
    const textColor = useColorModeValue(isOwnMessage ? '#fff' : '#000', '#fff');
 
    return (
-      <Flex justify={isOwnMessage ? 'end' : ''} align={'center'} px={'2rem'} mx='.2rem' ref={bottomRef}>
-         <Flex py='1rem' align={'start'} gap='1rem' direction={isOwnMessage ? 'row-reverse' : 'row'}>
+      <Flex
+         justify={isOwnMessage ? 'end' : ''}
+         align={'center'}
+         px={{ md: '2rem', base: '.5rem' }}
+         mx='.2rem'
+         ref={bottomRef}
+      >
+         <Flex
+            py='1rem'
+            align={'start'}
+            gap={{ md: '1rem', base: '.5rem' }}
+            direction={isOwnMessage ? 'row-reverse' : 'row'}
+         >
             <Box borderRadius={'50%'} overflow={'hidden'}>
                <Image width={45} height={40} alt='user img' src={img} />
             </Box>
 
             <Box textAlign={isOwnMessage ? 'right' : 'left'}>
-               <DynamicText fontSize='1rem' fontWeight='bold' mb='1rem'>
+               <DynamicText fontSize={{ md: '1rem', base: '.8rem' }} fontWeight='bold' mb='1rem'>
                   {isOwnMessage ? 'You' : name}
                </DynamicText>
 
@@ -45,7 +56,7 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
                   borderTopRightRadius={isOwnMessage ? '0px' : ''}
                   borderTopLeftRadius={!isOwnMessage ? '0px' : ''}
                >
-                  <Text fontSize={'14px'} color={textColor}>
+                  <Text fontSize={{ md: '14px', base: '10px' }} color={textColor}>
                      {message}
                   </Text>
                </Box>

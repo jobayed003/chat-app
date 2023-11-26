@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
 }
 
 const Settings = () => {
-   return <div>Settings page</div>;
+   return <Settings />;
 };
 
 export default Settings;

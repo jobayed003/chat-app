@@ -13,13 +13,13 @@ const Messages = ({ children }: ChildrenType) => {
    const params = useParams();
    return (
       <>
-         <GridItem w='100%'>
+         <GridItem w='100%' display={{ base: 'block' }}>
             <Chats />
          </GridItem>
          {children}
          {!params?.conversationId && !isLoading && (
             <Flex justify={'center'} align='center'>
-               <DynamicText fontSize='2rem'>Start chatting with friends</DynamicText>
+               <DynamicText fontSize={{ md: '2rem', base: '1rem' }}>Start chatting with friends</DynamicText>
             </Flex>
          )}
 

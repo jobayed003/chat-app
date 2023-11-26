@@ -9,6 +9,7 @@ import {
    InputLeftElement,
    InputRightElement,
    useColorModeValue,
+   useMediaQuery,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicImage from '@components/util/DynamicImage';
@@ -34,7 +35,13 @@ type ChatBoxProps = {
 const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
-   const textColor = useColorModeValue('#000ui', '#aaa');
+
+   const [isSmallerThan768] = useMediaQuery('(max-width: 768px)', {
+      ssr: true,
+      fallback: false,
+   });
+
+   const textColor = useColorModeValue('#000', '#aaa');
    const chatBoxBG = useColorModeValue('bgWhite', 'dark');
    const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
    const [currentMessage, setCurrentMessage] = useState('');
@@ -123,9 +130,9 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                      ))}
                </Box>
                <GridItem>
-                  <Box p='1rem'>
-                     <InputGroup size={'lg'}>
-                        <InputLeftElement fontSize='1rem' pl={'1rem'}>
+                  <Box p={{ md: '1rem', base: '10px' }}>
+                     <InputGroup size={isSmallerThan768 ? 'sm' : 'lg'}>
+                        <InputLeftElement pl={{ md: '1rem' }} fontSize={{ md: '1.2rem', base: '14px' }}>
                            <FaMicrophone color='#aaa' cursor={'pointer'} />
                         </InputLeftElement>
                         <Input
@@ -139,16 +146,17 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                               }
                            }}
                            _focusVisible={{ boxShadow: 'none' }}
-                           sx={{
-                              borderRadius: '50px',
-                           }}
-                           pr={'6.5rem'}
+                           borderRadius={{ md: '50px', base: '10px' }}
+                           pr={{ md: '6.5rem', base: '4.5rem' }}
                            value={currentMessage}
                            onChange={(e) => setCurrentMessage(e.target.value)}
                            placeholder={'Type a message'}
                            _placeholder={{ color: '#aaa', fontSize: '.9rem' }}
                         />
-                        <InputRightElement mr='3.5rem'>
+                        <InputRightElement
+                           mr={{ md: '3.5rem', base: '2.5rem' }}
+                           fontSize={{ md: '1.2rem', base: '14px' }}
+                        >
                            <MdSend
                               color='#aaa'
                               cursor={'pointer'}
@@ -158,7 +166,11 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                               }}
                            />
                         </InputRightElement>
-                        <InputRightElement gap='.5rem' mr='1rem'>
+                        <InputRightElement
+                           gap='.5rem'
+                           mr={{ md: '1rem', base: '.5rem' }}
+                           fontSize={{ md: '1.2rem', base: '14px' }}
+                        >
                            <FaRegSmile color='#aaa' cursor={'pointer'} />
                            <FaRegImage color='#aaa' cursor={'pointer'} />
                         </InputRightElement>

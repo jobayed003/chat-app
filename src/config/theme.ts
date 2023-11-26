@@ -2,11 +2,13 @@ import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
 const colors = {
    colorMode: {
       dark: '#000',
-      light: '#eee',
+      light: '#ddd',
    },
    colors: {
       primary: '#FB8E0B',
+      // primary: '#2D5EFF',
       secondary: 'rgba(253, 96, 3, 1)',
+      // secondary: '#0133D9',
    },
    graytext: '#aaa',
    bgDark: '#aaa',

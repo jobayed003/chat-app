@@ -2,17 +2,14 @@
 
 import { Grid, GridItem } from '@chakra-ui/react';
 
-import { useUser } from '@clerk/nextjs';
 import { AppContextProvider } from '@context/StateProvider';
-import { redirect } from 'next/navigation';
-import React from 'react';
 import SideBar from '../UI/SideBar';
 
-const Dashboard = ({ children }: { children: React.ReactNode }) => {
+const Dashboard = ({ children }: ChildrenType) => {
    return (
       <AppContextProvider>
-         <Grid templateColumns={'.8fr 1.5fr 3fr'}>
-            <GridItem h='100vh'>
+         <Grid templateColumns={{ md: '.5fr 1.5fr 3fr', base: 'max-content 3fr' }}>
+            <GridItem h='100vh' display={{ md: 'block', base: 'none' }}>
                <SideBar />
             </GridItem>
             {children}
