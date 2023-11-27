@@ -1,6 +1,18 @@
 'use client';
 
-import { Box, Button, CloseButton, Flex, Grid, Text, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import {
+   Box,
+   Button,
+   CloseButton,
+   Flex,
+   Grid,
+   Skeleton,
+   SkeletonCircle,
+   Stack,
+   Text,
+   useColorMode,
+   useColorModeValue,
+} from '@chakra-ui/react';
 import { UserButton, useAuth, useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
 import { buttonStyles } from '@config/data';
@@ -35,7 +47,7 @@ const SideBar = ({ onClose }: SideBarProps) => {
                </Text>
                IT
             </DynamicText>
-            <CloseButton fontSize={'1.2rem'} px='2rem' onClick={onClose} display={{ base: 'blockk', md: 'none' }} />
+            <CloseButton fontSize={'1.2rem'} px='2rem' onClick={onClose} display={{ base: 'block', md: 'none' }} />
          </Box>
          <Grid templateRows={'1fr auto'}>
             <Menus onClose={onClose!} />
@@ -46,17 +58,26 @@ const SideBar = ({ onClose }: SideBarProps) => {
                flexDir={'row'}
             >
                <Box borderRadius={'50%'} overflow={'hidden'}>
-                  <UserButton />
+                  {!user ? <SkeletonCircle size='10' /> : <UserButton />}
                </Box>
                <Box>
-                  <DynamicText as={'p'} m='0'>
-                     {user?.username}
-                  </DynamicText>
-                  <Link href={'/signin'} onClick={() => signOut()}>
-                     <DynamicText color={'graytext'} fontSize={'.9rem'}>
-                        Logout
-                     </DynamicText>
-                  </Link>
+                  {!user ? (
+                     <Stack>
+                        <Skeleton height='15px' w={'100px'} />
+                        <Skeleton height='15px' w={'100px'} />
+                     </Stack>
+                  ) : (
+                     <>
+                        <DynamicText as={'p'} m='0'>
+                           {user?.username}
+                        </DynamicText>
+                        <Link href={'/signin'} onClick={() => signOut()}>
+                           <DynamicText color={'graytext'} fontSize={'.9rem'}>
+                              Logout
+                           </DynamicText>
+                        </Link>
+                     </>
+                  )}
                </Box>
                <Button ml={'auto'} style={{ ...buttonStyles }} px={{ sm: '.4rem' }} onClick={toggleColorMode}>
                   {colorMode === 'dark' ? (

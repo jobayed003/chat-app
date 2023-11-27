@@ -2,12 +2,21 @@
 'use client';
 import {
    Box,
+   Button,
    Drawer,
    DrawerContent,
    DrawerOverlay,
    Flex,
    Grid,
    GridItem,
+   Modal,
+   ModalBody,
+   ModalContent,
+   ModalFooter,
+   ModalHeader,
+   ModalOverlay,
+   Skeleton,
+   SkeletonCircle,
    Text,
    useColorModeValue,
    useDisclosure,
@@ -23,11 +32,11 @@ import moment from 'moment';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { MdMenu, MdMessage, MdSearch } from 'react-icons/md';
+import { MdMenu, MdMessage, MdSearch, MdVideoCall } from 'react-icons/md';
 import SideBar from './SideBar';
+import Video from './Video';
 
 const Chats = () => {
-   const { setIsLoading } = useContext(AppContext);
    const [message, setMessage] = useState({});
    const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -85,6 +94,7 @@ const Chats = () => {
                <Box display={{ base: 'block', md: 'none' }} onClick={isOpen ? onClose : onOpen} ref={btnRef}>
                   <MdMenu />
                </Box>
+
                <SideNav isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
                <DynamicText fontSize={{ md: '2rem', base: '.8rem' }}>Messages</DynamicText>
                <Box fontSize={{ md: '2rem', base: '1rem' }}>
@@ -121,6 +131,18 @@ const Chats = () => {
                         currentUser={user}
                      />
                   ))}
+
+               {users.length === 0 && (
+                  <Flex gap='.9rem' align='center' px='1rem'>
+                     <Box>
+                        <SkeletonCircle size='10' />
+                     </Box>
+                     <Box display={'flex'} flexDir={'column'} gap='.3rem'>
+                        <Skeleton height='15px' w={'200px'} />
+                        <Skeleton height='15px' w={'200px'} />
+                     </Box>
+                  </Flex>
+               )}
             </Box>
          </Grid>
       </GridItem>

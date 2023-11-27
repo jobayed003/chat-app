@@ -16,6 +16,7 @@
       "@emotion/styled": "^11.10.6",
       "@prisma/client": "^5.6.0",
       "@types/node": "^20.8.10",
+      "@videosdk.live/react-sdk": "^0.1.78",
       "eslint": "8.38.0",
       "eslint-config-next": "^14.0.1",
       "framer-motion": "^6.5.1",
@@ -27,7 +28,8 @@
       "pusher-js": "^8.3.0",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
-      "react-icons": "^4.8.0"
+      "react-icons": "^4.8.0",
+      "react-player": "^2.13.0"
    },
    "devDependencies": {
       "@types/lodash": "^4.14.202",

@@ -1,6 +1,7 @@
 'use client';
 import {
    Box,
+   Button,
    Flex,
    Grid,
    GridItem,
@@ -8,7 +9,13 @@ import {
    InputGroup,
    InputLeftElement,
    InputRightElement,
+   Modal,
+   ModalBody,
+   ModalContent,
+   ModalFooter,
+   ModalOverlay,
    useColorModeValue,
+   useDisclosure,
    useMediaQuery,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
@@ -23,7 +30,8 @@ import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
 import { useContext, useEffect, useState } from 'react';
 import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
-import { MdSend } from 'react-icons/md';
+import { MdSend, MdVideoCall } from 'react-icons/md';
+import Video from './Video';
 
 type ChatBoxProps = {
    name: string;
@@ -33,19 +41,20 @@ type ChatBoxProps = {
 };
 
 const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
+   const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
+   const [currentMessage, setCurrentMessage] = useState('');
+   const [isTypingState, setIsTypingState] = useState({ status: false, typingUser: '' });
+
+   const { isLoading, setMessageDetails, setIsLoading } = useContext(AppContext);
+
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
-
+   const textColor = useColorModeValue('#000', '#aaa');
+   const chatBoxBG = useColorModeValue('bgWhite', 'dark');
    const [isSmallerThan768] = useMediaQuery('(max-width: 768px)', {
       ssr: true,
       fallback: false,
    });
-
-   const textColor = useColorModeValue('#000', '#aaa');
-   const chatBoxBG = useColorModeValue('bgWhite', 'dark');
-   const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
-   const [currentMessage, setCurrentMessage] = useState('');
-   const { isLoading, setMessageDetails, setIsLoading } = useContext(AppContext);
 
    const isOnline = useIsOnline();
    const { user } = useUser();
@@ -53,19 +62,26 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    const currentUserEmail = user?.primaryEmailAddress?.emailAddress!;
 
    useEffect(() => {
-      pusherClient.subscribe(id);
-
       const messageHandler = (data: MessageDetails) => {
          setMessageDetails(data);
+         console.log('hello');
+
          setMessages((prevMessages) => [...prevMessages, data]);
       };
+      pusherClient.subscribe(id);
       pusherClient.bind('newMessage', messageHandler);
+
+      pusherClient.bind('user-typing', ({ status, typingUser }: { status: boolean; typingUser: string }) => {
+         setIsTypingState({ status, typingUser });
+      });
 
       setIsLoading(false);
       getMessages();
+
       return () => {
          pusherClient.unsubscribe(id);
          pusherClient.unbind('newMessage', messageHandler);
+         pusherClient.unbind('user-typing', () => {});
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [id]);
@@ -110,8 +126,14 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            {name}
                         </DynamicText>
                         <DynamicText color={'#2F9167'} fontSize={'12px'}>
-                           {isOnline ? 'Online' : 'Offline'}
+                           {isOnline && isTypingState.status && isTypingState.typingUser === name
+                              ? 'Typing...'
+                              : 'Online'}
+                           {!isOnline && 'Offline'}
                         </DynamicText>
+                     </Box>
+                     <Box ml={'auto'} mr='4rem' cursor={'pointer'}>
+                        <VideoCall />
                      </Box>
                   </Flex>
                </GridItem>
@@ -123,7 +145,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            img={msgCnt.user.imgsrc}
                            name={msgCnt.user.name}
                            message={msgCnt.message}
-                           key={msgCnt + msgCnt.user.name}
+                           key={msgCnt.user.name + Math.random()}
                            isOwnMessage={currentUserEmail === msgCnt.sender.email}
                            sent={msgCnt.sent}
                         />
@@ -152,6 +174,18 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            onChange={(e) => setCurrentMessage(e.target.value)}
                            placeholder={'Type a message'}
                            _placeholder={{ color: '#aaa', fontSize: '.9rem' }}
+                           onFocus={async (e) => {
+                              await fetch('/api/typing', {
+                                 method: 'POST',
+                                 body: JSON.stringify({ id, typingUser: user?.username, status: true }),
+                              });
+                           }}
+                           onBlur={async (e) => {
+                              await fetch('/api/typing', {
+                                 method: 'POST',
+                                 body: JSON.stringify({ id, typingUser: user?.username, status: false }),
+                              });
+                           }}
                         />
                         <InputRightElement
                            mr={{ md: '3.5rem', base: '2.5rem' }}
@@ -184,3 +218,28 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
 };
 
 export default ChatBox;
+
+function VideoCall() {
+   const { isOpen, onClose, onOpen } = useDisclosure();
+
+   return (
+      <>
+         <MdVideoCall fontSize={'2rem'} onClick={onOpen} />
+         <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+               {/* <ModalCloseButton /> */}
+               <ModalBody>
+                  <Video />
+               </ModalBody>
+
+               <ModalFooter>
+                  <Button colorScheme='blue' mr={3} onClick={onClose}>
+                     Close
+                  </Button>
+               </ModalFooter>
+            </ModalContent>
+         </Modal>
+      </>
+   );
+}
