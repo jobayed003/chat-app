@@ -6,11 +6,10 @@ type Props = {};
 const useConversationId = (props: Props) => {
    const [id, setId] = useState('');
    const params = useParams();
-   const { conversationId } = params;
 
    useEffect(() => {
-      setId(conversationId as string);
-   }, [conversationId]);
+      setId(params?.conversationId as string);
+   }, [params?.conversationId]);
 
    return { id };
 };
