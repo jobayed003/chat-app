@@ -126,10 +126,10 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            {name}
                         </DynamicText>
                         <DynamicText color={'#2F9167'} fontSize={'12px'}>
-                           {isOnline && isTypingState.status && isTypingState.typingUser === name
+                           {isTypingState.status && isTypingState.typingUser === name
                               ? 'Typing...'
-                              : 'Online'}
-                           {!isOnline && 'Offline'}
+                              : isOnline && 'Online'}
+                           {!isOnline && !isTypingState.status && 'Offline'}
                         </DynamicText>
                      </Box>
                      <Box ml={'auto'} mr='4rem' cursor={'pointer'}>
@@ -164,7 +164,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                  setCurrentMessage('');
-                                 sendMessage();
+                                 currentMessage !== '' && sendMessage();
                               }
                            }}
                            _focusVisible={{ boxShadow: 'none' }}
@@ -196,7 +196,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                               cursor={'pointer'}
                               onClick={() => {
                                  setCurrentMessage('');
-                                 sendMessage();
+                                 currentMessage !== '' && sendMessage();
                               }}
                            />
                         </InputRightElement>

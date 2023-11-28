@@ -39,7 +39,7 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
             direction={isOwnMessage ? 'row-reverse' : 'row'}
          >
             <Box borderRadius={'50%'} overflow={'hidden'}>
-               <Image width={45} height={40} alt='user img' src={img} />
+               <Image width={45} height={40} alt='user img' src={img} priority />
             </Box>
 
             <Box textAlign={isOwnMessage ? 'right' : 'left'}>

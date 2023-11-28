@@ -15,18 +15,10 @@ const Home = () => {
 
    return (
       <>
-         {!isLoaded ? (
-            <Flex justify={'center'} align={'center'} height={'100vh'}>
-               <Spinner size='xl' />
-            </Flex>
-         ) : (
-            <>
-               <NavBar />
-               <Hero />
-               <Feature />
-               <Footer />
-            </>
-         )}
+         <NavBar />
+         <Hero />
+         <Feature />
+         <Footer />
       </>
    );
 };
