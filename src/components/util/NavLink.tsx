@@ -3,11 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import DynamicText from './DynamicText';
 
-interface Props {
-   children: React.ReactNode;
-}
-
-export const NavLink = (props: Props) => {
+export const NavLink = (props: ChildrenType) => {
    const { children } = props;
 
    return (

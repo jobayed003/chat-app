@@ -4,6 +4,7 @@ import Card from '@components/util/Card';
 import DynamicButton from '@components/util/DynamicButton';
 import DynamicText from '@components/util/DynamicText';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { AiFillStar, AiTwotoneStar } from 'react-icons/ai';
 import { FaArrowRight } from 'react-icons/fa';
@@ -77,9 +78,9 @@ const Hero = () => {
                   <Flex align={'center'} px='.4rem' flexWrap={'wrap'} gap={'1rem'}>
                      <Flex gap='1rem'>
                         <AvatarGroup size='md' max={3}>
-                           <Avatar name='Ryan Florence' src='/assets/ellipse1.png' />
-                           <Avatar name='Segun Adebayo' src='/assets/ellipse2.png' />
-                           <Avatar name='Kent Dodds' src='/assets/ellipse3.png' />
+                           <Avatar name='Random Ellipse 1' src='/assets/ellipse1.png' />
+                           <Avatar name='Random Ellipse 1' src='/assets/ellipse2.png' />
+                           <Avatar name='Random Ellipse 1' src='/assets/ellipse3.png' />
                         </AvatarGroup>
                         <Box>
                            <DynamicText fontSize={'30px'} fontWeight={'700'}>
@@ -115,10 +116,11 @@ const Hero = () => {
             <motion.div variants={rightVariants} initial='hidden' animate={'visible'}>
                <Box justifySelf={'center'} position={'relative'} mt={'4rem'}>
                   <Box>
-                     <img
+                     <Image
+                        priority={true}
                         src={'/assets/hero.png'}
-                        width={'100%'}
-                        height={'100%'}
+                        width={1000}
+                        height={1000}
                         alt='hero img'
                         style={{ objectFit: 'cover' }}
                      />

@@ -11,7 +11,13 @@ type Props = {
 const DynamicImage = (props: Props) => {
    return (
       <Box sx={props.sx}>
-         <Image src={props.imgsrc} alt='stack img' width={props.width || 100} height={props.height || 70} />
+         <Image
+            src={props.imgsrc}
+            alt='stack img'
+            width={props.width || 100}
+            height={props.height || 70}
+            priority={true}
+         />
       </Box>
    );
 };

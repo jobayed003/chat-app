@@ -7,8 +7,6 @@
 .env.local
 .env
 
-/ui.png
-
 # testing
 /coverage
 

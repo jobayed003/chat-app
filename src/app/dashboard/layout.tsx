@@ -1,7 +1,6 @@
 import Dashboard from '@components/Layout/Dashboard';
 import { Metadata, ResolvingMetadata } from 'next';
 import { headers } from 'next/headers';
-import React from 'react';
 
 type Props = {
    params: { id: string };
@@ -19,7 +18,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
    };
 }
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+const RootLayout = ({ children }: ChildrenType) => {
    return <Dashboard>{children}</Dashboard>;
 };
 

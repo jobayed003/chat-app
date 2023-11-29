@@ -29,7 +29,7 @@ const Card = (props: Props) => {
       >
          <Flex gap={'1rem'} align='center'>
             <Box borderRadius={'50%'} overflow={'hidden'}>
-               <Image src={props.imgsrc} alt='card img' width={50} height={70} />
+               <Image priority={true} src={props.imgsrc} alt='card img' width={50} height={70} />
             </Box>
             <Box width={'260px'}>
                <DynamicText>{props.title}</DynamicText>
