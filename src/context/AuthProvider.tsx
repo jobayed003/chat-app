@@ -1,35 +1,24 @@
 'use client';
 import { useUser } from '@clerk/nextjs';
-import useAuthState from '@hooks/useAuthState';
+import { User } from '@clerk/nextjs/dist/types/server';
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
 
 type ContextType = {
-   isAuthenticated: boolean;
-   users: [];
-   userDetails: {
-      name: string;
-      email: string;
-      profilePic: string;
-   };
+   users: [User];
 
    setUsers: Dispatch<SetStateAction<[]>>;
 };
 
 const initContextType: ContextType = {
-   isAuthenticated: false,
+   // @ts-expect-error
    users: [],
-   userDetails: {
-      name: '',
-      email: '',
-      profilePic: '',
-   },
+
    setUsers: () => [],
 };
 
 const AuthContext = createContext<ContextType>(initContextType);
 
 export const AuthContextProvider = ({ children }: ChildrenType) => {
-   const { isAuthenticated, userDetails } = useAuthState();
    const [users, setUsers] = useState<[]>([]);
    const { user } = useUser();
 
@@ -46,8 +35,6 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
    }, [user]);
    const contextValue = {
       users,
-      userDetails,
-      isAuthenticated,
 
       setUsers,
    };

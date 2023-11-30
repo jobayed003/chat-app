@@ -1,25 +1,18 @@
-// @ts-nocheck
 'use client';
 import {
    Box,
-   Button,
    Drawer,
    DrawerContent,
    DrawerOverlay,
    Flex,
    Grid,
    GridItem,
-   Modal,
-   ModalBody,
-   ModalContent,
-   ModalFooter,
-   ModalHeader,
-   ModalOverlay,
    Skeleton,
    SkeletonCircle,
    Text,
    useColorModeValue,
    useDisclosure,
+   useToast,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
@@ -31,24 +24,29 @@ import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { MdMenu, MdMessage, MdSearch, MdVideoCall } from 'react-icons/md';
+import { RefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { MdMenu, MdMessage, MdSearch } from 'react-icons/md';
 import SideBar from './SideBar';
-import Video from './Video';
 
 const Chats = () => {
-   const [message, setMessage] = useState({});
+   const [messages, setMessages] = useState({
+      message: '',
+      sent: '',
+   });
+   const [showSkeleton, setShowSkeleton] = useState(true);
+   const toast = useToast();
    const { isOpen, onOpen, onClose } = useDisclosure();
 
    const { users } = useContext(AuthContext);
    const isOnline = useIsOnline();
+
    const borderColor = useColorModeValue('light', 'dark');
-   const { user } = useUser();
+   const { isLoaded, user } = useUser();
    const { id } = useConversationId();
 
-   const btnRef = useRef(null);
+   const btnRef = useRef<HTMLButtonElement>(null);
 
-   const compareDates = (millis1) => {
+   const compareDates = (millis1: number) => {
       const present = Date.now();
       const date1 = new Date(millis1);
       const date2 = new Date(present);
@@ -64,7 +62,7 @@ const Chats = () => {
 
    useEffect(() => {
       const messageHandler = (data: MessageDetails) => {
-         setMessage(data);
+         setMessages(data);
       };
 
       const handleEvent = () => {
@@ -77,8 +75,30 @@ const Chats = () => {
          pusherClient.unsubscribe(id);
          pusherClient.unbind('newMessage', messageHandler);
       };
+
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [id]);
+
+   useEffect(() => {
+      const timer = setTimeout(() => {
+         setShowSkeleton(false);
+      }, 4000);
+
+      !isLoaded &&
+         !showSkeleton &&
+         toast({
+            position: 'top-right',
+            title: 'Error Loading',
+            description: 'Something went wrong. Try reloading',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+         });
+
+      return () => {
+         clearTimeout(timer);
+      };
+   }, []);
 
    return (
       <GridItem w='100%' borderRight={borderColor} h='100vh'>
@@ -91,7 +111,12 @@ const Chats = () => {
                gap={'.5rem'}
                justifyContent={{ sm: 'space-between', base: 'center' }}
             >
-               <Box display={{ base: 'block', md: 'none' }} onClick={isOpen ? onClose : onOpen} ref={btnRef}>
+               <Box
+                  display={{ base: 'block', md: 'none' }}
+                  onClick={isOpen ? onClose : onOpen}
+                  // @ts-expect-error
+                  ref={btnRef}
+               >
                   <MdMenu />
                </Box>
 
@@ -116,14 +141,14 @@ const Chats = () => {
                   users.map((signedUser) => (
                      <ChatUser
                         key={Math.random()}
-                        name={signedUser.username}
+                        name={signedUser.username!}
                         email={signedUser.emailAddresses[0].emailAddress}
                         status={isOnline ? 'Online' : 'Offline'}
                         img={signedUser.imageUrl}
                         messageDetails={{
-                           sent: message.sent,
+                           sent: messages.sent,
                            lastMessage:
-                              message.messsage ||
+                              messages.message ||
                               'Joined ' + compareDates(signedUser.createdAt).difference.humanize() + ' ago',
                         }}
                         lastActive={compareDates(1700746673468).difference.humanize()}
@@ -131,8 +156,8 @@ const Chats = () => {
                         currentUser={user}
                      />
                   ))}
-
-               {users.length === 0 && (
+               {/* @ts-ignore */}
+               {users.length === 0 && showSkeleton ? (
                   <Flex gap='.9rem' align='center' px='1rem'>
                      <Box>
                         <SkeletonCircle size='10' />
@@ -142,6 +167,13 @@ const Chats = () => {
                         <Skeleton height='15px' w={'200px'} />
                      </Box>
                   </Flex>
+               ) : (
+                  // @ts-ignore
+                  users.length === 0 && (
+                     <Flex justify='center'>
+                        <DynamicText fontSize={{ md: '1.5rem', base: '1rem' }}>No conversation found</DynamicText>
+                     </Flex>
+                  )
                )}
             </Box>
          </Grid>
@@ -151,14 +183,14 @@ const Chats = () => {
 
 export default Chats;
 
-const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUser }: User) => {
+const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUser }: Conversation) => {
    const router = useRouter();
    const { isLoading, setIsLoading } = useContext(AppContext);
    const { id } = useConversationId();
 
    const bgColor = useColorModeValue('#ddd', 'blue.800');
 
-   const handleClick = async () => {
+   const handleClick = useCallback(async () => {
       try {
          setIsLoading(true);
          const res = await fetch('/api/conversation', {
@@ -182,7 +214,7 @@ const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUse
       } catch (error) {
          console.log(error);
       }
-   };
+   }, [id]);
 
    return (
       <Box
@@ -246,11 +278,20 @@ const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUse
 //    );
 // };
 
-const SideNav = ({ isOpen, onClose, btnRef }: { isOpen: boolean; onClose: () => {}; btnRef: HTMLButtonElement }) => {
+const SideNav = ({
+   isOpen,
+   onClose,
+   btnRef,
+}: {
+   isOpen: boolean;
+   onClose: () => void;
+   btnRef: RefObject<HTMLButtonElement>;
+}) => {
    return (
       <Drawer isOpen={isOpen} placement='left' onClose={onClose} finalFocusRef={btnRef}>
          <DrawerOverlay />
          <DrawerContent width={'80px'}>
+            {/* @ts-ignore */}
             <SideBar onClose={onClose} />
          </DrawerContent>
       </Drawer>

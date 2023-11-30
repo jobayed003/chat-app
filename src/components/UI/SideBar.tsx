@@ -1,5 +1,4 @@
 'use client';
-
 import {
    Box,
    Button,
@@ -100,14 +99,14 @@ const Menus = ({ onClose }: { onClose: () => {} }) => {
    const bgColor = useColorModeValue('colors.primary', 'blue.800');
    const textColor = useColorModeValue('#fff', 'dark');
 
-   const option = [
+   const options = [
       { name: 'Messages', icon: <AiOutlineMessage fontSize={'1.3rem'} /> },
       { name: 'Settings', icon: <AiOutlineSetting fontSize={'1.3rem'} /> },
    ];
 
    return (
       <Flex pt='0' px={{ sm: '1rem' }} gap={'4rem'} flexDir='column' align='center' justify='center'>
-         {option.map((el) => (
+         {options.map((el) => (
             <Flex
                borderRadius={'20px'}
                _active={{ bg: bgColor, color: '#fff' }}

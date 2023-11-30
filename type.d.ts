@@ -1,8 +1,10 @@
-type User = {
+type Conversation = {
    name: string;
    img: string;
    lastActive?: string;
    userId: string;
+   email: string;
+   currentUser: User;
    messageDetails?: {
       messageStatus?: string;
       lastMessage?: string;
@@ -12,6 +14,8 @@ type User = {
 };
 
 type ChildrenType = { children?: React.ReactNode };
+
+interface Clerkuser extends UserResource {}
 
 interface MessageDetails {
    id: string;

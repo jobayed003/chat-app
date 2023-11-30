@@ -1,14 +1,15 @@
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
-type Props = {};
-
-const useConversationId = (props: Props) => {
-   const [id, setId] = useState('');
+const useConversationId = () => {
    const params = useParams();
 
-   useEffect(() => {
-      setId(params?.conversationId as string);
+   const id = useMemo(() => {
+      if (!params?.conversationId) {
+         return '';
+      }
+
+      return params.conversationId as string;
    }, [params?.conversationId]);
 
    return { id };

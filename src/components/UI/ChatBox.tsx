@@ -1,4 +1,5 @@
 'use client';
+import { authToken, createMeeting } from '@api';
 import {
    Box,
    Button,
@@ -25,13 +26,14 @@ import MessageBox from '@components/util/MessageBox';
 import Spinners from '@components/util/Spinners';
 import { messageDetailsInitState } from '@config/app';
 import AppContext from '@context/StateProvider';
+import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
-import { MdSend, MdVideoCall } from 'react-icons/md';
-import Video from './Video';
+import { MdCall, MdSend, MdVideoCall } from 'react-icons/md';
+import MakeCall from './Video';
 
 type ChatBoxProps = {
    name: string;
@@ -43,6 +45,7 @@ type ChatBoxProps = {
 const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
    const [currentMessage, setCurrentMessage] = useState('');
+
    const [isTypingState, setIsTypingState] = useState({ status: false, typingUser: '' });
 
    const { isLoading, setMessageDetails, setIsLoading } = useContext(AppContext);
@@ -64,10 +67,9 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    useEffect(() => {
       const messageHandler = (data: MessageDetails) => {
          setMessageDetails(data);
-         console.log('hello');
-
          setMessages((prevMessages) => [...prevMessages, data]);
       };
+
       pusherClient.subscribe(id);
       pusherClient.bind('newMessage', messageHandler);
 
@@ -84,7 +86,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
          pusherClient.unbind('user-typing', () => {});
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [id]);
+   }, []);
 
    const sendMessage = async () => {
       await fetch('/api/messages', {
@@ -100,6 +102,8 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       });
       setCurrentMessage('');
    };
+
+   console.log('hello from chatbox');
 
    const getMessages = async () => {
       const res = await fetch(`/api/messages/${id}`);
@@ -132,9 +136,8 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            {!isOnline && !isTypingState.status && 'Offline'}
                         </DynamicText>
                      </Box>
-                     <Box ml={'auto'} mr='4rem' cursor={'pointer'}>
-                        <VideoCall />
-                     </Box>
+
+                     <Call />
                   </Flex>
                </GridItem>
                <Box bg={chatBoxBG} overflowY={'scroll'}>
@@ -219,18 +222,47 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
 
 export default ChatBox;
 
-function VideoCall() {
+function Call() {
    const { isOpen, onClose, onOpen } = useDisclosure();
+   const { id } = useConversationId();
 
+   const handleClick = useCallback(
+      async (ID: string | null, videoCall: boolean, audioCall: boolean) => {
+         const meetId = ID == null ? await createMeeting({ token: authToken }) : ID;
+
+         await fetch('/api/video', {
+            method: 'POST',
+            body: JSON.stringify({ id, meetingId: meetId, videoCall, audioCall }),
+         });
+      },
+      [id]
+   );
    return (
       <>
-         <MdVideoCall fontSize={'2rem'} onClick={onOpen} />
-         <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+         <Flex ml={'auto'} align='center' gap='1rem' px='2rem' cursor={'pointer'}>
+            <MdVideoCall
+               fontSize={'2rem'}
+               onClick={() => {
+                  onOpen();
+                  handleClick(null, true, false);
+               }}
+            />
+
+            <MdCall
+               fontSize={'1.5rem'}
+               onClick={() => {
+                  onOpen();
+                  handleClick(null, false, true);
+               }}
+            />
+         </Flex>
+
+         <Modal closeOnOverlayClick={false} blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
                {/* <ModalCloseButton /> */}
                <ModalBody>
-                  <Video />
+                  <MakeCall />
                </ModalBody>
 
                <ModalFooter>

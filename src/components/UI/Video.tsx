@@ -1,113 +1,101 @@
-import { authToken, createMeeting } from '@api';
+import { authToken } from '@api';
+import { Box, Button, Flex } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
+import useConversationId from '@hooks/useConversationId';
+import { pusherClient } from '@libs/pusher';
 import { MeetingProvider, useMeeting, useParticipant } from '@videosdk.live/react-sdk';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 
-const Video = () => {
+const MakeCall = () => {
    const [meetingId, setMeetingId] = useState('');
+   const [call, setCall] = useState({ videoCall: false, audioCall: false });
+
    const { user } = useUser();
+   const { id } = useConversationId();
 
-   //Getting the meeting id by calling the api we just wrote
-   const getMeetingAndToken = async (id?: string) => {
-      const meetingId = id == null ? await createMeeting({ token: authToken }) : id;
-      setMeetingId(meetingId);
-   };
+   console.log('hello from video');
 
-   //This will set Meeting Id to null when meeting is left or ended
+   useEffect(() => {
+      pusherClient.subscribe(id);
+      pusherClient.bind(
+         'video-call',
+         ({ meetingId, videoCall, audioCall }: { meetingId: string; videoCall: boolean; audioCall: boolean }) => {
+            setCall({ videoCall, audioCall });
+            console.log(meetingId);
+
+            setMeetingId(meetingId);
+         }
+      );
+      return () => {
+         pusherClient.unsubscribe(id);
+         pusherClient.unbind('video-call', () => {});
+      };
+   }, []);
+
    const onMeetingLeave = () => {
-      // @ts-expect-error
-      setMeetingId(null);
-   };
-   return authToken && meetingId ? (
-      <MeetingProvider
-         config={{
-            meetingId,
-            micEnabled: true,
-            webcamEnabled: true,
-            name: user?.username!,
-         }}
-         token={authToken}
-      >
-         <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
-      </MeetingProvider>
-   ) : (
-      <JoinScreen getMeetingAndToken={getMeetingAndToken} />
-   );
-};
-export default Video;
-
-function JoinScreen({ getMeetingAndToken }: { getMeetingAndToken: (meeting?: string) => void }) {
-   const [meetingId, setMeetingId] = useState<string | undefined>();
-   const onClick = async () => {
-      getMeetingAndToken(meetingId);
+      setMeetingId('');
    };
    return (
-      <div>
-         <input
-            type='text'
-            placeholder='Enter Meeting Id'
-            onChange={(e) => {
-               setMeetingId(e.target.value);
+      authToken &&
+      meetingId && (
+         <MeetingProvider
+            config={{
+               meetingId,
+               micEnabled: true,
+               webcamEnabled: true,
+               name: user?.username!,
             }}
-         />
-         <button onClick={onClick}>Join</button>
-         {' or '}
-         <button onClick={onClick}>Create Meeting</button>
-      </div>
+            token={authToken}
+         >
+            <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} />
+         </MeetingProvider>
+      )
    );
-}
+};
+export default memo(MakeCall);
 
-function MeetingView({ onMeetingLeave, meetingId }: { onMeetingLeave: () => void; meetingId: string }) {
-   const [joined, setJoined] = useState('');
-   //Get the method which will be used to join the meeting.
-   //We will also get the participants list to display all participants
+const MeetingView = ({ onMeetingLeave, meetingId }: { onMeetingLeave: () => void; meetingId: string }) => {
    const { join, participants } = useMeeting({
-      //callback for when meeting is joined successfully
-      onMeetingJoined: () => {
-         setJoined('JOINED');
-      },
-      //callback for when meeting is left
+      onMeetingJoined: () => {},
+
       onMeetingLeft: () => {
          onMeetingLeave();
       },
    });
-   const joinMeeting = () => {
-      setJoined('JOINING');
+
+   useEffect(() => {
       join();
-   };
+   }, [meetingId]);
 
    return (
-      <div className='container'>
-         <h3>Meeting Id: {meetingId}</h3>
-         {joined && joined == 'JOINED' ? (
-            <div>
-               <Controls />
-               {/* //For rendering all the participants in the meeting */}
-               {/* @ts-ignore */}
-               {[...participants.keys()].map((participantId) => (
-                  <ParticipantView participantId={participantId} key={participantId} />
-               ))}
-            </div>
-         ) : joined && joined == 'JOINING' ? (
-            <p>Joining the meeting...</p>
-         ) : (
-            <button onClick={joinMeeting}>Join</button>
-         )}
-      </div>
-   );
-}
+      <Flex>
+         <Box>
+            {meetingId !== '' && (
+               <>
+                  <Controls />
 
-function Controls() {
+                  {/* @ts-ignore */}
+                  {[...participants.keys()].map((participantId) => (
+                     <ParticipantView participantId={participantId} key={participantId} />
+                  ))}
+               </>
+            )}
+         </Box>
+      </Flex>
+   );
+};
+
+const Controls = () => {
    const { leave, toggleMic, toggleWebcam } = useMeeting();
    return (
-      <div>
-         <button onClick={() => leave()}>Leave</button>
-         <button onClick={() => toggleMic()}>toggleMic</button>
-         <button onClick={() => toggleWebcam()}>toggleWebcam</button>
-      </div>
+      <Flex gap='1rem' justify={'center'} align='center'>
+         <Button onClick={() => leave()}>Leave</Button>
+         <Button onClick={() => toggleMic()}>Toggle Mic</Button>
+         <Button onClick={() => toggleWebcam()}>Toggle Webcam</Button>
+      </Flex>
    );
-}
+};
 
 const ParticipantView = ({ participantId }: { participantId: string }) => {
    const micRef = useRef<HTMLAudioElement>(null);
@@ -135,7 +123,6 @@ const ParticipantView = ({ participantId }: { participantId: string }) => {
          }
       }
    }, [micStream, micOn]);
-   console.log(videoStream);
 
    return (
       <div key={participantId}>
