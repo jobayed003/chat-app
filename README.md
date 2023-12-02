@@ -6,7 +6,3 @@ Tech stack Used for chatIT-
 -  TypeScript
 -  PusherJS
 -  ClerkJS
-
-You can visit the live app with below link
-
-[chatIT](https://chatit-app.vercel.app/)
