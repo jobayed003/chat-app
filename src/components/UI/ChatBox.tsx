@@ -74,9 +74,9 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       //    setIsTypingState({ status, typingUser });
       // });
 
-      setIsLoading(false);
+      console.log('Why running?');
       getMessages();
-
+      setIsLoading(false);
       return () => {
          pusherClient.unsubscribe(id);
          pusherClient.unbind('newMessage', messageHandler);
@@ -151,7 +151,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            img={msgCnt.user.imgsrc}
                            name={msgCnt.user.name}
                            message={msgCnt.message}
-                           key={msgCnt.user.name + Math.random()}
+                           key={msgCnt.message}
                            isOwnMessage={currentUserEmail === msgCnt.sender.email}
                            sent={msgCnt.sent}
                         />

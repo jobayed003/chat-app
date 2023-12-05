@@ -11,7 +11,7 @@ interface MessageBoxTypes {
    sent: string;
 }
 
-const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes) => {
+const MessageBox = memo(function MessageBox({ message, isOwnMessage, img, name, sent }: MessageBoxTypes) {
    const messageTextBGColor = useColorModeValue(
       isOwnMessage ? 'colors.primary' : '#fff',
       isOwnMessage ? 'blue.800' : '#2E333D'
@@ -67,8 +67,6 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
          </Flex>
       </Flex>
    );
-};
+});
 
-const MemoizedComp = memo(MessageBox);
-
-export default MemoizedComp;
+export default MessageBox;

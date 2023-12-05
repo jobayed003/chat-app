@@ -8,7 +8,7 @@ import Feature from '../UI/Feature';
 import Hero from '../UI/Hero';
 
 const Home = () => {
-   const { isLoaded, isSignedIn } = useUser();
+   const { isSignedIn } = useUser();
 
    if (isSignedIn) redirect('/dashboard/messages');
 
