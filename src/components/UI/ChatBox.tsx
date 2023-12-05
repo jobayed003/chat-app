@@ -6,6 +6,7 @@ import {
    Flex,
    Grid,
    GridItem,
+   Image,
    Input,
    InputGroup,
    InputLeftElement,
@@ -17,10 +18,8 @@ import {
    ModalOverlay,
    useColorModeValue,
    useDisclosure,
-   useMediaQuery,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
-import DynamicImage from '@components/util/DynamicImage';
 import DynamicText from '@components/util/DynamicText';
 import MessageBox from '@components/util/MessageBox';
 import Spinners from '@components/util/Spinners';
@@ -30,8 +29,9 @@ import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
+import { useRouter } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
+import { FaArrowLeft, FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 import { MdCall, MdSend, MdVideoCall } from 'react-icons/md';
 import MakeCall from './Video';
 
@@ -45,8 +45,9 @@ type ChatBoxProps = {
 const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
    const [currentMessage, setCurrentMessage] = useState('');
-
    const [isTypingState, setIsTypingState] = useState({ status: false, typingUser: '' });
+
+   const router = useRouter();
 
    const { isLoading, setMessageDetails, setIsLoading } = useContext(AppContext);
 
@@ -54,10 +55,6 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
    const textColor = useColorModeValue('#000', '#aaa');
    const chatBoxBG = useColorModeValue('bgWhite', 'dark');
-   const [isSmallerThan768] = useMediaQuery('(max-width: 768px)', {
-      ssr: true,
-      fallback: false,
-   });
 
    const isOnline = useIsOnline();
    const { user } = useUser();
@@ -73,9 +70,9 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       pusherClient.subscribe(id);
       pusherClient.bind('newMessage', messageHandler);
 
-      pusherClient.bind('user-typing', ({ status, typingUser }: { status: boolean; typingUser: string }) => {
-         setIsTypingState({ status, typingUser });
-      });
+      // pusherClient.bind('user-typing', ({ status, typingUser }: { status: boolean; typingUser: string }) => {
+      //    setIsTypingState({ status, typingUser });
+      // });
 
       setIsLoading(false);
       getMessages();
@@ -83,10 +80,10 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       return () => {
          pusherClient.unsubscribe(id);
          pusherClient.unbind('newMessage', messageHandler);
-         pusherClient.unbind('user-typing', () => {});
+         // pusherClient.unbind('user-typing', () => {});
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
+   }, [id]);
 
    const sendMessage = async () => {
       await fetch('/api/messages', {
@@ -103,13 +100,11 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       setCurrentMessage('');
    };
 
-   console.log('hello from chatbox');
-
-   const getMessages = async () => {
+   const getMessages = useCallback(async () => {
       const res = await fetch(`/api/messages/${id}`);
       const data = await res.json();
       setMessages(data.messages);
-   };
+   }, [id]);
 
    return (
       <GridItem height={'100vh'}>
@@ -119,12 +114,20 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
             <Grid templateRows={'100px 1fr auto'} height={'100%'}>
                <GridItem borderBottom={borderColor}>
                   <Flex align={'center'} gap='1rem' p='2rem 1.5rem'>
-                     <DynamicImage
-                        sx={{ borderRadius: '50%', overflow: 'hidden' }}
-                        imgsrc={imageUrl}
-                        width={40}
-                        height={40}
-                     />
+                     <Box
+                        fontSize={'1.2rem'}
+                        color={textColor}
+                        display={{ md: 'none', base: 'block' }}
+                        onClick={() => {
+                           router.push('/dashboard/messages');
+                        }}
+                     >
+                        <FaArrowLeft />
+                     </Box>
+
+                     <Box borderRadius={'50%'} overflow={'hidden'}>
+                        <Image width={'40px'} height={'40px'} alt='user img' src={imageUrl} />
+                     </Box>
                      <Box>
                         <DynamicText as={'p'} m='0'>
                            {name}
@@ -156,8 +159,8 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                </Box>
                <GridItem>
                   <Box p={{ md: '1rem', base: '10px' }}>
-                     <InputGroup size={isSmallerThan768 ? 'sm' : 'lg'}>
-                        <InputLeftElement pl={{ md: '1rem' }} fontSize={{ md: '1.2rem', base: '14px' }}>
+                     <InputGroup size={'lg'}>
+                        <InputLeftElement pl={{ md: '1rem' }} fontSize={'1.2rem'}>
                            <FaMicrophone color='#aaa' cursor={'pointer'} />
                         </InputLeftElement>
                         <Input
@@ -172,28 +175,25 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            }}
                            _focusVisible={{ boxShadow: 'none' }}
                            borderRadius={{ md: '50px', base: '10px' }}
-                           pr={{ md: '6.5rem', base: '4.5rem' }}
+                           pr={'6.5rem'}
                            value={currentMessage}
                            onChange={(e) => setCurrentMessage(e.target.value)}
                            placeholder={'Type a message'}
                            _placeholder={{ color: '#aaa', fontSize: '.9rem' }}
-                           onFocus={async (e) => {
-                              await fetch('/api/typing', {
-                                 method: 'POST',
-                                 body: JSON.stringify({ id, typingUser: user?.username, status: true }),
-                              });
-                           }}
-                           onBlur={async (e) => {
-                              await fetch('/api/typing', {
-                                 method: 'POST',
-                                 body: JSON.stringify({ id, typingUser: user?.username, status: false }),
-                              });
-                           }}
+                           // onFocus={async (e) => {
+                           //    await fetch('/api/typing', {
+                           //       method: 'POST',
+                           //       body: JSON.stringify({ id, typingUser: user?.username, status: true }),
+                           //    });
+                           // }}
+                           // onBlur={async (e) => {
+                           //    await fetch('/api/typing', {
+                           //       method: 'POST',
+                           //       body: JSON.stringify({ id, typingUser: user?.username, status: false }),
+                           //    });
+                           // }}
                         />
-                        <InputRightElement
-                           mr={{ md: '3.5rem', base: '2.5rem' }}
-                           fontSize={{ md: '1.2rem', base: '14px' }}
-                        >
+                        <InputRightElement mr={'3.5rem'} fontSize={'1.2rem'}>
                            <MdSend
                               color='#aaa'
                               cursor={'pointer'}
@@ -203,11 +203,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                               }}
                            />
                         </InputRightElement>
-                        <InputRightElement
-                           gap='.5rem'
-                           mr={{ md: '1rem', base: '.5rem' }}
-                           fontSize={{ md: '1.2rem', base: '14px' }}
-                        >
+                        <InputRightElement gap='.5rem' mr={'1rem'} fontSize={'1.2rem'}>
                            <FaRegSmile color='#aaa' cursor={'pointer'} />
                            <FaRegImage color='#aaa' cursor={'pointer'} />
                         </InputRightElement>
@@ -239,7 +235,7 @@ function Call() {
    );
    return (
       <>
-         <Flex ml={'auto'} align='center' gap='1rem' px='2rem' cursor={'pointer'}>
+         <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
             <MdVideoCall
                fontSize={'2rem'}
                onClick={() => {

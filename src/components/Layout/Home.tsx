@@ -1,6 +1,5 @@
 'use client';
 
-import { Flex, Spinner } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import Footer from '@components/UI/Footer';
 import NavBar from '@components/UI/Navbar';

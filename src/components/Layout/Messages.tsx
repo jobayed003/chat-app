@@ -18,7 +18,7 @@ const Messages = ({ children }: ChildrenType) => {
          </GridItem>
          {children}
          {!params?.conversationId && !isLoading && (
-            <Flex justify={'center'} align='center'>
+            <Flex justify={'center'} align='center' display={{ base: 'none', md: 'flex' }}>
                <DynamicText fontSize={{ md: '2rem', base: '1rem' }}>Start chatting with friends</DynamicText>
             </Flex>
          )}

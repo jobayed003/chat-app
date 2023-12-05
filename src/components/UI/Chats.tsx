@@ -23,7 +23,7 @@ import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { RefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { MdMenu, MdMessage, MdSearch } from 'react-icons/md';
 import SideBar from './SideBar';
@@ -34,6 +34,10 @@ const Chats = () => {
       sent: '',
    });
    const [showSkeleton, setShowSkeleton] = useState(true);
+
+   // @ts-ignore
+   const { conversationId } = useParams();
+
    const toast = useToast();
    const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -101,18 +105,24 @@ const Chats = () => {
    }, []);
 
    return (
-      <GridItem w='100%' borderRight={borderColor} h='100vh'>
+      <GridItem
+         w='100%'
+         borderRight={borderColor}
+         h={'100vh'}
+         display={{ base: conversationId ? 'none' : 'block', md: 'block' }}
+      >
          <Grid templateRows={'100px 1fr'}>
             <Flex
                borderBlockEnd={borderColor}
-               align={{ sm: 'center', base: 'start' }}
-               p={{ md: '1.5rem', base: '.5rem' }}
-               flexDir={{ sm: 'row', base: 'column' }}
+               align={'center'}
+               p={'1.5rem'}
+               flexDir={'row'}
                gap={'.5rem'}
-               justifyContent={{ sm: 'space-between', base: 'center' }}
+               justifyContent={'space-between'}
             >
                <Box
                   display={{ base: 'block', md: 'none' }}
+                  fontSize={'1.5rem'}
                   onClick={isOpen ? onClose : onOpen}
                   // @ts-expect-error
                   ref={btnRef}
@@ -121,19 +131,13 @@ const Chats = () => {
                </Box>
 
                <SideNav isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
-               <DynamicText fontSize={{ md: '2rem', base: '.8rem' }}>Messages</DynamicText>
-               <Box fontSize={{ md: '2rem', base: '1rem' }}>
+               <DynamicText fontSize={'2rem'}>Messages</DynamicText>
+               <Box fontSize={'1.5rem'}>
                   <MdSearch cursor={'pointer'} />
                </Box>
             </Flex>
             <Box>
-               <Flex
-                  align={'center'}
-                  gap='.5rem'
-                  color={'grayText'}
-                  fontSize={{ md: '.8rem', base: '.6rem' }}
-                  p={{ md: '1.5rem', sm: '1rem', base: '.5rem' }}
-               >
+               <Flex align={'center'} gap='.5rem' color={'grayText'} fontSize={'.8rem'} p={'1.5rem'}>
                   <MdMessage />
                   <Text>All Messages</Text>
                </Flex>
@@ -171,7 +175,7 @@ const Chats = () => {
                   // @ts-ignore
                   users.length === 0 && (
                      <Flex justify='center'>
-                        <DynamicText fontSize={{ md: '1.5rem', base: '1rem' }}>No conversation found</DynamicText>
+                        <DynamicText fontSize={'1.5rem'}>No conversation found</DynamicText>
                      </Flex>
                   )
                )}
@@ -183,7 +187,7 @@ const Chats = () => {
 
 export default Chats;
 
-const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUser }: Conversation) => {
+const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Conversation) => {
    const router = useRouter();
    const { isLoading, setIsLoading } = useContext(AppContext);
    const { id } = useConversationId();
@@ -226,14 +230,14 @@ const ChatUser = ({ name, img, email, userId, status, messageDetails, currentUse
             !isLoading && handleClick();
          }}
       >
-         <Flex justify={'space-between'} align={'center'}>
+         <Flex align={'center'} px='1rem'>
             <Flex py='1rem' align={'center'} gap={'.8rem'} justify={'center'}>
                <Box borderRadius={'50%'} overflow={'hidden'}>
                   <Image width={45} height={40} alt='user img' src={img} />
                </Box>
 
-               <Box display={{ md: 'block', base: 'none' }}>
-                  <DynamicText fontSize='14px'>{name}</DynamicText>
+               <Box>
+                  <DynamicText fontSize='1rem'>{name}</DynamicText>
                   <DynamicText color={'gray'} fontSize='12px'>
                      {messageDetails?.lastMessage}
                   </DynamicText>

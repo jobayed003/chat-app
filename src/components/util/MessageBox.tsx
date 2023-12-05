@@ -1,6 +1,6 @@
-import { Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
-import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { Box, Flex, Image, Text, useColorModeValue } from '@chakra-ui/react';
+
+import { memo, useEffect, useRef } from 'react';
 import DynamicText from './DynamicText';
 
 interface MessageBoxTypes {
@@ -39,7 +39,7 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
             direction={isOwnMessage ? 'row-reverse' : 'row'}
          >
             <Box borderRadius={'50%'} overflow={'hidden'}>
-               <Image width={45} height={40} alt='user img' src={img} priority />
+               <Image width={'40px'} height={'40px'} alt='user img' src={img} />
             </Box>
 
             <Box textAlign={isOwnMessage ? 'right' : 'left'}>
@@ -56,7 +56,7 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
                   borderTopRightRadius={isOwnMessage ? '0px' : ''}
                   borderTopLeftRadius={!isOwnMessage ? '0px' : ''}
                >
-                  <Text fontSize={{ md: '14px', base: '10px' }} color={textColor}>
+                  <Text fontSize={'14px'} color={textColor}>
                      {message}
                   </Text>
                </Box>
@@ -69,4 +69,6 @@ const MessageBox = ({ message, isOwnMessage, img, name, sent }: MessageBoxTypes)
    );
 };
 
-export default MessageBox;
+const MemoizedComp = memo(MessageBox);
+
+export default MemoizedComp;
