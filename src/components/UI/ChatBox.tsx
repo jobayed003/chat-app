@@ -74,7 +74,6 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       //    setIsTypingState({ status, typingUser });
       // });
 
-      console.log('Why running?');
       getMessages();
       setIsLoading(false);
       return () => {
@@ -146,12 +145,13 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                <Box bg={chatBoxBG} overflowY={'scroll'}>
                   {messages
                      .filter((el) => el.message !== '')
-                     .map((msgCnt) => (
+                     .map((msgCnt, idx) => (
                         <MessageBox
                            img={msgCnt.user.imgsrc}
                            name={msgCnt.user.name}
                            message={msgCnt.message}
-                           key={msgCnt.message}
+                           // @ts-ignore
+                           key={msgCnt._id || idx + msgCnt.message}
                            isOwnMessage={currentUserEmail === msgCnt.sender.email}
                            sent={msgCnt.sent}
                         />
