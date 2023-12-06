@@ -8,7 +8,6 @@ export const pusherServer = new PusherServer({
    cluster: 'mt1',
    useTLS: true,
 });
-
 export const pusherClient = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
    cluster: 'mt1',
 });

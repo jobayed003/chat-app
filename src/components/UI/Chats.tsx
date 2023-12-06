@@ -208,6 +208,16 @@ const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Co
          if (res.ok) {
             const { conversationId } = await res.json();
 
+            localStorage.setItem(
+               'conversationDetails',
+               JSON.stringify({
+                  conversationId,
+                  senderId: currentUser.id,
+                  receiverId: userId,
+                  users: [userId, currentUser.id],
+               })
+            );
+
             if (conversationId === id) {
                setIsLoading(false);
                return;
@@ -270,17 +280,6 @@ const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Co
       </Box>
    );
 };
-
-// const PinnedMessages = () => {
-//    return (
-//       <Box p='1.5rem'>
-//          <Flex align={'center'} gap='.5rem' color={'gray'} fontSize={'.8rem'}>
-//             <MdLocationPin />
-//             <Text>Pinned Message</Text>
-//          </Flex>
-//       </Box>
-//    );
-// };
 
 const SideNav = ({
    isOpen,

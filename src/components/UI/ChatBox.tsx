@@ -29,7 +29,7 @@ import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
 import moment from 'moment';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaArrowLeft, FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 import { MdCall, MdSend, MdVideoCall } from 'react-icons/md';
@@ -105,6 +105,37 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       setMessages(data.messages);
    }, [id]);
 
+   const openNewTab = async (videoCall: boolean) => {
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height;
+
+      const newWidth = screenWidth * 0.5;
+      const newHeight = screenHeight * 0.5;
+      const left = (screenWidth - newWidth) / 2;
+      const top = (screenHeight - newHeight) / 2;
+
+      const windowFeatures = `width=${newWidth},height=${newHeight},left=${left},top=${top}`;
+
+      const callId = await createMeeting({ token: authToken });
+      const url = `/groupcall?conversation_id=${id}&call_id=${callId}&has_video=${videoCall}&user_to_ring=${name}&called_by=${user?.username}`;
+
+      await fetch('/api/video', {
+         method: 'POST',
+         body: JSON.stringify({
+            id,
+            callId,
+            calledBy: user?.username,
+            isVideo: videoCall,
+            userToRing: name,
+            url,
+         }),
+      });
+
+      if (callId) {
+         open(window.origin + url, 'NewWindow', windowFeatures);
+      }
+   };
+
    return (
       <GridItem height={'100vh'}>
          {isLoading ? (
@@ -138,8 +169,22 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            {!isOnline && !isTypingState.status && 'Offline'}
                         </DynamicText>
                      </Box>
+                     <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
+                        <MdVideoCall
+                           fontSize={'2rem'}
+                           onClick={() => {
+                              openNewTab(true);
+                           }}
+                        />
 
-                     <Call />
+                        <MdCall
+                           fontSize={'1.5rem'}
+                           onClick={() => {
+                              openNewTab(false);
+                           }}
+                        />
+                     </Flex>
+                     {/* <Call /> */}
                   </Flex>
                </GridItem>
                <Box bg={chatBoxBG} overflowY={'scroll'}>
@@ -222,6 +267,7 @@ function Call() {
    const { isOpen, onClose, onOpen } = useDisclosure();
    const { id } = useConversationId();
 
+   const pathName = usePathname();
    const handleClick = useCallback(
       async (ID: string | null, videoCall: boolean, audioCall: boolean) => {
          const meetId = ID == null ? await createMeeting({ token: authToken }) : ID;
@@ -233,21 +279,37 @@ function Call() {
       },
       [id]
    );
+
+   const openTab = () => {
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height;
+
+      const newWidth = screenWidth * 0.5;
+      const newHeight = screenHeight * 0.5;
+      const left = (screenWidth - newWidth) / 2;
+      const top = (screenHeight - newHeight) / 2;
+
+      const windowFeatures = `width=${newWidth},height=${newHeight},left=${left},top=${top}`;
+
+      open(window.origin + pathName, 'NewWindow', windowFeatures);
+   };
+
    return (
       <>
          <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
             <MdVideoCall
                fontSize={'2rem'}
                onClick={() => {
-                  onOpen();
-                  handleClick(null, true, false);
+                  // onOpen();
+                  openTab();
+                  // handleClick(null, true, false);
                }}
             />
 
             <MdCall
                fontSize={'1.5rem'}
                onClick={() => {
-                  onOpen();
+                  // onOpen();
                   handleClick(null, false, true);
                }}
             />
@@ -271,3 +333,5 @@ function Call() {
       </>
    );
 }
+
+// https://www.facebook.com/groupcall/ROOM:9841986415842203/?call_id=4135963557&has_video=true&initialize_video=true&is_e2ee_mandated=false&nonce=mhrfhv6ej05k&referrer_context=zenon_precall&thread_type=1&users_to_ring[0]=100092719037964&use_joining_context=true&peer_id=100092719037964&av=100015580007545&server_info_data=GANsbGEYFVJPT006OTg0MTk4NjQxNTg0MjIwMxgQQ3FPSE5UZHVubkdvUVZXSwA%3D

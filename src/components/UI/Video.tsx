@@ -1,40 +1,47 @@
 import { authToken } from '@api';
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import useConversationId from '@hooks/useConversationId';
-import { pusherClient } from '@libs/pusher';
 import { MeetingProvider, useMeeting, useParticipant } from '@videosdk.live/react-sdk';
+import { useSearchParams } from 'next/navigation';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { FaMicrophone, FaVideo } from 'react-icons/fa';
 import ReactPlayer from 'react-player';
 
 const MakeCall = () => {
    const [meetingId, setMeetingId] = useState('');
-   const [call, setCall] = useState({ videoCall: false, audioCall: false });
-
    const { user } = useUser();
    const { id } = useConversationId();
 
-   console.log('hello from video');
+   const searchParams = useSearchParams();
+
+   // let params = [];
+   // for (const [key, value] of searchParams) {
+   //    params.push(value);
+
+   //    console.log(params[0]);
+
+   //    // console.log(key, '->', value);
+   // }
+   const calledBy = searchParams?.get('called_by');
+   const userToRing = searchParams?.get('user_to_ring');
+
+   const isVideo = searchParams?.get('has_video') === 'true';
 
    useEffect(() => {
-      pusherClient.subscribe(id);
-      pusherClient.bind(
-         'video-call',
-         ({ meetingId, videoCall, audioCall }: { meetingId: string; videoCall: boolean; audioCall: boolean }) => {
-            setCall({ videoCall, audioCall });
-            console.log(meetingId);
+      const callId = searchParams?.get('call_id') as string;
 
-            setMeetingId(meetingId);
-         }
-      );
+      user && setMeetingId(callId);
+
       return () => {
-         pusherClient.unsubscribe(id);
-         pusherClient.unbind('video-call', () => {});
+         setMeetingId('');
       };
-   }, []);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [user]);
 
    const onMeetingLeave = () => {
       setMeetingId('');
+      close();
    };
    return (
       authToken &&
@@ -43,7 +50,7 @@ const MakeCall = () => {
             config={{
                meetingId,
                micEnabled: true,
-               webcamEnabled: true,
+               webcamEnabled: isVideo,
                name: user?.username!,
             }}
             token={authToken}
@@ -66,33 +73,38 @@ const MeetingView = ({ onMeetingLeave, meetingId }: { onMeetingLeave: () => void
 
    useEffect(() => {
       join();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [meetingId]);
 
    return (
-      <Flex>
-         <Box>
-            {meetingId !== '' && (
-               <>
-                  <Controls />
-
-                  {/* @ts-ignore */}
-                  {[...participants.keys()].map((participantId) => (
-                     <ParticipantView participantId={participantId} key={participantId} />
-                  ))}
-               </>
-            )}
-         </Box>
+      <Flex flexDir={'column'} align='space-between'>
+         {meetingId !== '' && (
+            <Flex gap={'2rem'} justify={'space-between'} px='1rem'>
+               {/* @ts-ignore */}
+               {[...participants.keys()].map((participantId) => (
+                  <ParticipantView participantId={participantId} key={participantId} />
+               ))}
+            </Flex>
+         )}
+         <Controls />
       </Flex>
    );
 };
 
 const Controls = () => {
    const { leave, toggleMic, toggleWebcam } = useMeeting();
+
    return (
       <Flex gap='1rem' justify={'center'} align='center'>
-         <Button onClick={() => leave()}>Leave</Button>
-         <Button onClick={() => toggleMic()}>Toggle Mic</Button>
-         <Button onClick={() => toggleWebcam()}>Toggle Webcam</Button>
+         <Button onClick={() => leave()} bg='red'>
+            End Call
+         </Button>
+         <Button onClick={() => toggleMic()}>
+            <FaMicrophone />
+         </Button>
+         <Button onClick={() => toggleWebcam()}>
+            <FaVideo />
+         </Button>
       </Flex>
    );
 };
@@ -125,12 +137,9 @@ const ParticipantView = ({ participantId }: { participantId: string }) => {
    }, [micStream, micOn]);
 
    return (
-      <div key={participantId}>
-         <p>
-            Participant: {displayName} | Webcam: {webcamOn ? 'ON' : 'OFF'} | Mic: {micOn ? 'ON' : 'OFF'}
-         </p>
+      <Flex flexDir={'column'} key={participantId} py='.5rem'>
          <audio ref={micRef} autoPlay muted={isLocal} />
-         {webcamOn && (
+         {webcamOn ? (
             <ReactPlayer
                playsinline // very very imp prop
                pip={false}
@@ -139,13 +148,25 @@ const ParticipantView = ({ participantId }: { participantId: string }) => {
                muted={true}
                playing={true}
                url={videoStream}
-               height={'200px'}
-               width={'300px'}
+               height={'400px'}
+               width={'450px'}
                onError={(err) => {
                   console.log(err, 'participant video error');
                }}
             />
+         ) : (
+            <Flex height={'400px'} width={'450px'} borderRadius={'5px'} overflow={'hidden'} align='center'>
+               <Box bg={'#000'} w='100%' h='86%' textAlign={'center'}></Box>
+            </Flex>
          )}
-      </div>
+         <Box textAlign='center'>
+            <Text as='h1' fontSize='1.4rem'>
+               {displayName}
+            </Text>
+            <Text>
+               Camera : {webcamOn ? 'ON' : 'OFF'} | Speaker: {micOn ? 'ON' : 'OFF'}
+            </Text>
+         </Box>
+      </Flex>
    );
 };
