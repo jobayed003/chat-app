@@ -20,7 +20,7 @@ const Ringer = () => {
    const { isOpen, onOpen, onClose } = useDisclosure();
 
    useEffect(() => {
-      const { conversationId } = JSON.parse(localStorage.getItem('conversationDetails')!);
+      const { conversationId } = JSON.parse(localStorage.getItem('conversationDetails')!) || { conversationId: '' };
 
       pusherClient.subscribe(conversationId);
       pusherClient.bind(
