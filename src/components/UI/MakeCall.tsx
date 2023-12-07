@@ -1,7 +1,7 @@
+'use client';
 import { authToken } from '@api';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
-import useConversationId from '@hooks/useConversationId';
 import { MeetingProvider, useMeeting, useParticipant } from '@videosdk.live/react-sdk';
 import { useSearchParams } from 'next/navigation';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
@@ -11,20 +11,7 @@ import ReactPlayer from 'react-player';
 const MakeCall = () => {
    const [meetingId, setMeetingId] = useState('');
    const { user } = useUser();
-   const { id } = useConversationId();
-
    const searchParams = useSearchParams();
-
-   // let params = [];
-   // for (const [key, value] of searchParams) {
-   //    params.push(value);
-
-   //    console.log(params[0]);
-
-   //    // console.log(key, '->', value);
-   // }
-   const calledBy = searchParams?.get('called_by');
-   const userToRing = searchParams?.get('user_to_ring');
 
    const isVideo = searchParams?.get('has_video') === 'true';
 

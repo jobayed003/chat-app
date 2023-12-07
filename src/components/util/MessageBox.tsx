@@ -56,7 +56,7 @@ const MessageBox = memo(function MessageBox({ message, isOwnMessage, img, name, 
                   borderTopRightRadius={isOwnMessage ? '0px' : ''}
                   borderTopLeftRadius={!isOwnMessage ? '0px' : ''}
                >
-                  <Text fontSize={'14px'} color={textColor}>
+                  <Text fontSize={{ md: '1rem', base: '14px' }} color={textColor}>
                      {message}
                   </Text>
                </Box>

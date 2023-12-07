@@ -1,4 +1,4 @@
-import Call from '@components/UI/Call';
+import MakeCall from '@components/UI/MakeCall';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {
@@ -9,5 +9,5 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
 }
 
 export default function HomePage() {
-   return <Call />;
+   return <MakeCall />;
 }

@@ -6,3 +6,4 @@ Tech stack Used for chatIT-
 -  TypeScript
 -  PusherJS
 -  ClerkJS
+-  MongoDB

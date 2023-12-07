@@ -2,7 +2,6 @@
 import { authToken, createMeeting } from '@api';
 import {
    Box,
-   Button,
    Flex,
    Grid,
    GridItem,
@@ -11,13 +10,7 @@ import {
    InputGroup,
    InputLeftElement,
    InputRightElement,
-   Modal,
-   ModalBody,
-   ModalContent,
-   ModalFooter,
-   ModalOverlay,
    useColorModeValue,
-   useDisclosure,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/util/DynamicText';
@@ -25,15 +18,14 @@ import MessageBox from '@components/util/MessageBox';
 import Spinners from '@components/util/Spinners';
 import { messageDetailsInitState } from '@config/app';
 import AppContext from '@context/StateProvider';
-import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
+import EmojiPicker from 'emoji-picker-react';
 import moment from 'moment';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaArrowLeft, FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
-import { MdCall, MdSend, MdVideoCall } from 'react-icons/md';
-import MakeCall from './Video';
+import { MdSend } from 'react-icons/md';
 
 type ChatBoxProps = {
    name: string;
@@ -44,6 +36,8 @@ type ChatBoxProps = {
 
 const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
+   const [isClicked, setIsClicked] = useState(false);
+
    const [currentMessage, setCurrentMessage] = useState('');
    const [isTypingState, setIsTypingState] = useState({ status: false, typingUser: '' });
 
@@ -136,6 +130,15 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       }
    };
 
+   const addEmoji = (e) => {
+      let sym = e.unified.split('-');
+      let codesArray: [] = [];
+      // @ts-ignore
+      sym.forEach((el: string) => codesArray.push('0x' + el));
+      let emoji = String.fromCodePoint(...codesArray);
+      setCurrentMessage(currentMessage + emoji);
+   };
+
    return (
       <GridItem height={'100vh'}>
          {isLoading ? (
@@ -169,7 +172,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            {!isOnline && !isTypingState.status && 'Offline'}
                         </DynamicText>
                      </Box>
-                     <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
+                     {/*     <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
                         <MdVideoCall
                            fontSize={'2rem'}
                            onClick={() => {
@@ -183,8 +186,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                               openNewTab(false);
                            }}
                         />
-                     </Flex>
-                     {/* <Call /> */}
+                     </Flex> */}
                   </Flex>
                </GridItem>
                <Box bg={chatBoxBG} overflowY={'scroll'}>
@@ -209,6 +211,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            <FaMicrophone color='#aaa' cursor={'pointer'} />
                         </InputLeftElement>
                         <Input
+                           pos={'relative'}
                            color={textColor}
                            border={'none'}
                            bg={bgColor}
@@ -225,12 +228,13 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            onChange={(e) => setCurrentMessage(e.target.value)}
                            placeholder={'Type a message'}
                            _placeholder={{ color: '#aaa', fontSize: '.9rem' }}
-                           // onFocus={async (e) => {
-                           //    await fetch('/api/typing', {
-                           //       method: 'POST',
-                           //       body: JSON.stringify({ id, typingUser: user?.username, status: true }),
-                           //    });
-                           // }}
+                           onFocus={async (e) => {
+                              setIsClicked(false);
+                              // await fetch('/api/typing', {
+                              //    method: 'POST',
+                              //    body: JSON.stringify({ id, typingUser: user?.username, status: true }),
+                              // });
+                           }}
                            // onBlur={async (e) => {
                            //    await fetch('/api/typing', {
                            //       method: 'POST',
@@ -249,7 +253,20 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            />
                         </InputRightElement>
                         <InputRightElement gap='.5rem' mr={'1rem'} fontSize={'1.2rem'}>
-                           <FaRegSmile color='#aaa' cursor={'pointer'} />
+                           <FaRegSmile color='#aaa' cursor={'pointer'} onClick={() => setIsClicked(!isClicked)} />
+
+                           {isClicked && (
+                              <Box pos={'absolute'} bottom={'3rem'} right={'1rem'}>
+                                 <EmojiPicker
+                                    width={320}
+                                    // width={280}
+                                    height={400}
+                                    emojiStyle='Google'
+                                    theme='dark'
+                                    onEmojiClick={addEmoji}
+                                 />
+                              </Box>
+                           )}
                            <FaRegImage color='#aaa' cursor={'pointer'} />
                         </InputRightElement>
                      </InputGroup>
@@ -263,7 +280,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
 
 export default ChatBox;
 
-function Call() {
+/* function Call() {
    const { isOpen, onClose, onOpen } = useDisclosure();
    const { id } = useConversationId();
 
@@ -318,7 +335,7 @@ function Call() {
          <Modal closeOnOverlayClick={false} blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-               {/* <ModalCloseButton /> */}
+              
                <ModalBody>
                   <MakeCall />
                </ModalBody>
@@ -332,6 +349,5 @@ function Call() {
          </Modal>
       </>
    );
-}
-
-// https://www.facebook.com/groupcall/ROOM:9841986415842203/?call_id=4135963557&has_video=true&initialize_video=true&is_e2ee_mandated=false&nonce=mhrfhv6ej05k&referrer_context=zenon_precall&thread_type=1&users_to_ring[0]=100092719037964&use_joining_context=true&peer_id=100092719037964&av=100015580007545&server_info_data=GANsbGEYFVJPT006OTg0MTk4NjQxNTg0MjIwMxgQQ3FPSE5UZHVubkdvUVZXSwA%3D
+} 
+*/
