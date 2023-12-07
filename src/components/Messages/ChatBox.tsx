@@ -13,14 +13,14 @@ import {
    useColorModeValue,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
-import DynamicText from '@components/util/DynamicText';
-import MessageBox from '@components/util/MessageBox';
-import Spinners from '@components/util/Spinners';
+import MessageBox from '@components/Messages/MessageBox';
+import DynamicText from '@components/UI/DynamicText';
+import Spinners from '@components/UI/Spinners';
 import { messageDetailsInitState } from '@config/app';
 import AppContext from '@context/StateProvider';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -130,7 +130,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       }
    };
 
-   const addEmoji = (e) => {
+   const addEmoji = (e: EmojiClickData) => {
       let sym = e.unified.split('-');
       let codesArray: [] = [];
       // @ts-ignore
@@ -281,5 +281,3 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
 };
 
 export default ChatBox;
-
-// 01863867047

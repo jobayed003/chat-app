@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { Avatar, AvatarGroup, Box, Flex, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
+import DynamicButton from '@components/UI/DynamicButton';
+import DynamicText from '@components/UI/DynamicText';
 import Card from '@components/util/Card';
-import DynamicButton from '@components/util/DynamicButton';
-import DynamicText from '@components/util/DynamicText';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';

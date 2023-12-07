@@ -13,7 +13,7 @@ import {
    useColorModeValue,
 } from '@chakra-ui/react';
 import { UserButton, useAuth, useUser } from '@clerk/nextjs';
-import DynamicText from '@components/util/DynamicText';
+import DynamicText from '@components/UI/DynamicText';
 import { buttonStyles } from '@config/data';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';

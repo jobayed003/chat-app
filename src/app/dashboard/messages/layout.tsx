@@ -1,4 +1,4 @@
-import Messages from '@components/Layout/Messages';
+import Messages from '@components/Messages/Messages';
 import React from 'react';
 
 const RootLayout = ({ children }: ChildrenType) => {

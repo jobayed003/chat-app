@@ -1,4 +1,4 @@
-import Dashboard from '@components/Layout/Dashboard';
+import Dashboard from '@components/Dashboard/Dashboard';
 import { Metadata, ResolvingMetadata } from 'next';
 import { headers } from 'next/headers';
 

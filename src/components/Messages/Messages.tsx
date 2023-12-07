@@ -1,9 +1,9 @@
 'use client';
 
 import { Flex, GridItem } from '@chakra-ui/react';
-import Chats from '@components/UI/Chats';
-import DynamicText from '@components/util/DynamicText';
-import Spinners from '@components/util/Spinners';
+import Chats from '@components/Messages/Chats';
+import DynamicText from '@components/UI/DynamicText';
+import Spinners from '@components/UI/Spinners';
 import AppContext from '@context/StateProvider';
 import { useParams } from 'next/navigation';
 import { useContext } from 'react';

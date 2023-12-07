@@ -1,6 +1,5 @@
 import { useColorModeValue } from '@chakra-ui/react';
 import Link from 'next/link';
-import React from 'react';
 import DynamicText from './DynamicText';
 
 export const NavLink = (props: ChildrenType) => {

@@ -5,8 +5,7 @@ import { Grid, GridItem } from '@chakra-ui/react';
 import Ringer from '@components/UI/Ringer';
 import { AppContextProvider } from '@context/StateProvider';
 import { useParams } from 'next/navigation';
-import SideBar from '../UI/SideBar';
-import { useUser } from '@clerk/nextjs';
+import SideBar from './SideBar';
 
 const Dashboard = ({ children }: ChildrenType) => {
    // @ts-ignore

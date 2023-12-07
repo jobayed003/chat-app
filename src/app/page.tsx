@@ -1,5 +1,4 @@
-import { currentUser } from '@clerk/nextjs';
-import Home from '@components/Layout/Home';
+import Home from '@components/Home/Home';
 
 import { Metadata, ResolvingMetadata } from 'next';
 

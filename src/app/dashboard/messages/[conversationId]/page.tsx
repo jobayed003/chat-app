@@ -1,5 +1,5 @@
 import { clerkClient, currentUser } from '@clerk/nextjs';
-import ChatBox from '@components/UI/ChatBox';
+import ChatBox from '@components/Messages/ChatBox';
 import { getConversation } from '@libs/getConversation';
 import { Metadata, ResolvingMetadata } from 'next';
 

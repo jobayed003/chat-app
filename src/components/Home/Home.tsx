@@ -1,11 +1,11 @@
 'use client';
 
 import { useClerk, useUser } from '@clerk/nextjs';
-import Footer from '@components/UI/Footer';
-import NavBar from '@components/UI/Navbar';
+import Footer from '@components/Home/Footer';
+import NavBar from '@components/Home/Navbar';
 import { redirect } from 'next/navigation';
-import Feature from '../UI/Feature';
-import Hero from '../UI/Hero';
+import Feature from './Feature';
+import Hero from './Hero';
 
 const Home = () => {
    const { isSignedIn } = useUser();

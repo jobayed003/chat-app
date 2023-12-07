@@ -15,7 +15,7 @@ import {
    useToast,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
-import DynamicText from '@components/util/DynamicText';
+import DynamicText from '@components/UI/DynamicText';
 import AuthContext from '@context/AuthProvider';
 import AppContext from '@context/StateProvider';
 import useConversationId from '@hooks/useConversationId';
@@ -26,7 +26,7 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { RefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { MdMenu, MdMessage, MdSearch } from 'react-icons/md';
-import SideBar from './SideBar';
+import SideBar from '../Dashboard/SideBar';
 
 const Chats = () => {
    const [messages, setMessages] = useState({
