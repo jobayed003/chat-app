@@ -261,7 +261,9 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                                     width={320}
                                     // width={280}
                                     height={400}
+                                    // @ts-ignore
                                     emojiStyle='Google'
+                                    // @ts-ignore
                                     theme='dark'
                                     onEmojiClick={addEmoji}
                                  />
@@ -280,74 +282,4 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
 
 export default ChatBox;
 
-/* function Call() {
-   const { isOpen, onClose, onOpen } = useDisclosure();
-   const { id } = useConversationId();
-
-   const pathName = usePathname();
-   const handleClick = useCallback(
-      async (ID: string | null, videoCall: boolean, audioCall: boolean) => {
-         const meetId = ID == null ? await createMeeting({ token: authToken }) : ID;
-
-         await fetch('/api/video', {
-            method: 'POST',
-            body: JSON.stringify({ id, meetingId: meetId, videoCall, audioCall }),
-         });
-      },
-      [id]
-   );
-
-   const openTab = () => {
-      const screenWidth = window.screen.width;
-      const screenHeight = window.screen.height;
-
-      const newWidth = screenWidth * 0.5;
-      const newHeight = screenHeight * 0.5;
-      const left = (screenWidth - newWidth) / 2;
-      const top = (screenHeight - newHeight) / 2;
-
-      const windowFeatures = `width=${newWidth},height=${newHeight},left=${left},top=${top}`;
-
-      open(window.origin + pathName, 'NewWindow', windowFeatures);
-   };
-
-   return (
-      <>
-         <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
-            <MdVideoCall
-               fontSize={'2rem'}
-               onClick={() => {
-                  // onOpen();
-                  openTab();
-                  // handleClick(null, true, false);
-               }}
-            />
-
-            <MdCall
-               fontSize={'1.5rem'}
-               onClick={() => {
-                  // onOpen();
-                  handleClick(null, false, true);
-               }}
-            />
-         </Flex>
-
-         <Modal closeOnOverlayClick={false} blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
-            <ModalOverlay />
-            <ModalContent>
-              
-               <ModalBody>
-                  <MakeCall />
-               </ModalBody>
-
-               <ModalFooter>
-                  <Button colorScheme='blue' mr={3} onClick={onClose}>
-                     Close
-                  </Button>
-               </ModalFooter>
-            </ModalContent>
-         </Modal>
-      </>
-   );
-} 
-*/
+// 01863867047
