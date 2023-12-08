@@ -12,7 +12,7 @@ import {
    useColorMode,
    useColorModeValue,
 } from '@chakra-ui/react';
-import { UserButton, useAuth, useUser } from '@clerk/nextjs';
+import { UserButton, useAuth } from '@clerk/nextjs';
 import DynamicText from '@components/UI/DynamicText';
 import { buttonStyles } from '@config/data';
 import Link from 'next/link';
@@ -21,13 +21,14 @@ import { AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
 type SideBarProps = {
+   user: CurrentUser;
    onClose?: () => {};
 };
 
-const SideBar = ({ onClose }: SideBarProps) => {
+const SideBar = ({ user, onClose }: SideBarProps) => {
    const { colorMode, toggleColorMode } = useColorMode();
    const { signOut } = useAuth();
-   const { user } = useUser();
+
    const borderColor = useColorModeValue('light', 'dark');
 
    return (

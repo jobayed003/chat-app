@@ -1,3 +1,4 @@
+'use client';
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import DynamicText from '@components/UI/DynamicText';
 

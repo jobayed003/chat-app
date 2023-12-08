@@ -31,8 +31,6 @@ export const AppContextProvider = ({ children }: ChildrenType) => {
 
    const [isClicked, setIsClicked] = useState<boolean>(false);
 
-   useEffect(() => {}, []);
-
    const contextValue = {
       isClicked,
       messageDetails,

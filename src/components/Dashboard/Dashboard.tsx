@@ -5,9 +5,15 @@ import { Grid, GridItem } from '@chakra-ui/react';
 import Ringer from '@components/UI/Ringer';
 import { AppContextProvider } from '@context/StateProvider';
 import { useParams } from 'next/navigation';
+import { ReactNode } from 'react';
 import SideBar from './SideBar';
 
-const Dashboard = ({ children }: ChildrenType) => {
+type DashboardProps = {
+   user: CurrentUser;
+   children: ReactNode;
+};
+
+const Dashboard = (props: DashboardProps) => {
    // @ts-ignore
    const { conversationId } = useParams();
 
@@ -15,9 +21,9 @@ const Dashboard = ({ children }: ChildrenType) => {
       <AppContextProvider>
          <Grid templateColumns={{ md: '.5fr 1.5fr 3fr', base: `${conversationId ? '3fr' : '1fr'}` }}>
             <GridItem h='100vh' display={{ md: 'block', base: 'none' }}>
-               <SideBar />
+               <SideBar user={props.user} />
             </GridItem>
-            {children}
+            {props.children}
          </Grid>
 
          <Ringer />

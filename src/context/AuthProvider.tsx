@@ -24,6 +24,8 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
 
    useEffect(() => {
       const fetchUsers = async () => {
+         // const ft = await fetch('/api/webhook');
+
          const response = await fetch('/api/users');
 
          const users = await response.json();

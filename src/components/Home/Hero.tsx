@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+'use client';
 import { Avatar, AvatarGroup, Box, Flex, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
 import Card from '@components/UI/Card';
 import DynamicButton from '@components/UI/DynamicButton';

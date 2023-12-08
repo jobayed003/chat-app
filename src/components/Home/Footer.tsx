@@ -1,3 +1,4 @@
+'use client';
 import { Box, Divider, Flex } from '@chakra-ui/react';
 import Layout from '@components/Layout/Layout';
 import DynamicButton from '@components/UI/DynamicButton';

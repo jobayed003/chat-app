@@ -1,3 +1,5 @@
+import { currentUser } from '@clerk/nextjs';
+import { User } from '@clerk/nextjs/dist/types/server';
 import Dashboard from '@components/Dashboard/Dashboard';
 import { Metadata, ResolvingMetadata } from 'next';
 import { headers } from 'next/headers';
@@ -18,8 +20,10 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
    };
 }
 
-const RootLayout = ({ children }: ChildrenType) => {
-   return <Dashboard>{children}</Dashboard>;
+const RootLayout = async ({ children }: ChildrenType) => {
+   const { id, username, firstName, lastName, imageUrl } = (await currentUser()) as User;
+
+   return <Dashboard user={{ id, username, firstName, lastName, imageUrl }}>{children}</Dashboard>;
 };
 
 export default RootLayout;

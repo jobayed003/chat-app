@@ -1,19 +1,15 @@
-'use client';
-
-import { useClerk, useUser } from '@clerk/nextjs';
+import { currentUser } from '@clerk/nextjs';
+import { User } from '@clerk/nextjs/dist/types/server';
 import Footer from '@components/Home/Footer';
 import NavBar from '@components/Home/Navbar';
 import { redirect } from 'next/navigation';
 import Feature from './Feature';
 import Hero from './Hero';
 
-const Home = () => {
-   const { isSignedIn } = useUser();
-   // const } = auth ()
+const Home = async () => {
+   const { id } = (await currentUser()) as User;
 
-   const { handleRedirectCallback } = useClerk();
-
-   if (isSignedIn) redirect('/dashboard/messages');
+   if (id) redirect('/dashboard/messages');
 
    return (
       <>
