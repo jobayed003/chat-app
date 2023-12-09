@@ -193,47 +193,46 @@ const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Co
    const bgColor = useColorModeValue('#ddd', 'blue.800');
 
    const handleClick = useCallback(async () => {
-      const conversationDetails = JSON.parse(localStorage.getItem('conversationDetails') as string);
+      // const conversationDetails = JSON.parse(localStorage.getItem('conversationDetails') as string);
 
-      const { conversationId } = conversationDetails;
+      // const { conversationId } = conversationDetails;
 
-      if (conversationId) {
-         setIsLoading(false);
-         router.push(`/dashboard/messages/${conversationId}`);
-      } else {
-         try {
-            setIsLoading(true);
-            const res = await fetch('/api/conversation', {
-               method: 'POST',
-               body: JSON.stringify({
+      // if (conversationId) {
+      //    setIsLoading(false);
+      //    router.push(`/dashboard/messages/${conversationId}`);
+      // } else {
+      try {
+         setIsLoading(true);
+         const res = await fetch('/api/conversation', {
+            method: 'POST',
+            body: JSON.stringify({
+               senderId: currentUser.id,
+               receiverId: userId,
+               users: [userId, currentUser.id],
+            }),
+         });
+         if (res.ok) {
+            const { conversationId } = await res.json();
+
+            localStorage.setItem(
+               'conversationDetails',
+               JSON.stringify({
+                  conversationId,
                   senderId: currentUser.id,
                   receiverId: userId,
                   users: [userId, currentUser.id],
-               }),
-            });
-            if (res.ok) {
-               const { conversationId } = await res.json();
+               })
+            );
 
-               localStorage.setItem(
-                  'conversationDetails',
-                  JSON.stringify({
-                     conversationId,
-                     senderId: currentUser.id,
-                     receiverId: userId,
-                     users: [userId, currentUser.id],
-                  })
-               );
-
-               if (conversationId === id) {
-                  setIsLoading(false);
-                  return;
-               }
-
-               router.push(`/dashboard/messages/${conversationId}`);
+            if (conversationId === id) {
+               setIsLoading(false);
+               return;
             }
-         } catch (error) {
-            console.log(error);
+
+            router.push(`/dashboard/messages/${conversationId}`);
          }
+      } catch (error) {
+         console.log(error);
       }
    }, [id]);
 
