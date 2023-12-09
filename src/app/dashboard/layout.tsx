@@ -21,9 +21,21 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
 }
 
 const RootLayout = async ({ children }: ChildrenType) => {
-   const { id, username, firstName, lastName, imageUrl } = (await currentUser()) as User;
-
-   return <Dashboard user={{ id, username, firstName, lastName, imageUrl }}>{children}</Dashboard>;
+   const user = (await currentUser()) as User;
+   // @ts-ignore
+   return (
+      <Dashboard
+         user={{
+            id: user.id,
+            userName: user.username!,
+            firstName: user.firstName!,
+            lastName: user.lastName!,
+            imageUrl: user.imageUrl!,
+         }}
+      >
+         {children}
+      </Dashboard>
+   );
 };
 
 export default RootLayout;

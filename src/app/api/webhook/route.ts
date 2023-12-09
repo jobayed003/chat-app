@@ -1,4 +1,7 @@
-import { WebhookEvent } from '@clerk/nextjs/server';
+import { UserJSON, WebhookEvent } from '@clerk/nextjs/server';
+import { connectDB } from '@libs/connectDB';
+import { updateUser } from '@libs/updateUser';
+import { Db } from 'mongodb';
 import { headers } from 'next/headers';
 import { Webhook } from 'svix';
 
@@ -9,15 +12,8 @@ export async function handler(req: Request) {
       throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local');
    }
 
-   // Get the headers
    const headerPayload = headers();
-
-   // Get the body
    const payload = await req.json();
-
-   const body = JSON.stringify(payload);
-
-   console.log(payload);
 
    const svix_id = headerPayload.get('svix-id');
    const svix_timestamp = headerPayload.get('svix-timestamp');
@@ -30,14 +26,12 @@ export async function handler(req: Request) {
       });
    }
 
-   // Create a new Svix instance with your secret.
    const wh = new Webhook(WEBHOOK_SECRET);
 
    let evt: WebhookEvent;
 
-   // Verify the payload with the headers
    try {
-      evt = wh.verify(body, {
+      evt = wh.verify(JSON.stringify(payload), {
          'svix-id': svix_id,
          'svix-timestamp': svix_timestamp,
          'svix-signature': svix_signature,
@@ -48,23 +42,55 @@ export async function handler(req: Request) {
          status: 400,
       });
    }
-   type EventType = 'user.created' | 'user.updated' | '*';
-
-   // Get the ID and type
-   const { id } = evt.data;
+   type EventType = 'user.created' | 'user.updated' | 'user.deleted' | '*';
 
    // @ts-ignore
    const eventType: EventType = evt.type;
+   const user = evt.data as UserJSON;
 
-   if (eventType === 'user.created' || eventType === 'user.updated') {
-      const { id, ...attributes } = evt.data;
-      console.log(attributes);
+   if (eventType === 'user.created') {
+      try {
+         const userDetails = {
+            id: user.id,
+            userName: user.username,
+            email: user.email_addresses[0].email_address,
+            imageUrl: user.image_url,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            createdAt: user.created_at,
+         };
+
+         const db = (await connectDB()) as Db;
+
+         const Users = db.collection('Users');
+         await Users.insertOne(userDetails);
+         return new Response('User created successfully', { status: 200 });
+      } catch (error) {
+         return new Response('Something went wrong!', { status: 501 });
+      }
    }
+   if (eventType === 'user.deleted') {
+      const { id } = evt.data;
 
-   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
-   console.log('Webhook body:', body);
+      const db = (await connectDB()) as Db;
 
-   return new Response('', { status: 200 });
+      const Users = db.collection('Users');
+      await Users.deleteOne({ id });
+      return new Response('User deleted successfully', { status: 200 });
+   }
+   if (eventType === 'user.updated') {
+      const userDetails = {
+         id: user.id,
+         userName: user.username,
+         email: user.email_addresses[0].email_address,
+         imageUrl: user.image_url,
+         firstName: user.first_name,
+         lastName: user.last_name,
+         createdAt: user.created_at,
+      };
+      await updateUser(user.id, userDetails);
+      return new Response('User updated successfully', { status: 200 });
+   }
 }
 
 export const GET = handler;

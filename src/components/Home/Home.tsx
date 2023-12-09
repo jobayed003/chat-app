@@ -7,9 +7,9 @@ import Feature from './Feature';
 import Hero from './Hero';
 
 const Home = async () => {
-   const { id } = (await currentUser()) as User;
+   const user = (await currentUser()) as User;
 
-   if (id) redirect('/dashboard/messages');
+   if (user?.id) redirect('/dashboard/messages');
 
    return (
       <>

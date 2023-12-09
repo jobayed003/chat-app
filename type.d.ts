@@ -1,9 +1,11 @@
 interface CurrentUser {
-   id: string | null;
-   username: string | null;
-   firstName: string | null;
-   lastName: string | null;
-   imageUrl: string | null;
+   id: string;
+   userName: string;
+   firstName: string;
+   lastName: string;
+   imageUrl: string;
+   emailAddress?: string;
+   createdAt?: string;
 }
 
 type Conversation = {

@@ -102,7 +102,7 @@ const Chats = () => {
       return () => {
          clearTimeout(timer);
       };
-   }, []);
+   }, [isLoaded, showSkeleton, toast]);
 
    return (
       <GridItem
@@ -145,15 +145,15 @@ const Chats = () => {
                   users.map((signedUser) => (
                      <ChatUser
                         key={Math.random()}
-                        name={signedUser.username!}
-                        email={signedUser.emailAddresses[0].emailAddress}
+                        name={signedUser.userName}
+                        email={signedUser.emailAddress!}
                         status={isOnline ? 'Online' : 'Offline'}
                         img={signedUser.imageUrl}
                         messageDetails={{
                            sent: messages.sent,
                            lastMessage:
                               messages.message ||
-                              'Joined ' + compareDates(signedUser.createdAt).difference.humanize() + ' ago',
+                              'Joined ' + compareDates(+signedUser.createdAt!).difference.humanize() + ' ago',
                         }}
                         lastActive={compareDates(1700746673468).difference.humanize()}
                         userId={signedUser.id}

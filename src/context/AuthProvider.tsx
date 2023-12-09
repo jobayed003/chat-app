@@ -4,7 +4,7 @@ import { User } from '@clerk/nextjs/dist/types/server';
 import { Dispatch, SetStateAction, createContext, useEffect, useState } from 'react';
 
 type ContextType = {
-   users: [User];
+   users: [CurrentUser];
 
    setUsers: Dispatch<SetStateAction<[]>>;
 };
@@ -24,12 +24,10 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
 
    useEffect(() => {
       const fetchUsers = async () => {
-         // const ft = await fetch('/api/webhook');
-
          const response = await fetch('/api/users');
 
          const users = await response.json();
-         setUsers(users.filter((el: any) => el.id !== user?.id));
+         setUsers(users);
       };
 
       user && fetchUsers();
