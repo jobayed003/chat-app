@@ -1,8 +1,10 @@
-import Messages from '@components/Messages/Messages';
-import React from 'react';
+import MessageLayout from '@components/Messages/MessageLayout';
+import { fetchUsers } from '@libs/fetchUsers';
 
-const RootLayout = ({ children }: ChildrenType) => {
-   return <Messages>{children}</Messages>;
+const RootLayout = async ({ children }: ChildrenType) => {
+   const users = await fetchUsers();
+
+   return <MessageLayout users={users}>{children}</MessageLayout>;
 };
 
 export default RootLayout;

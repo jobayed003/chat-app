@@ -16,7 +16,6 @@ import {
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/UI/DynamicText';
-import AuthContext from '@context/AuthProvider';
 import AppContext from '@context/StateProvider';
 import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
@@ -28,7 +27,7 @@ import { RefObject, useCallback, useContext, useEffect, useRef, useState } from 
 import { MdMenu, MdMessage, MdSearch } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
 
-const Chats = () => {
+const Chats = ({ users }: { users: CurrentUser[] }) => {
    const [messages, setMessages] = useState({
       message: '',
       sent: '',
@@ -41,7 +40,6 @@ const Chats = () => {
    const toast = useToast();
    const { isOpen, onOpen, onClose } = useDisclosure();
 
-   const { users } = useContext(AuthContext);
    const isOnline = useIsOnline();
 
    const borderColor = useColorModeValue('light', 'dark');
@@ -195,38 +193,47 @@ const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Co
    const bgColor = useColorModeValue('#ddd', 'blue.800');
 
    const handleClick = useCallback(async () => {
-      try {
-         setIsLoading(true);
-         const res = await fetch('/api/conversation', {
-            method: 'POST',
-            body: JSON.stringify({
-               senderId: currentUser.id,
-               receiverId: userId,
-               users: [userId, currentUser.id],
-            }),
-         });
-         if (res.ok) {
-            const { conversationId } = await res.json();
+      const conversationDetails = JSON.parse(localStorage.getItem('conversationDetails') as string);
 
-            localStorage.setItem(
-               'conversationDetails',
-               JSON.stringify({
-                  conversationId,
+      const { conversationId } = conversationDetails;
+
+      if (conversationId) {
+         setIsLoading(false);
+         router.push(`/dashboard/messages/${conversationId}`);
+      } else {
+         try {
+            setIsLoading(true);
+            const res = await fetch('/api/conversation', {
+               method: 'POST',
+               body: JSON.stringify({
                   senderId: currentUser.id,
                   receiverId: userId,
                   users: [userId, currentUser.id],
-               })
-            );
+               }),
+            });
+            if (res.ok) {
+               const { conversationId } = await res.json();
 
-            if (conversationId === id) {
-               setIsLoading(false);
-               return;
+               localStorage.setItem(
+                  'conversationDetails',
+                  JSON.stringify({
+                     conversationId,
+                     senderId: currentUser.id,
+                     receiverId: userId,
+                     users: [userId, currentUser.id],
+                  })
+               );
+
+               if (conversationId === id) {
+                  setIsLoading(false);
+                  return;
+               }
+
+               router.push(`/dashboard/messages/${conversationId}`);
             }
-
-            router.push(`/dashboard/messages/${conversationId}`);
+         } catch (error) {
+            console.log(error);
          }
-      } catch (error) {
-         console.log(error);
       }
    }, [id]);
 

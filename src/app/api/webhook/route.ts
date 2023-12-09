@@ -6,11 +6,7 @@ import { headers } from 'next/headers';
 import { Webhook } from 'svix';
 
 export async function handler(req: Request) {
-   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET_KEY;
-
-   if (!WEBHOOK_SECRET) {
-      throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local');
-   }
+   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET_KEY || '';
 
    const headerPayload = headers();
    const payload = await req.json();

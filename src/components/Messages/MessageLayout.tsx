@@ -6,17 +6,22 @@ import DynamicText from '@components/UI/DynamicText';
 import Spinners from '@components/UI/Spinners';
 import AppContext from '@context/StateProvider';
 import { useParams } from 'next/navigation';
-import { useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 
-const Messages = ({ children }: ChildrenType) => {
+type MessageLayoutProps = {
+   users: CurrentUser[];
+   children: ReactNode;
+};
+
+const MessageLayout = (props: MessageLayoutProps) => {
    const { isLoading } = useContext(AppContext);
    const params = useParams();
    return (
       <>
          <GridItem w='100%' display={{ base: 'block' }}>
-            <Chats />
+            <Chats users={props.users} />
          </GridItem>
-         {children}
+         {props.children}
          {!params?.conversationId && !isLoading && (
             <Flex justify={'center'} align='center' display={{ base: 'none', md: 'flex' }}>
                <DynamicText fontSize={{ md: '2rem', base: '1rem' }}>Start chatting with friends</DynamicText>
@@ -32,4 +37,4 @@ const Messages = ({ children }: ChildrenType) => {
    );
 };
 
-export default Messages;
+export default MessageLayout;
