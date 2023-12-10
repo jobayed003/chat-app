@@ -2,8 +2,8 @@
 'use client';
 import { Avatar, AvatarGroup, Box, Flex, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
 import Card from '@components/UI/Card';
-import DynamicButton from '@components/UI/DynamicButton';
-import DynamicText from '@components/UI/DynamicText';
+import DynamicButton from '@components/UI/Util/DynamicButton';
+import DynamicText from '@components/UI/Util/DynamicText';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';

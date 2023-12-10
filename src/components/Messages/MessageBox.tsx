@@ -1,7 +1,7 @@
 import { Box, Flex, Image, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { memo, useEffect, useRef } from 'react';
-import DynamicText from '../UI/DynamicText';
+import DynamicText from '../UI/Util/DynamicText';
 
 interface MessageBoxTypes {
    name: string;

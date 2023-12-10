@@ -13,8 +13,8 @@ import {
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import MessageBox from '@components/Messages/MessageBox';
-import DynamicText from '@components/UI/DynamicText';
 import Spinners from '@components/UI/Spinners';
+import DynamicText from '@components/UI/Util/DynamicText';
 import { messageDetailsInitState } from '@config/app';
 import AppContext from '@context/StateProvider';
 import { useIsOnline } from '@hooks/useIsOnline';

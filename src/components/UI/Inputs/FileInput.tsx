@@ -3,7 +3,7 @@ import { Box, Flex, Input } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { AiOutlineFileImage } from 'react-icons/ai';
-import DynamicText from './DynamicText';
+import DynamicText from '../Util/DynamicText';
 
 const thumbsContainer = {
    display: 'flex',

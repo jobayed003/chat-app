@@ -1,6 +1,6 @@
 'use client';
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
-import DynamicText from '@components/UI/DynamicText';
+import DynamicText from '@components/UI/Util/DynamicText';
 
 import Card from '@components/UI/Card';
 import { variants } from '@config/data';

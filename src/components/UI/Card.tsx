@@ -1,6 +1,6 @@
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import Image from 'next/image';
-import DynamicText from './DynamicText';
+import DynamicText from './Util/DynamicText';
 
 type Props = {
    title: string;

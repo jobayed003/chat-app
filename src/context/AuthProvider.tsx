@@ -2,26 +2,27 @@
 import { Dispatch, SetStateAction, createContext, useState } from 'react';
 
 type ContextType = {
-   users: CurrentUser[];
+   currentUser: CurrentUser;
 
-   setUsers: Dispatch<SetStateAction<[]>>;
+   setCurrentUser: Dispatch<SetStateAction<{}>>;
 };
 
+const initUser = { id: '', userName: '', firstName: '', lastName: '', imageUrl: '' };
 const initContextType: ContextType = {
-   users: [],
+   currentUser: initUser,
 
-   setUsers: () => [],
+   setCurrentUser: () => {},
 };
 
 const AuthContext = createContext<ContextType>(initContextType);
 
 export const AuthContextProvider = ({ children }: ChildrenType) => {
-   const [users, setUsers] = useState<[]>([]);
+   const [currentUser, setCurrentUser] = useState<CurrentUser>();
 
    const contextValue = {
-      users,
+      currentUser,
 
-      setUsers,
+      setCurrentUser,
    };
    // @ts-ignore
    return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

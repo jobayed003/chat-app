@@ -11,9 +11,9 @@ import {
    useColorMode,
    useDisclosure,
 } from '@chakra-ui/react';
-import DynamicButton from '@components/UI/DynamicButton';
-import DynamicText from '@components/UI/DynamicText';
 import { NavLink } from '@components/UI/NavLink';
+import DynamicButton from '@components/UI/Util/DynamicButton';
+import DynamicText from '@components/UI/Util/DynamicText';
 import { buttonStyles } from '@config/data';
 import { useIsVisible } from '@hooks/useIsVisible';
 import Link from 'next/link';

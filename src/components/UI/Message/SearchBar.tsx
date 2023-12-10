@@ -6,8 +6,8 @@ import useSearchDebounce from '@hooks/useSearchDebounce';
 import { compareDates } from '@libs/compareDates';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { MdSearch } from 'react-icons/md';
-import { ChatUser } from './ChatUser';
-import DynamicText from './DynamicText';
+import DynamicText from '../Util/DynamicText';
+import ChatUser from './ChatUser';
 
 type SearchBarProps = {
    users: CurrentUser[];

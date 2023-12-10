@@ -1,9 +1,9 @@
 'use client';
 import { Box, Divider, Flex } from '@chakra-ui/react';
 import Layout from '@components/Layout/Layout';
-import DynamicButton from '@components/UI/DynamicButton';
-import DynamicText from '@components/UI/DynamicText';
 import { NavLink } from '@components/UI/NavLink';
+import DynamicButton from '@components/UI/Util/DynamicButton';
+import DynamicText from '@components/UI/Util/DynamicText';
 import { variants } from '@config/data';
 import { useIsVisible } from '@hooks/useIsVisible';
 import { motion } from 'framer-motion';

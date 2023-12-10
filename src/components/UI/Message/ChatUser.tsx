@@ -1,13 +1,15 @@
 'use client';
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
-import DynamicText from '@components/UI/DynamicText';
+import DynamicText from '@components/UI/Util/DynamicText';
 import AppContext from '@context/StateProvider';
 import useConversationId from '@hooks/useConversationId';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useContext } from 'react';
+import { memo, useCallback, useContext, useEffect, useState } from 'react';
 
-export const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Conversation) => {
+const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Conversation) => {
+   const [isClicked, setIsClicked] = useState(false);
+
    const router = useRouter();
    const { isLoading, setIsLoading } = useContext(AppContext);
    const { id } = useConversationId();
@@ -59,14 +61,19 @@ export const ChatUser = ({ name, img, userId, status, messageDetails, currentUse
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [id]);
 
+   useEffect(() => {
+      !id && setIsClicked(false);
+   }, [id]);
+
    return (
       <Box
          cursor={'pointer'}
-         _active={{ bg: bgColor }}
          _hover={{ bg: bgColor }}
+         bg={isClicked ? bgColor : ''}
          borderRadius={'5px'}
          px='.5rem'
-         onClick={(e) => {
+         onClick={() => {
+            setIsClicked(true);
             !isLoading && handleClick();
          }}
       >
@@ -110,3 +117,7 @@ export const ChatUser = ({ name, img, userId, status, messageDetails, currentUse
       </Box>
    );
 };
+
+const MemoizeChatUser = memo(ChatUser);
+
+export default MemoizeChatUser;

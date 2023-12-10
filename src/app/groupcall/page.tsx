@@ -1,4 +1,4 @@
-import MakeCall from '@components/UI/MakeCall';
+import MakeCall from '@components/UI/Call/MakeCall';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {

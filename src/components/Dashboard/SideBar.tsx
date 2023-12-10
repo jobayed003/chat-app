@@ -6,33 +6,40 @@ import {
    Flex,
    Grid,
    Skeleton,
-   SkeletonCircle,
    Stack,
    Text,
    useColorMode,
    useColorModeValue,
 } from '@chakra-ui/react';
 import { UserButton, useAuth } from '@clerk/nextjs';
-import DynamicText from '@components/UI/DynamicText';
+import DynamicText from '@components/UI/Util/DynamicText';
 import { buttonStyles } from '@config/data';
+import AuthContext from '@context/AuthProvider';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useContext, useEffect } from 'react';
 import { AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
 type SideBarProps = {
    user: CurrentUser;
-   onClose?: () => {};
+   onClose?: () => void;
 };
 
 const SideBar = ({ user, onClose }: SideBarProps) => {
+   const { currentUser, setCurrentUser } = useContext(AuthContext);
+
    const { colorMode, toggleColorMode } = useColorMode();
+   const borderColor = useColorModeValue('light', 'dark');
    const { signOut } = useAuth();
 
-   const borderColor = useColorModeValue('light', 'dark');
+   useEffect(() => {
+      setCurrentUser(user);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [user]);
 
    return (
-      <Grid templateRows={'100px auto'} borderRight={borderColor} h='100%'>
+      <Grid templateRows={'100px auto'} borderRight={borderColor} h='100%' w={{ base: 'auto', md: 'auto' }}>
          <Box
             borderBottom={borderColor}
             display={'flex'}
@@ -47,7 +54,15 @@ const SideBar = ({ user, onClose }: SideBarProps) => {
                </Text>
                IT
             </DynamicText>
-            <CloseButton fontSize={'1.2rem'} px='2rem' onClick={onClose} display={{ base: 'block', md: 'none' }} />
+            <CloseButton
+               fontSize={'1rem'}
+               px='2rem'
+               onClick={onClose}
+               display={{ base: 'block', md: 'none' }}
+               _focusVisible={{ boxShadow: 'none' }}
+               _hover={{ bg: 'none' }}
+               _active={{ bg: 'none' }}
+            />
          </Box>
          <Grid templateRows={'1fr auto'}>
             <Menus onClose={onClose!} />
@@ -58,18 +73,18 @@ const SideBar = ({ user, onClose }: SideBarProps) => {
                flexDir={'row'}
             >
                <Box borderRadius={'50%'} overflow={'hidden'}>
-                  {!user ? <SkeletonCircle size='10' /> : <UserButton />}
+                  {!currentUser ? <Skeleton height='40px' w={'40px'} /> : <UserButton />}
                </Box>
                <Box>
-                  {!user ? (
+                  {!currentUser ? (
                      <Stack>
-                        <Skeleton height='15px' w={'100px'} />
-                        <Skeleton height='15px' w={'100px'} />
+                        <Skeleton height='15px' w={'150px'} />
+                        <Skeleton height='15px' w={'150px'} />
                      </Stack>
                   ) : (
                      <>
                         <DynamicText as={'p'} m='0'>
-                           {user?.userName}
+                           {currentUser?.userName}
                         </DynamicText>
                         <Link href={'/signin'} onClick={() => signOut()}>
                            <DynamicText color={'graytext'} fontSize={'.9rem'}>
@@ -94,7 +109,7 @@ const SideBar = ({ user, onClose }: SideBarProps) => {
 
 export default SideBar;
 
-const Menus = ({ onClose }: { onClose: () => {} }) => {
+const Menus = ({ onClose }: { onClose: () => void }) => {
    const pathName = usePathname()?.split('/');
    const router = useRouter();
    const bgColor = useColorModeValue('colors.primary', 'blue.800');

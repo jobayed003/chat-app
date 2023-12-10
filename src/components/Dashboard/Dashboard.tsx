@@ -2,7 +2,7 @@
 
 import { Grid, GridItem } from '@chakra-ui/react';
 
-import Ringer from '@components/UI/Ringer';
+import Ringer from '@components/UI/Call/Ringer';
 import { AppContextProvider } from '@context/StateProvider';
 import { useParams } from 'next/navigation';
 import { ReactNode } from 'react';

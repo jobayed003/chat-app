@@ -1,7 +1,7 @@
 'use client';
 
 import { Flex } from '@chakra-ui/react';
-import DynamicButton from '@components/UI/DynamicButton';
+import DynamicButton from '@components/UI/Util/DynamicButton';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 

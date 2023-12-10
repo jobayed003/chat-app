@@ -15,26 +15,27 @@ import {
    useToast,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
-import { ChatUser } from '@components/UI/ChatUser';
-import DynamicText from '@components/UI/DynamicText';
-import { SearchBar } from '@components/UI/SearchBar';
+import ChatUser from '@components/UI/Message/ChatUser';
+import { SearchBar } from '@components/UI/Message/SearchBar';
+import DynamicText from '@components/UI/Util/DynamicText';
+import AuthContext from '@context/AuthProvider';
 import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { compareDates } from '@libs/compareDates';
 import { pusherClient } from '@libs/pusher';
 import { useParams } from 'next/navigation';
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MdMenu, MdMessage } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
 
 const Chats = ({ users }: { users: CurrentUser[] }) => {
-   const [openSearch, setOpenSearch] = useState(false);
-
    const [messages, setMessages] = useState({
       message: '',
       sent: '',
    });
    const [showSkeleton, setShowSkeleton] = useState(true);
+
+   const { currentUser } = useContext(AuthContext);
 
    // @ts-ignore
    const { conversationId } = useParams();
@@ -45,10 +46,8 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
    const isOnline = useIsOnline();
 
    const borderColor = useColorModeValue('light', 'dark');
-   const { isLoaded, user } = useUser();
+   const { isLoaded } = useUser();
    const { id } = useConversationId();
-
-   const btnRef = useRef<HTMLButtonElement>(null);
 
    useEffect(() => {
       const messageHandler = (data: MessageDetails) => {
@@ -106,26 +105,14 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
                gap={'.5rem'}
                justifyContent={'space-between'}
             >
-               <Box
-                  display={{ base: 'block', md: 'none' }}
-                  fontSize={'1.5rem'}
-                  onClick={isOpen ? onClose : onOpen}
-                  // @ts-expect-error
-                  ref={btnRef}
-               >
+               <Box display={{ base: 'block', md: 'none' }} fontSize={'1.5rem'} onClick={isOpen ? onClose : onOpen}>
                   <MdMenu />
                </Box>
 
                {/* Sidenav for mobile view */}
-               <SideNav isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
+               <SideNav user={currentUser} isOpen={isOpen} onClose={onClose} />
 
                <DynamicText fontSize={'2rem'}>Messages</DynamicText>
-               {/* {openSearch && (
-                  <Input placeholder='Type a user name' border={'none'} _focusVisible={{ boxShadow: 'none' }} />
-               )} */}
-               {/* <Box fontSize={'1.5rem'}>
-                  <MdSearch cursor={'pointer'} onClick={() => setOpenSearch(!openSearch)} />
-               </Box> */}
 
                <SearchBar users={users} />
             </Flex>
@@ -136,10 +123,10 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
                </Flex>
 
                <Box px='1rem'>
-                  {user &&
+                  {currentUser &&
                      users.map((signedUser) => (
                         <ChatUser
-                           key={Math.random()}
+                           key={signedUser.id}
                            name={signedUser.userName}
                            email={signedUser.emailAddress!}
                            status={isOnline ? 'Online' : 'Offline'}
@@ -152,7 +139,7 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
                            }}
                            lastActive={compareDates(1700746673468).difference.humanize()}
                            userId={signedUser.id}
-                           currentUser={user}
+                           currentUser={currentUser}
                         />
                      ))}
                </Box>
@@ -183,21 +170,12 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
 
 export default Chats;
 
-const SideNav = ({
-   isOpen,
-   onClose,
-   btnRef,
-}: {
-   isOpen: boolean;
-   onClose: () => void;
-   btnRef: RefObject<HTMLButtonElement>;
-}) => {
+const SideNav = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: CurrentUser }) => {
    return (
-      <Drawer isOpen={isOpen} placement='left' onClose={onClose} finalFocusRef={btnRef}>
+      <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
          <DrawerOverlay />
-         <DrawerContent width={'80px'}>
-            {/* @ts-ignore */}
-            <SideBar onClose={onClose} />
+         <DrawerContent width={'auto'}>
+            <SideBar user={user} onClose={onClose} />
          </DrawerContent>
       </Drawer>
    );
