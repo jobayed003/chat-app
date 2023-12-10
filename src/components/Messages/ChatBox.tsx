@@ -1,5 +1,4 @@
 'use client';
-import { authToken, createMeeting } from '@api';
 import {
    Box,
    Flex,
@@ -140,7 +139,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
    };
 
    return (
-      <GridItem height={'100vh'}>
+      <GridItem height={'100dvh'}>
          {isLoading ? (
             <Spinners />
          ) : (
@@ -256,7 +255,7 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
                            <FaRegSmile color='#aaa' cursor={'pointer'} onClick={() => setIsClicked(!isClicked)} />
 
                            {isClicked && (
-                              <Box pos={'absolute'} bottom={'3rem'} right={'1rem'}>
+                              <Box pos={'absolute'} bottom={'3rem'} right={{ md: '1rem', base: '-1rem' }}>
                                  <EmojiPicker
                                     width={320}
                                     // width={280}

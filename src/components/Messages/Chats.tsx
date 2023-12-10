@@ -94,7 +94,7 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
       <GridItem
          w='100%'
          borderRight={borderColor}
-         h={'100vh'}
+         h={'100dvh'}
          display={{ base: conversationId ? 'none' : 'block', md: 'block' }}
       >
          <Grid templateRows={'100px 1fr'}>

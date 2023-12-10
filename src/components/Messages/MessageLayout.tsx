@@ -29,7 +29,7 @@ const MessageLayout = (props: MessageLayoutProps) => {
          )}
 
          {!params?.conversationId && isLoading && (
-            <GridItem height={'100vh'}>
+            <GridItem height={'100vh'} display={{ base: 'none', md: 'block' }}>
                <Spinners />
             </GridItem>
          )}
