@@ -172,7 +172,7 @@ export default Chats;
 
 const SideNav = ({ isOpen, onClose, user }: { isOpen: boolean; onClose: () => void; user: CurrentUser }) => {
    return (
-      <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
+      <Drawer isOpen={isOpen} placement='left' onClose={onClose} size={'xs'}>
          <DrawerOverlay />
          <DrawerContent width={'auto'}>
             <SideBar user={user} onClose={onClose} />
