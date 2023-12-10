@@ -15,19 +15,21 @@ import {
    useToast,
 } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
+import { ChatUser } from '@components/UI/ChatUser';
 import DynamicText from '@components/UI/DynamicText';
-import AppContext from '@context/StateProvider';
+import { SearchBar } from '@components/UI/SearchBar';
 import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
+import { compareDates } from '@libs/compareDates';
 import { pusherClient } from '@libs/pusher';
-import moment from 'moment';
-import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
-import { RefObject, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { MdMenu, MdMessage, MdSearch } from 'react-icons/md';
+import { useParams } from 'next/navigation';
+import { RefObject, useEffect, useRef, useState } from 'react';
+import { MdMenu, MdMessage } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
 
 const Chats = ({ users }: { users: CurrentUser[] }) => {
+   const [openSearch, setOpenSearch] = useState(false);
+
    const [messages, setMessages] = useState({
       message: '',
       sent: '',
@@ -47,20 +49,6 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
    const { id } = useConversationId();
 
    const btnRef = useRef<HTMLButtonElement>(null);
-
-   const compareDates = (millis1: number) => {
-      const present = Date.now();
-      const date1 = new Date(millis1);
-      const date2 = new Date(present);
-      const moment1 = moment(date1);
-      const moment2 = moment(date2);
-      const difference = moment.duration(moment2.diff(moment1));
-      return {
-         date1,
-         date2,
-         difference,
-      };
-   };
 
    useEffect(() => {
       const messageHandler = (data: MessageDetails) => {
@@ -128,36 +116,46 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
                   <MdMenu />
                </Box>
 
+               {/* Sidenav for mobile view */}
                <SideNav isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
+
                <DynamicText fontSize={'2rem'}>Messages</DynamicText>
-               <Box fontSize={'1.5rem'}>
-                  <MdSearch cursor={'pointer'} />
-               </Box>
+               {/* {openSearch && (
+                  <Input placeholder='Type a user name' border={'none'} _focusVisible={{ boxShadow: 'none' }} />
+               )} */}
+               {/* <Box fontSize={'1.5rem'}>
+                  <MdSearch cursor={'pointer'} onClick={() => setOpenSearch(!openSearch)} />
+               </Box> */}
+
+               <SearchBar users={users} />
             </Flex>
             <Box>
                <Flex align={'center'} gap='.5rem' color={'grayText'} fontSize={'.8rem'} p={'1.5rem'}>
                   <MdMessage />
                   <Text>All Messages</Text>
                </Flex>
-               {user &&
-                  users.map((signedUser) => (
-                     <ChatUser
-                        key={Math.random()}
-                        name={signedUser.userName}
-                        email={signedUser.emailAddress!}
-                        status={isOnline ? 'Online' : 'Offline'}
-                        img={signedUser.imageUrl}
-                        messageDetails={{
-                           sent: messages.sent,
-                           lastMessage:
-                              messages.message ||
-                              'Joined ' + compareDates(+signedUser.createdAt!).difference.humanize() + ' ago',
-                        }}
-                        lastActive={compareDates(1700746673468).difference.humanize()}
-                        userId={signedUser.id}
-                        currentUser={user}
-                     />
-                  ))}
+
+               <Box px='1rem'>
+                  {user &&
+                     users.map((signedUser) => (
+                        <ChatUser
+                           key={Math.random()}
+                           name={signedUser.userName}
+                           email={signedUser.emailAddress!}
+                           status={isOnline ? 'Online' : 'Offline'}
+                           img={signedUser.imageUrl}
+                           messageDetails={{
+                              sent: messages.sent,
+                              lastMessage:
+                                 messages.message ||
+                                 'Joined ' + compareDates(+signedUser.createdAt!).difference.humanize() + ' ago',
+                           }}
+                           lastActive={compareDates(1700746673468).difference.humanize()}
+                           userId={signedUser.id}
+                           currentUser={user}
+                        />
+                     ))}
+               </Box>
                {/* @ts-ignore */}
                {users.length === 0 && showSkeleton ? (
                   <Flex gap='.9rem' align='center' px='1rem'>
@@ -184,108 +182,6 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
 };
 
 export default Chats;
-
-const ChatUser = ({ name, img, userId, status, messageDetails, currentUser }: Conversation) => {
-   const router = useRouter();
-   const { isLoading, setIsLoading } = useContext(AppContext);
-   const { id } = useConversationId();
-
-   const bgColor = useColorModeValue('#ddd', 'blue.800');
-
-   const handleClick = useCallback(async () => {
-      // const conversationDetails = JSON.parse(localStorage.getItem('conversationDetails') as string);
-
-      // const { conversationId } = conversationDetails;
-
-      // if (conversationId) {
-      //    setIsLoading(false);
-      //    router.push(`/dashboard/messages/${conversationId}`);
-      // } else {
-      try {
-         setIsLoading(true);
-         const res = await fetch('/api/conversation', {
-            method: 'POST',
-            body: JSON.stringify({
-               senderId: currentUser.id,
-               receiverId: userId,
-               users: [userId, currentUser.id],
-            }),
-         });
-         if (res.ok) {
-            const { conversationId } = await res.json();
-
-            localStorage.setItem(
-               'conversationDetails',
-               JSON.stringify({
-                  conversationId,
-                  senderId: currentUser.id,
-                  receiverId: userId,
-                  users: [userId, currentUser.id],
-               })
-            );
-
-            if (conversationId === id) {
-               setIsLoading(false);
-               return;
-            }
-
-            router.push(`/dashboard/messages/${conversationId}`);
-         }
-      } catch (error) {
-         console.log(error);
-      }
-   }, [id]);
-
-   return (
-      <Box
-         cursor={'pointer'}
-         _active={{ bg: bgColor }}
-         _hover={{ bg: bgColor }}
-         px='1rem'
-         onClick={(e) => {
-            !isLoading && handleClick();
-         }}
-      >
-         <Flex align={'center'} px='1rem'>
-            <Flex py='1rem' align={'center'} gap={'.8rem'} justify={'center'}>
-               <Box borderRadius={'50%'} overflow={'hidden'}>
-                  <Image width={45} height={40} alt='user img' src={img} />
-               </Box>
-
-               <Box>
-                  <DynamicText fontSize='1rem'>{name}</DynamicText>
-                  <DynamicText color={'gray'} fontSize='12px'>
-                     {messageDetails?.lastMessage}
-                  </DynamicText>
-
-                  {/* <DynamicText fontSize={'12px'} color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}>
-                     {messageDetails.messageStatus === 'typing' ? 'Typing...' : messageDetails?.lastMessages}
-                  </DynamicText> */}
-               </Box>
-            </Flex>
-            <Flex direction={'column'}>
-               {/* <DynamicText fontSize='12px' color={'gray'}>
-                  {messageDetails?.sent}
-               </DynamicText> */}
-
-               {/* <Flex
-                  bg={'#D34242'}
-                  borderRadius={'50%'}
-                  align={'center'}
-                  justify={'center'}
-                  alignSelf={'end'}
-                  w='15px'
-                  h='15px'
-               >
-                  <DynamicText fontSize={'12px'} color={'#fff'}>
-                     {`${messageDetails?.lastMessages.length}`}
-                  </DynamicText>
-               </Flex> */}
-            </Flex>
-         </Flex>
-      </Box>
-   );
-};
 
 const SideNav = ({
    isOpen,
