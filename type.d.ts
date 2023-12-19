@@ -28,6 +28,7 @@ type ChildrenType = { children?: React.ReactNode };
 interface Clerkuser extends UserResource {}
 
 interface MessageDetails {
+   docId?: string;
    id: string;
    user: { email: string; name: string; imgsrc: string };
    sender: { email: string; seen: boolean };

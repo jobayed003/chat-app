@@ -22,7 +22,7 @@ import { pusherClient } from '@libs/pusher';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaArrowLeft, FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 import { MdSend } from 'react-icons/md';
 
@@ -31,9 +31,10 @@ type ChatBoxProps = {
    imageUrl: string;
    id: string;
    email: string;
+   messagesList: MessageDetails[];
 };
 
-const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
+const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
    const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
    const [isClicked, setIsClicked] = useState(false);
 
@@ -59,7 +60,6 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
          setMessageDetails(data);
          setMessages((prevMessages) => [...prevMessages, data]);
       };
-
       pusherClient.subscribe(id);
       pusherClient.bind('newMessage', messageHandler);
 
@@ -67,7 +67,6 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       //    setIsTypingState({ status, typingUser });
       // });
 
-      getMessages();
       setIsLoading(false);
       return () => {
          pusherClient.unsubscribe(id);
@@ -77,26 +76,26 @@ const ChatBox = ({ name, imageUrl, id }: ChatBoxProps) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [id]);
 
+   useEffect(() => {
+      setMessages(messagesList);
+   }, [messagesList]);
+
    const sendMessage = async () => {
+      const tempData = {
+         id,
+         user: { email: currentUserEmail, name: user?.username, imgsrc: user?.imageUrl },
+         sender: { email: currentUserEmail, seen: false },
+         message: currentMessage,
+         sent: moment().format('hh:mm a'),
+      };
+
       await fetch('/api/messages', {
          method: 'POST',
-         body: JSON.stringify({
-            id,
-            user: { email: currentUserEmail, name: user?.username, imgsrc: user?.imageUrl },
-            sender: { email: currentUserEmail, seen: false },
-            message: currentMessage,
-
-            sent: moment().format('hh:mm a'),
-         }),
+         body: JSON.stringify(tempData),
       });
+
       setCurrentMessage('');
    };
-
-   const getMessages = useCallback(async () => {
-      const res = await fetch(`/api/messages/${id}`);
-      const data = await res.json();
-      setMessages(data.messages);
-   }, [id]);
 
    // const openNewTab = async (videoCall: boolean) => {
    //    const screenWidth = window.screen.width;

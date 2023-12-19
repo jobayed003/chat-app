@@ -1,28 +1,15 @@
-import { clerkClient, currentUser } from '@clerk/nextjs';
 import ChatBox from '@components/Messages/ChatBox';
-import { getConversation } from '@libs/getConversation';
+
+import { getMessages } from '@libs/getMessages';
+import { getConversationUser } from '@libs/getUsersById';
 import { Metadata, ResolvingMetadata } from 'next';
-
-async function getUser(id: string) {
-   const { senderId, receiverId } = await getConversation(id);
-   const current = await currentUser();
-   if (receiverId !== current?.id) {
-      const user = await clerkClient.users.getUser(receiverId);
-      return user;
-   } else if (senderId !== current?.id) {
-      const user = await clerkClient.users.getUser(senderId);
-      return user;
-   }
-
-   return { username: '', emailAddresses: [], imageUrl: '' };
-}
 
 type Props = {
    params: { conversationId: string };
 };
 
 export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
-   const { username } = await getUser(params?.conversationId);
+   const { username } = await getConversationUser(params?.conversationId);
 
    return {
       title: username + ' | chatIT',
@@ -40,9 +27,17 @@ const ChatBoxPage = async ({
    };
 }) => {
    const { conversationId } = params;
-   const { imageUrl, username, emailAddresses } = await getUser(conversationId);
+   const messages = await getMessages(conversationId);
+
+   const { imageUrl, username, emailAddresses } = await getConversationUser(conversationId);
    return (
-      <ChatBox name={username || ''} email={emailAddresses[0].emailAddress} imageUrl={imageUrl} id={conversationId} />
+      <ChatBox
+         name={username || ''}
+         email={emailAddresses[0].emailAddress}
+         imageUrl={imageUrl}
+         id={conversationId}
+         messagesList={messages}
+      />
    );
 };
 

@@ -7,16 +7,18 @@ export const getMessages = async (id: string) => {
    const Messages = db.collection('Messages');
 
    const result = Messages.find({ id });
-   return result;
-};
-
-export const getMessage = async (id: string) => {
-   const result = await getMessages(id);
 
    let messages = [];
    for await (const message of result) {
-      messages.push(message);
+      const temp = {
+         docId: message._id.toHexString(),
+         id: message.id,
+         message: message.message,
+         user: message.user,
+         sender: message.sender,
+         sent: message.sent,
+      };
+      messages.push(temp);
    }
-
-   return messages[messages.length - 1];
+   return messages;
 };
