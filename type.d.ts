@@ -1,26 +1,40 @@
 interface CurrentUser {
    id: string;
-   userName: string;
+   username: string;
    firstName: string;
    lastName: string;
    imageUrl: string;
-   emailAddress?: string;
+   email?: string;
    createdAt?: string;
 }
 
+// type Conversation = {
+//    name: string;
+//    img: string;
+//    lastActive?: string;
+//    userId: string;
+//    email: string;
+//    currentUser: CurrentUser;
+//    messageDetails?: {
+//       messageStatus?: string;
+//       lastMessage?: string;
+//       sent?: string;
+//    };
+//    status?: string;
+//    conversationId: string;
+// };
+
 type Conversation = {
-   name: string;
-   img: string;
-   lastActive?: string;
-   userId: string;
-   email: string;
-   currentUser: User;
-   messageDetails?: {
-      messageStatus?: string;
-      lastMessage?: string;
-      sent?: string;
+   conversationId: string;
+   users?: string[];
+   chats: {
+      senderId: string;
+      recieverId: string;
+      seen: boolean;
+      text: string[];
+      sent: string;
    };
-   status: string;
+   conversationUser: CurrentUser;
 };
 
 type ChildrenType = { children?: React.ReactNode };
@@ -29,7 +43,7 @@ interface Clerkuser extends UserResource {}
 
 interface MessageDetails {
    docId?: string;
-   id: string;
+   conversationId: string;
    user: { email: string; name: string; imgsrc: string };
    sender: { email: string; seen: boolean };
    message: string;

@@ -27,7 +27,7 @@ const RootLayout = async ({ children }: ChildrenType) => {
       <Dashboard
          user={{
             id: user.id,
-            userName: user.username!,
+            username: user.username!,
             firstName: user.firstName!,
             lastName: user.lastName!,
             imageUrl: user.imageUrl!,

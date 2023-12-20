@@ -17,3 +17,7 @@ export async function connectDB() {
       return client.db('chatDB');
    }
 }
+
+export async function disconnectDB() {
+   return client.close();
+}

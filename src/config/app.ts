@@ -1,6 +1,6 @@
 export const PORT = 3000;
 export const messageDetailsInitState = {
-   id: '',
+   conversationId: '',
    message: '',
    sender: { email: '', seen: false },
    user: { email: '', name: '', imgsrc: '' },

@@ -1,7 +1,7 @@
 import ChatBox from '@components/Messages/ChatBox';
 
+import { getConversationUser } from '@libs/conversationDetails';
 import { getMessages } from '@libs/getMessages';
-import { getConversationUser } from '@libs/getUsersById';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {
@@ -29,13 +29,14 @@ const ChatBoxPage = async ({
    const { conversationId } = params;
    const messages = await getMessages(conversationId);
 
-   const { imageUrl, username, emailAddresses } = await getConversationUser(conversationId);
+   const { imageUrl, id, username, email } = await getConversationUser(conversationId);
    return (
       <ChatBox
          name={username || ''}
-         email={emailAddresses[0].emailAddress}
+         email={email}
          imageUrl={imageUrl}
-         id={conversationId}
+         userId={id}
+         conversationId={conversationId}
          messagesList={messages}
       />
    );

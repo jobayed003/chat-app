@@ -3,11 +3,9 @@ import { Box, Flex, Input, Modal, ModalBody, ModalContent, ModalOverlay, useDisc
 import { useUser } from '@clerk/nextjs';
 
 import useSearchDebounce from '@hooks/useSearchDebounce';
-import { compareDates } from '@libs/compareDates';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { MdSearch } from 'react-icons/md';
 import DynamicText from '../Util/DynamicText';
-import ChatUser from './ChatUser';
 
 type SearchBarProps = {
    users: CurrentUser[];
@@ -25,7 +23,7 @@ export const SearchBar = ({ users }: SearchBarProps) => {
       // @ts-ignore
       const text = searchedUserName.toLowerCase().replace(replaceAll, '').trim();
       const regex = new RegExp(text, 'i');
-      return users.filter((user) => regex.test(user.userName.replace(replaceAll, '').trim()));
+      return users.filter((user) => regex.test(user.username.replace(replaceAll, '').trim()));
    };
 
    useEffect(() => {
@@ -53,11 +51,11 @@ export const SearchBar = ({ users }: SearchBarProps) => {
                      />
                      <DynamicText px='.5rem'>Select a user to start a conversation</DynamicText>
                      <Box onClick={onClose}>
-                        {searchedUsers.map((signedUser) => (
+                        {/* {searchedUsers.map((signedUser) => (
                            <ChatUser
                               key={Math.random()}
-                              name={signedUser.userName}
-                              email={signedUser.emailAddress!}
+                              name={signedUser.username}
+                              email={signedUser.email!}
                               status={'Offline'}
                               img={signedUser.imageUrl}
                               messageDetails={{
@@ -67,7 +65,7 @@ export const SearchBar = ({ users }: SearchBarProps) => {
                               userId={signedUser.id}
                               currentUser={user}
                            />
-                        ))}
+                        ))} */}
                      </Box>
                   </Flex>
                </ModalBody>

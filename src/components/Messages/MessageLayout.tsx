@@ -5,21 +5,32 @@ import Chats from '@components/Messages/Chats';
 import Spinners from '@components/UI/Spinners';
 import DynamicText from '@components/UI/Util/DynamicText';
 import AppContext from '@context/StateProvider';
+import useConversationId from '@hooks/useConversationId';
 import { useParams } from 'next/navigation';
-import { ReactNode, useContext } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 
 type MessageLayoutProps = {
-   users: CurrentUser[];
    children: ReactNode;
+   users: CurrentUser[];
+   conversations: Conversation[];
 };
 
 const MessageLayout = (props: MessageLayoutProps) => {
-   const { isLoading } = useContext(AppContext);
+   const { isLoading, setConversation } = useContext(AppContext);
    const params = useParams();
+
+   const { id } = useConversationId();
+
+   useEffect(() => {
+      const currentConv = props.conversations.filter((c) => c.conversationId === id)[0];
+      setConversation(currentConv);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [params?.conversationId]);
+
    return (
       <>
          <GridItem w='100%' display={{ base: 'block' }}>
-            <Chats users={props.users} />
+            <Chats users={props.users} conversations={props.conversations} />
          </GridItem>
          {props.children}
          {!params?.conversationId && !isLoading && (

@@ -29,12 +29,13 @@ import { MdSend } from 'react-icons/md';
 type ChatBoxProps = {
    name: string;
    imageUrl: string;
-   id: string;
+   conversationId: string;
    email: string;
+   userId: string;
    messagesList: MessageDetails[];
 };
 
-const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
+const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }: ChatBoxProps) => {
    const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
    const [isClicked, setIsClicked] = useState(false);
 
@@ -43,7 +44,7 @@ const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
 
    const router = useRouter();
 
-   const { isLoading, setMessageDetails, setIsLoading } = useContext(AppContext);
+   const { isLoading, conversation, setMessageDetails, setIsLoading } = useContext(AppContext);
 
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
@@ -60,7 +61,7 @@ const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
          setMessageDetails(data);
          setMessages((prevMessages) => [...prevMessages, data]);
       };
-      pusherClient.subscribe(id);
+      pusherClient.subscribe(conversationId);
       pusherClient.bind('newMessage', messageHandler);
 
       // pusherClient.bind('user-typing', ({ status, typingUser }: { status: boolean; typingUser: string }) => {
@@ -69,12 +70,12 @@ const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
 
       setIsLoading(false);
       return () => {
-         pusherClient.unsubscribe(id);
+         pusherClient.unsubscribe(conversationId);
          pusherClient.unbind('newMessage', messageHandler);
          // pusherClient.unbind('user-typing', () => {});
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [id]);
+   }, [conversationId]);
 
    useEffect(() => {
       setMessages(messagesList);
@@ -82,10 +83,12 @@ const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
 
    const sendMessage = async () => {
       const tempData = {
-         id,
+         conversationId,
          user: { email: currentUserEmail, name: user?.username, imgsrc: user?.imageUrl },
-         sender: { email: currentUserEmail, seen: false },
+         sender: user?.id,
+         seen: false,
          message: currentMessage,
+         isCurrentUser: conversation.chats.senderId === user?.id,
          sent: moment().format('hh:mm a'),
       };
 
@@ -136,7 +139,6 @@ const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
       let emoji = String.fromCodePoint(...codesArray);
       setCurrentMessage(currentMessage + emoji);
    };
-
    return (
       <GridItem height={'100dvh'}>
          {isLoading ? (
@@ -197,7 +199,7 @@ const ChatBox = ({ name, imageUrl, id, messagesList }: ChatBoxProps) => {
                            message={msgCnt.message}
                            // @ts-ignore
                            key={msgCnt._id || idx + msgCnt.message}
-                           isOwnMessage={currentUserEmail === msgCnt.sender.email}
+                           isOwnMessage={currentUserEmail === msgCnt.user.email}
                            sent={msgCnt.sent}
                         />
                      ))}

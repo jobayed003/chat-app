@@ -21,20 +21,15 @@ import DynamicText from '@components/UI/Util/DynamicText';
 import AuthContext from '@context/AuthProvider';
 import useConversationId from '@hooks/useConversationId';
 import { useIsOnline } from '@hooks/useIsOnline';
-import { compareDates } from '@libs/compareDates';
 import { pusherClient } from '@libs/pusher';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { MdMenu, MdMessage } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
 
-const Chats = ({ users }: { users: CurrentUser[] }) => {
-   const [messages, setMessages] = useState({
-      message: '',
-      sent: '',
-   });
+const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: Conversation[] }) => {
    const [showSkeleton, setShowSkeleton] = useState(true);
-
+   const router = useRouter();
    const { currentUser } = useContext(AuthContext);
 
    // @ts-ignore
@@ -51,7 +46,7 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
 
    useEffect(() => {
       const messageHandler = (data: MessageDetails) => {
-         setMessages(data);
+         router.refresh();
       };
 
       const handleEvent = () => {
@@ -124,23 +119,8 @@ const Chats = ({ users }: { users: CurrentUser[] }) => {
 
                <Box px='1rem'>
                   {currentUser &&
-                     users.map((signedUser) => (
-                        <ChatUser
-                           key={signedUser.id}
-                           name={signedUser.userName}
-                           email={signedUser.emailAddress!}
-                           status={isOnline ? 'Online' : 'Offline'}
-                           img={signedUser.imageUrl}
-                           messageDetails={{
-                              sent: messages.sent,
-                              lastMessage:
-                                 messages.message ||
-                                 'Joined ' + compareDates(+signedUser.createdAt!).difference.humanize() + ' ago',
-                           }}
-                           lastActive={compareDates(1700746673468).difference.humanize()}
-                           userId={signedUser.id}
-                           currentUser={currentUser}
-                        />
+                     conversations.map((curConversation) => (
+                        <ChatUser key={curConversation.conversationId} {...curConversation} />
                      ))}
                </Box>
                {/* @ts-ignore */}

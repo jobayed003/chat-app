@@ -11,7 +11,7 @@ export const fetchUsers = async () => {
    for await (const doc of usersCol) {
       users.push({
          docId: doc._id.toJSON(),
-         userName: doc.userName,
+         username: doc.userName,
          email: doc.email,
          imageUrl: doc.imageUrl,
          firstName: doc.firstName,
@@ -20,5 +20,6 @@ export const fetchUsers = async () => {
          createdAt: doc.createdAt,
       });
    }
+
    return users.filter((el: any) => el.id !== userId);
 };
