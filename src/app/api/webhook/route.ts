@@ -1,6 +1,7 @@
 import { UserJSON, WebhookEvent } from '@clerk/nextjs/server';
 import { connectDB } from '@libs/connectDB';
-import { updateUser } from '@libs/updateUser';
+import { updateUser } from '@libs/userDetails';
+
 import { Db } from 'mongodb';
 import { headers } from 'next/headers';
 import { Webhook } from 'svix';

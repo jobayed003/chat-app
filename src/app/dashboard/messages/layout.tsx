@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs';
 import MessageLayout from '@components/Messages/MessageLayout';
 import { getConversationRef, getConversationUser } from '@libs/conversationDetails';
-import { fetchUsers } from '@libs/fetchUsers';
+import { fetchUsers } from '@libs/userDetails';
 
 const RootLayout = async ({ children }: ChildrenType) => {
    const users = await fetchUsers();

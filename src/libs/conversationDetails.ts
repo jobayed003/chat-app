@@ -46,16 +46,20 @@ type lastChat = {
 
 export const updateConversation = async (id: string, lastChat: lastChat, isCurrentUser: boolean) => {
    const doc = await getConversationRef();
-   console.log(isCurrentUser);
 
    if (isCurrentUser) {
       const updateMessage = { $push: { 'chats.text': lastChat.text } };
       await doc.updateOne({ _id: new ObjectId(id) }, updateMessage);
-      return;
+   } else {
+      const update = {
+         $set: {
+            'chats.sent': lastChat.sent,
+            'chats.senderId': lastChat.senderId,
+            'chats.seen': lastChat.seen,
+            'chats.text': [lastChat.text],
+         },
+      };
+      // @ts-ignore
+      await doc.updateOne({ _id: new ObjectId(id) }, update, { upsert: true });
    }
-
-   const update = { $set: { chats: lastChat } };
-
-   // @ts-ignore
-   await doc.updateOne({ _id: new ObjectId(id) }, update, { upsert: true });
 };

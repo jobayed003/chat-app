@@ -88,7 +88,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }
          sender: user?.id,
          seen: false,
          message: currentMessage,
-         isCurrentUser: conversation.chats.senderId === user?.id,
+         isCurrentUser: conversation.chats?.senderId === user?.id,
          sent: moment().format('hh:mm a'),
       };
 
@@ -96,10 +96,9 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }
          method: 'POST',
          body: JSON.stringify(tempData),
       });
-
+      // router.refresh();
       setCurrentMessage('');
    };
-
    // const openNewTab = async (videoCall: boolean) => {
    //    const screenWidth = window.screen.width;
    //    const screenHeight = window.screen.height;

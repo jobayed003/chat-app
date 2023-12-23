@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       await pusherServer.trigger(data.conversationId, 'newMessage', data);
 
       const updatedConv = {
-         text: [data.message],
+         text: data.message,
          sent: data.sent,
          seen: data.seen,
          senderId: data.sender,

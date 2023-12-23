@@ -2,18 +2,14 @@
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/UI/Util/DynamicText';
-import AppContext from '@context/StateProvider';
-import useConversationId from '@hooks/useConversationId';
+import { compareDates } from '@libs/compareDates';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { memo, useContext, useState } from 'react';
+import { memo, useState } from 'react';
 
 const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => {
    const [isClicked, setIsClicked] = useState(false);
-
    const router = useRouter();
-   const { isLoading, setIsLoading } = useContext(AppContext);
-   const { id } = useConversationId();
    const { user } = useUser();
 
    const bgColor = useColorModeValue('#ddd', 'blue.800');
@@ -53,7 +49,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
          px='.5rem'
          onClick={() => {
             setIsClicked(true);
-            !isLoading && router.push(`/dashboard/messages/${conversationId}`);
+            router.push(`/dashboard/messages/${conversationId}`);
          }}
       >
          <Flex align={'center'} justify={'space-between'}>
@@ -65,7 +61,8 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                <Box>
                   <DynamicText fontSize='1rem'>{conversationUser.username}</DynamicText>
                   <DynamicText color={'gray'} fontSize='12px'>
-                     {chats.senderId === user?.id ? 'You:' : ''} {chats.text.at(-1)}
+                     {chats?.senderId === user?.id ? 'You:' : ''} {chats?.text?.at(-1)}
+                     {!chats && 'Joined ' + compareDates(+conversationUser.createdAt!).difference.humanize() + ' ago'}
                   </DynamicText>
 
                   {/* <DynamicText fontSize={'12px'} color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}>
@@ -75,10 +72,10 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
             </Flex>
             <Flex direction={'column'} gap={'.5rem'}>
                <DynamicText fontSize='12px' color={'gray'}>
-                  {chats.sent}
+                  {chats?.sent}
                </DynamicText>
 
-               {chats.senderId !== user?.id && (
+               {chats && chats?.senderId !== user?.id && (
                   <Flex
                      bg={'#D34242'}
                      borderRadius={'50%'}
@@ -89,7 +86,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                      h='15px'
                   >
                      <DynamicText fontSize={'12px'} color={'#fff'}>
-                        {chats.text.length}
+                        {chats?.text?.length}
                      </DynamicText>
                   </Flex>
                )}
