@@ -42,13 +42,17 @@ type lastChat = {
    sent: string;
    senderId: string;
    seen: boolean;
+   lastSender: string;
 };
 
-export const updateConversation = async (id: string, lastChat: lastChat, isCurrentUser: boolean) => {
+export const updateConversation = async (id: string, lastChat: lastChat) => {
    const doc = await getConversationRef();
+   const { userId } = auth();
+
+   const isCurrentUser = lastChat.lastSender === userId;
 
    if (isCurrentUser) {
-      const updateMessage = { $push: { 'chats.text': lastChat.text } };
+      const updateMessage = { $set: { 'chats.sent': lastChat.sent }, $push: { 'chats.text': lastChat.text } };
       await doc.updateOne({ _id: new ObjectId(id) }, updateMessage);
    } else {
       const update = {
@@ -62,4 +66,27 @@ export const updateConversation = async (id: string, lastChat: lastChat, isCurre
       // @ts-ignore
       await doc.updateOne({ _id: new ObjectId(id) }, update, { upsert: true });
    }
+};
+
+export const getConversations = async () => {
+   const { userId } = auth();
+
+   const doc = await getConversationRef();
+
+   const conversationCol = doc.find({ users: { $eq: userId } });
+
+   let conversations: Conversation[] = [];
+
+   for await (const doc of conversationCol) {
+      const tempData = {
+         conversationId: doc._id.toHexString(),
+         users: doc.users,
+         chats: doc.chats,
+      };
+      const conversationUser = await getConversationUser(tempData.conversationId);
+      // @ts-ignore
+      conversations.push({ ...tempData, conversationUser });
+   }
+
+   return conversations;
 };

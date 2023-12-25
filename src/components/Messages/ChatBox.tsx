@@ -35,8 +35,8 @@ type ChatBoxProps = {
    messagesList: MessageDetails[];
 };
 
-const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }: ChatBoxProps) => {
-   const [messages, setMessages] = useState([{ ...messageDetailsInitState }]);
+const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps) => {
+   const [messages, setMessages] = useState([messageDetailsInitState]);
    const [isClicked, setIsClicked] = useState(false);
 
    const [currentMessage, setCurrentMessage] = useState('');
@@ -44,7 +44,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }
 
    const router = useRouter();
 
-   const { isLoading, conversation, setMessageDetails, setIsLoading } = useContext(AppContext);
+   const { isLoading, lastSender, setMessageDetails, setIsLoading, setLastSender } = useContext(AppContext);
 
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
@@ -88,15 +88,16 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }
          sender: user?.id,
          seen: false,
          message: currentMessage,
-         isCurrentUser: conversation.chats?.senderId === user?.id,
+         lastSender,
          sent: moment().format('hh:mm a'),
       };
 
+      setLastSender(user?.id!);
       await fetch('/api/messages', {
          method: 'POST',
          body: JSON.stringify(tempData),
       });
-      // router.refresh();
+
       setCurrentMessage('');
    };
    // const openNewTab = async (videoCall: boolean) => {
@@ -138,6 +139,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }
       let emoji = String.fromCodePoint(...codesArray);
       setCurrentMessage(currentMessage + emoji);
    };
+
    return (
       <GridItem height={'100dvh'}>
          {isLoading ? (
@@ -188,20 +190,22 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList, email, userId }
                      </Flex> */}
                   </Flex>
                </GridItem>
-               <Box bg={chatBoxBG} overflowY={'scroll'}>
+               <Box bg={chatBoxBG} overflowY={messages.length > 0 ? 'scroll' : 'hidden'}>
                   {messages
                      .filter((el) => el.message !== '')
-                     .map((msgCnt, idx) => (
+                     .map((msgCnt) => (
                         <MessageBox
                            img={msgCnt.user.imgsrc}
                            name={msgCnt.user.name}
                            message={msgCnt.message}
                            // @ts-ignore
-                           key={msgCnt._id || idx + msgCnt.message}
+                           key={msgCnt.docId}
                            isOwnMessage={currentUserEmail === msgCnt.user.email}
                            sent={msgCnt.sent}
                         />
                      ))}
+
+                  {/* {messages.length === 0 && ""} */}
                </Box>
                <GridItem>
                   <Box p={{ md: '1rem', base: '10px' }}>

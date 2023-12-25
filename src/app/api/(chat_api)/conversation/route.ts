@@ -1,8 +1,14 @@
+import { auth } from '@clerk/nextjs';
 import { disconnectDB } from '@libs/connectDB';
 import { getConversationRef } from '@libs/conversationDetails';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
+   const { userId } = auth();
+   if (!userId) {
+      return new Response('Unauthorized', { status: 401 });
+   }
+
    const data = await req.json();
 
    const doc = await getConversationRef();

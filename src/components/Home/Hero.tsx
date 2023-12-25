@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 import { Avatar, AvatarGroup, Box, Flex, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
 import Card from '@components/UI/Card';
@@ -80,9 +79,9 @@ const Hero = () => {
                   <Flex align={'center'} px='.4rem' flexWrap={'wrap'} gap={'1rem'}>
                      <Flex gap='1rem'>
                         <AvatarGroup size='md' max={3}>
-                           <Avatar name='Random Ellipse 1' src='/assets/ellipse1.png' />
-                           <Avatar name='Random Ellipse 1' src='/assets/ellipse2.png' />
-                           <Avatar name='Random Ellipse 1' src='/assets/ellipse3.png' />
+                           {[1, 2, 3].map((el) => (
+                              <Avatar name={`Random Ellipse ${el}`} src={`/assets/ellipse${el}.png`} key={el} />
+                           ))}
                         </AvatarGroup>
                         <Box>
                            <DynamicText fontSize={'30px'} fontWeight={'700'}>

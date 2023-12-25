@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs';
 import { UserJSON, WebhookEvent } from '@clerk/nextjs/server';
 import { connectDB } from '@libs/connectDB';
 import { updateUser } from '@libs/userDetails';
@@ -7,6 +8,11 @@ import { headers } from 'next/headers';
 import { Webhook } from 'svix';
 
 export async function handler(req: Request) {
+   const { userId } = auth();
+   if (!userId) {
+      return new Response('Unauthorized', { status: 401 });
+   }
+
    const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET_KEY || '';
 
    const headerPayload = headers();

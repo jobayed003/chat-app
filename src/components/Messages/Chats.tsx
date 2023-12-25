@@ -7,90 +7,34 @@ import {
    Flex,
    Grid,
    GridItem,
-   Skeleton,
-   SkeletonCircle,
    Text,
    useColorModeValue,
    useDisclosure,
-   useToast,
 } from '@chakra-ui/react';
-import { useUser } from '@clerk/nextjs';
 import ChatUser from '@components/UI/Message/ChatUser';
 import { SearchBar } from '@components/UI/Message/SearchBar';
 import DynamicText from '@components/UI/Util/DynamicText';
 import AuthContext from '@context/AuthProvider';
+import AppContext from '@context/StateProvider';
 import useConversationId from '@hooks/useConversationId';
-import { useIsOnline } from '@hooks/useIsOnline';
-import { pusherClient } from '@libs/pusher';
-import { useParams, useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { MdMenu, MdMessage } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
 
 const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: Conversation[] }) => {
-   const [showSkeleton, setShowSkeleton] = useState(true);
-   const router = useRouter();
    const { currentUser } = useContext(AuthContext);
 
-   // @ts-ignore
-   const { conversationId } = useParams();
+   const { lastSender } = useContext(AppContext);
 
-   const toast = useToast();
+   console.log(lastSender);
+
    const { isOpen, onOpen, onClose } = useDisclosure();
 
-   const isOnline = useIsOnline();
-
    const borderColor = useColorModeValue('light', 'dark');
-   const { isLoaded } = useUser();
    const { id } = useConversationId();
 
-   useEffect(() => {
-      const messageHandler = (data: MessageDetails) => {
-         router.refresh();
-      };
-
-      const handleEvent = () => {
-         pusherClient.subscribe(id);
-         pusherClient.bind('newMessage', messageHandler);
-      };
-
-      id && handleEvent();
-      return () => {
-         pusherClient.unsubscribe(id);
-         pusherClient.unbind('newMessage', messageHandler);
-      };
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [id]);
-
-   useEffect(() => {
-      const timer = setTimeout(() => {
-         setShowSkeleton(false);
-      }, 4000);
-
-      !isLoaded &&
-         !showSkeleton &&
-         toast({
-            position: 'top-right',
-            title: 'Error Loading',
-            description: 'Something went wrong. Try reloading',
-            status: 'error',
-            duration: 9000,
-            isClosable: true,
-         });
-
-      return () => {
-         clearTimeout(timer);
-      };
-   }, [isLoaded, showSkeleton, toast]);
-
    return (
-      <GridItem
-         w='100%'
-         borderRight={borderColor}
-         h={'100dvh'}
-         display={{ base: conversationId ? 'none' : 'block', md: 'block' }}
-      >
+      <GridItem w='100%' borderRight={borderColor} h={'100dvh'} display={{ base: id ? 'none' : 'block', md: 'block' }}>
          <Grid templateRows={'100px 1fr'}>
             <Flex
                borderBlockEnd={borderColor}
@@ -123,24 +67,11 @@ const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: 
                         <ChatUser key={curConversation.conversationId} {...curConversation} />
                      ))}
                </Box>
-               {/* @ts-ignore */}
-               {users.length === 0 && showSkeleton ? (
-                  <Flex gap='.9rem' align='center' px='1rem'>
-                     <Box>
-                        <SkeletonCircle size='10' />
-                     </Box>
-                     <Box display={'flex'} flexDir={'column'} gap='.3rem'>
-                        <Skeleton height='15px' w={'200px'} />
-                        <Skeleton height='15px' w={'200px'} />
-                     </Box>
+
+               {users.length === 0 && (
+                  <Flex justify='center'>
+                     <DynamicText fontSize={'1.5rem'}>No conversation found</DynamicText>
                   </Flex>
-               ) : (
-                  // @ts-ignore
-                  users.length === 0 && (
-                     <Flex justify='center'>
-                        <DynamicText fontSize={'1.5rem'}>No conversation found</DynamicText>
-                     </Flex>
-                  )
                )}
             </Box>
          </Grid>

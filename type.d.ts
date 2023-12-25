@@ -8,22 +8,6 @@ interface CurrentUser {
    createdAt?: string;
 }
 
-// type Conversation = {
-//    name: string;
-//    img: string;
-//    lastActive?: string;
-//    userId: string;
-//    email: string;
-//    currentUser: CurrentUser;
-//    messageDetails?: {
-//       messageStatus?: string;
-//       lastMessage?: string;
-//       sent?: string;
-//    };
-//    status?: string;
-//    conversationId: string;
-// };
-
 type Conversation = {
    conversationId: string;
    users?: string[];

@@ -2,10 +2,8 @@
 
 import { Flex, GridItem } from '@chakra-ui/react';
 import Chats from '@components/Messages/Chats';
-import Spinners from '@components/UI/Spinners';
 import DynamicText from '@components/UI/Util/DynamicText';
 import AppContext from '@context/StateProvider';
-import useConversationId from '@hooks/useConversationId';
 import { useParams } from 'next/navigation';
 import { ReactNode, useContext, useEffect } from 'react';
 
@@ -16,14 +14,16 @@ type MessageLayoutProps = {
 };
 
 const MessageLayout = (props: MessageLayoutProps) => {
-   const { isLoading, setConversation } = useContext(AppContext);
+   const { isLoading, setConversation, setLastSender } = useContext(AppContext);
    const params = useParams();
 
-   const { id } = useConversationId();
-
    useEffect(() => {
-      const currentConv = props.conversations.filter((c) => c.conversationId === id)[0];
-      setConversation(currentConv);
+      props.users.forEach((user, idx) => {
+         const currentConv = props.conversations.filter((c) => c.users?.includes(user.id))[idx];
+         setConversation(currentConv);
+         setLastSender(currentConv?.chats?.senderId);
+      });
+
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [params?.conversationId]);
 
@@ -39,11 +39,11 @@ const MessageLayout = (props: MessageLayoutProps) => {
             </Flex>
          )}
 
-         {!params?.conversationId && isLoading && (
+         {/* {!params?.conversationId && isLoading && (
             <GridItem height={'100vh'} display={{ base: 'none', md: 'block' }}>
                <Spinners />
             </GridItem>
-         )}
+         )} */}
       </>
    );
 };

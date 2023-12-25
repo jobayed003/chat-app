@@ -2,12 +2,18 @@
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/UI/Util/DynamicText';
+import AppContext from '@context/StateProvider';
+
 import { compareDates } from '@libs/compareDates';
+import { pusherClient } from '@libs/pusher';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { memo, useState } from 'react';
+import { memo, useContext, useEffect, useState } from 'react';
 
 const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => {
+   const [messages, setMessages] = useState({ lastSent: '', texts: [''] });
+   const { lastSender } = useContext(AppContext);
+
    const [isClicked, setIsClicked] = useState(false);
    const router = useRouter();
    const { user } = useUser();
@@ -40,6 +46,26 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
    //    // eslint-disable-next-line react-hooks/exhaustive-deps
    // }, [id]);
 
+   useEffect(() => {
+      const messageHandler = (data: MessageDetails) => {
+         setMessages((prevState) => ({ lastSent: data.sent, texts: [...prevState.texts, data.message] }));
+      };
+
+      pusherClient.subscribe(conversationId);
+      pusherClient.bind('newMessage', messageHandler);
+
+      return () => {
+         pusherClient.unsubscribe(conversationId);
+         pusherClient.unbind('newMessage', messageHandler);
+      };
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [conversationId]);
+
+   useEffect(() => {
+      chats && setMessages({ lastSent: chats.sent, texts: chats.text });
+   }, []);
+
    return (
       <Box
          cursor={'pointer'}
@@ -61,8 +87,10 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                <Box>
                   <DynamicText fontSize='1rem'>{conversationUser.username}</DynamicText>
                   <DynamicText color={'gray'} fontSize='12px'>
-                     {chats?.senderId === user?.id ? 'You:' : ''} {chats?.text?.at(-1)}
-                     {!chats && 'Joined ' + compareDates(+conversationUser.createdAt!).difference.humanize() + ' ago'}
+                     {lastSender === user?.id ? 'You:' : ''}
+                     {messages.texts.length === 0
+                        ? 'Joined ' + compareDates(+conversationUser.createdAt!).difference.humanize() + ' ago'
+                        : messages.texts.at(-1)}
                   </DynamicText>
 
                   {/* <DynamicText fontSize={'12px'} color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}>
@@ -72,10 +100,10 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
             </Flex>
             <Flex direction={'column'} gap={'.5rem'}>
                <DynamicText fontSize='12px' color={'gray'}>
-                  {chats?.sent}
+                  {messages.lastSent}
                </DynamicText>
 
-               {chats && chats?.senderId !== user?.id && (
+               {lastSender !== user?.id && (
                   <Flex
                      bg={'#D34242'}
                      borderRadius={'50%'}
@@ -86,7 +114,8 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                      h='15px'
                   >
                      <DynamicText fontSize={'12px'} color={'#fff'}>
-                        {chats?.text?.length}
+                        {/* {chats?.text?.length} */}
+                        {messages.texts.length}
                      </DynamicText>
                   </Flex>
                )}

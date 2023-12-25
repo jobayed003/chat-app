@@ -4,11 +4,13 @@ import { messageDetailsInitState } from '@config/app';
 import { Dispatch, SetStateAction, createContext, useState } from 'react';
 
 interface ContextType {
+   lastSender: string;
    isClicked: boolean;
    conversation: Conversation;
    messageDetails: MessageDetails;
    isLoading: boolean;
 
+   setLastSender: Dispatch<SetStateAction<string>>;
    setIsClicked: Dispatch<SetStateAction<boolean>>;
    setIsLoading: Dispatch<SetStateAction<boolean>>;
    setMessageDetails: Dispatch<SetStateAction<MessageDetails>>;
@@ -34,6 +36,7 @@ const initConversation = {
 };
 
 const initContextType: ContextType = {
+   lastSender: '',
    isClicked: true,
    isLoading: false,
    conversation: initConversation,
@@ -42,6 +45,7 @@ const initContextType: ContextType = {
    setMessageDetails: () => {},
    setConversation: () => {},
    setIsClicked: () => {},
+   setLastSender: () => {},
    setIsLoading: () => {},
 };
 
@@ -50,6 +54,7 @@ const AppContext = createContext<ContextType>(initContextType);
 export const AppContextProvider = ({ children }: ChildrenType) => {
    const [messageDetails, setMessageDetails] = useState(messageDetailsInitState);
    const [conversation, setConversation] = useState<Conversation>(initConversation);
+   const [lastSender, setLastSender] = useState<string>('');
 
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const [isClicked, setIsClicked] = useState<boolean>(true);
@@ -59,7 +64,9 @@ export const AppContextProvider = ({ children }: ChildrenType) => {
       messageDetails,
       isLoading,
       conversation,
+      lastSender,
 
+      setLastSender,
       setConversation,
       setIsLoading,
       setMessageDetails,
