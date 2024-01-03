@@ -84,7 +84,7 @@ const SideBar = ({ user, onClose }: SideBarProps) => {
                   ) : (
                      <>
                         <DynamicText as={'p'} m='0'>
-                           {currentUser?.userName}
+                           {currentUser?.username}
                         </DynamicText>
                         <Link href={'/signin'} onClick={() => signOut()}>
                            <DynamicText color={'graytext'} fontSize={'.9rem'}>

@@ -1,5 +1,6 @@
 import { auth, clerkClient } from '@clerk/nextjs';
 import { Db, ObjectId } from 'mongodb';
+import { revalidatePath } from 'next/cache';
 import { connectDB } from './connectDB';
 
 export const getConversationRef = async () => {
@@ -52,7 +53,13 @@ export const updateConversation = async (id: string, lastChat: lastChat) => {
    const isCurrentUser = lastChat.lastSender === userId;
 
    if (isCurrentUser) {
-      const updateMessage = { $set: { 'chats.sent': lastChat.sent }, $push: { 'chats.text': lastChat.text } };
+      const updateMessage = {
+         $set: {
+            'chats.sent': lastChat.sent,
+            'chats.senderId': lastChat.senderId,
+         },
+         $push: { 'chats.texts': lastChat.text },
+      };
       await doc.updateOne({ _id: new ObjectId(id) }, updateMessage);
    } else {
       const update = {
@@ -60,7 +67,7 @@ export const updateConversation = async (id: string, lastChat: lastChat) => {
             'chats.sent': lastChat.sent,
             'chats.senderId': lastChat.senderId,
             'chats.seen': lastChat.seen,
-            'chats.text': [lastChat.text],
+            'chats.texts': [lastChat.text],
          },
       };
       // @ts-ignore

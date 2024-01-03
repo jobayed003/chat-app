@@ -3,7 +3,6 @@ import { connectDB } from '@libs/connectDB';
 import { updateConversation } from '@libs/conversationDetails';
 import { pusherServer } from '@libs/pusher';
 import { Db } from 'mongodb';
-import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -14,6 +13,7 @@ export async function POST(req: NextRequest) {
       }
 
       const data = await req.json();
+      await pusherServer.trigger(data.conversationId, 'newMessage', data);
 
       const db = (await connectDB()) as Db;
 
@@ -29,8 +29,6 @@ export async function POST(req: NextRequest) {
 
       const result = await Messages.insertOne(newMessage);
 
-      await pusherServer.trigger(data.conversationId, 'newMessage', data);
-
       const updatedConv = {
          text: data.message,
          sent: data.sent,
@@ -40,8 +38,6 @@ export async function POST(req: NextRequest) {
       };
 
       await updateConversation(data.conversationId, updatedConv);
-
-      revalidatePath(`/dashboard/messages/${data.conversationId}`, 'page');
 
       return NextResponse.json({ docId: result.insertedId });
    } catch (err) {

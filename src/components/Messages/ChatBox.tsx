@@ -44,7 +44,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
 
    const router = useRouter();
 
-   const { isLoading, lastSender, setMessageDetails, setIsLoading, setLastSender } = useContext(AppContext);
+   const { isLoading, lastSender, setMessageDetails, setIsLoading } = useContext(AppContext);
 
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
@@ -92,7 +92,6 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
          sent: moment().format('hh:mm a'),
       };
 
-      setLastSender(user?.id!);
       await fetch('/api/messages', {
          method: 'POST',
          body: JSON.stringify(tempData),

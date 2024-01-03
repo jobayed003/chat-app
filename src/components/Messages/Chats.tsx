@@ -26,8 +26,6 @@ const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: 
 
    const { lastSender } = useContext(AppContext);
 
-   console.log(lastSender);
-
    const { isOpen, onOpen, onClose } = useDisclosure();
 
    const borderColor = useColorModeValue('light', 'dark');

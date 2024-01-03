@@ -23,7 +23,7 @@ const initConversation = {
       senderId: '',
       recieverId: '',
       seen: false,
-      text: [''],
+      texts: [''],
       sent: '',
    },
    conversationUser: {

@@ -12,7 +12,7 @@ import { memo, useContext, useEffect, useState } from 'react';
 
 const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => {
    const [messages, setMessages] = useState({ lastSent: '', texts: [''] });
-   const { lastSender } = useContext(AppContext);
+   const { lastSender, setLastSender } = useContext(AppContext);
 
    const [isClicked, setIsClicked] = useState(false);
    const router = useRouter();
@@ -48,7 +48,13 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
 
    useEffect(() => {
       const messageHandler = (data: MessageDetails) => {
-         setMessages((prevState) => ({ lastSent: data.sent, texts: [...prevState.texts, data.message] }));
+         if (data.sender === user?.id) {
+            setMessages({ lastSent: '', texts: [] });
+            setMessages((prevState) => ({ lastSent: data.sent, texts: [...prevState?.texts, data.message] }));
+            return;
+         }
+         setMessages((prevState) => ({ lastSent: data.sent, texts: [...prevState?.texts, data.message] }));
+         setLastSender(data.sender);
       };
 
       pusherClient.subscribe(conversationId);
@@ -60,11 +66,15 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
       };
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [conversationId]);
+   }, []);
 
    useEffect(() => {
-      chats && setMessages({ lastSent: chats.sent, texts: chats.text });
-   }, []);
+      if (chats) {
+         setLastSender(chats.senderId);
+         setMessages({ lastSent: chats.sent, texts: chats.texts });
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [chats]);
 
    return (
       <Box
@@ -87,7 +97,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                <Box>
                   <DynamicText fontSize='1rem'>{conversationUser.username}</DynamicText>
                   <DynamicText color={'gray'} fontSize='12px'>
-                     {lastSender === user?.id ? 'You:' : ''}
+                     {lastSender === user?.id ? 'You: ' : ''}
                      {messages.texts.length === 0
                         ? 'Joined ' + compareDates(+conversationUser.createdAt!).difference.humanize() + ' ago'
                         : messages.texts.at(-1)}
@@ -103,7 +113,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                   {messages.lastSent}
                </DynamicText>
 
-               {lastSender !== user?.id && (
+               {!!messages.texts.length && lastSender !== user?.id && (
                   <Flex
                      bg={'#D34242'}
                      borderRadius={'50%'}

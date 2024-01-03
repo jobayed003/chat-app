@@ -15,7 +15,7 @@ type Conversation = {
       senderId: string;
       recieverId: string;
       seen: boolean;
-      text: string[];
+      texts: string[];
       sent: string;
    };
    conversationUser: CurrentUser;
@@ -29,7 +29,7 @@ interface MessageDetails {
    docId?: string;
    conversationId: string;
    user: { email: string; name: string; imgsrc: string };
-   sender: { email: string; seen: boolean };
+   sender: string;
    message: string;
    sent: string;
 }
