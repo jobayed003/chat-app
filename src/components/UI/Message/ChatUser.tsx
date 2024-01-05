@@ -114,14 +114,12 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
          const lastMessage = chats.texts.at(-1)!;
          dispatch({
             type: 'ADD',
-            payload: { lastTextsLength: chats.texts.length, lastMessage, lastSent: chats.sent },
+            payload: { lastTextsLength: chats.texts.length + 1, lastMessage, lastSent: chats.sent },
          });
          // setMessages({ lastSent: chats.sent, texts: chats.texts });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
-   console.log(state);
-
    return (
       <Box
          cursor={'pointer'}
@@ -171,7 +169,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                   >
                      <DynamicText fontSize={'12px'} color={'#fff'}>
                         {/* {chats?.text?.length} */}
-                        {state.lastTextsLength}
+                        {state.lastTextsLength - 1}
                      </DynamicText>
                   </Flex>
                )}
