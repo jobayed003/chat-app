@@ -1,25 +1,42 @@
 'use client';
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
-import { useUser } from '@clerk/nextjs';
 import DynamicText from '@components/UI/Util/DynamicText';
+import AuthContext from '@context/AuthProvider';
 import AppContext from '@context/StateProvider';
 
 import { compareDates } from '@libs/compareDates';
 import { pusherClient } from '@libs/pusher';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { memo, useContext, useEffect, useState } from 'react';
+import { memo, useContext, useEffect, useReducer, useState } from 'react';
+
+type State = { lastSent: string; lastTextsLength: number; lastMessage: string };
+
+type Action = { type: 'ADD' | 'UPDATE'; payload: State };
+
+const messageReducer = (state: State, action: Action): State => {
+   switch (action.type) {
+      case 'ADD':
+         return { ...action.payload };
+      case 'UPDATE':
+         return {
+            ...action.payload,
+            lastTextsLength: state.lastTextsLength + action.payload.lastTextsLength,
+         };
+      default:
+         return state;
+   }
+};
 
 const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => {
-   const [messages, setMessages] = useState({ lastSent: '', texts: [''] });
+   const [state, dispatch] = useReducer(messageReducer, { lastSent: '', lastTextsLength: 0, lastMessage: '' });
    const { lastSender, setLastSender } = useContext(AppContext);
+   const { currentUser } = useContext(AuthContext);
 
    const [isClicked, setIsClicked] = useState(false);
    const router = useRouter();
-   const { user } = useUser();
 
    const bgColor = useColorModeValue('#ddd', 'blue.800');
-
    // const handleClick = useCallback(async () => {
    //    // try {
    //    //    setIsLoading(true);
@@ -46,15 +63,38 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
    //    // eslint-disable-next-line react-hooks/exhaustive-deps
    // }, [id]);
 
+   // console.log(messageDetails);
+
    useEffect(() => {
-      const messageHandler = (data: MessageDetails) => {
-         if (data.sender === user?.id) {
-            setMessages({ lastSent: '', texts: [] });
-            setMessages((prevState) => ({ lastSent: data.sent, texts: [...prevState?.texts, data.message] }));
-            return;
-         }
-         setMessages((prevState) => ({ lastSent: data.sent, texts: [...prevState?.texts, data.message] }));
+      const messageHandler = async (data: MessageDetails) => {
          setLastSender(data.sender);
+         if (data.sender !== currentUser.id) {
+            console.log(state.lastTextsLength);
+
+            if (state.lastTextsLength > 0) {
+               console.log(state.lastTextsLength, 'yes');
+
+               dispatch({
+                  type: 'ADD',
+                  payload: { lastMessage: data.message, lastSent: data.sent, lastTextsLength: 1 },
+               });
+               return;
+            } else {
+               dispatch({
+                  type: 'UPDATE',
+                  payload: {
+                     lastMessage: data.message,
+                     lastSent: data.sent,
+                     lastTextsLength: 1,
+                  },
+               });
+            }
+         } else {
+            dispatch({
+               type: 'ADD',
+               payload: { lastMessage: data.message, lastSent: data.sent, lastTextsLength: 1 },
+            });
+         }
       };
 
       pusherClient.subscribe(conversationId);
@@ -71,10 +111,16 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
    useEffect(() => {
       if (chats) {
          setLastSender(chats.senderId);
-         setMessages({ lastSent: chats.sent, texts: chats.texts });
+         const lastMessage = chats.texts.at(-1)!;
+         dispatch({
+            type: 'ADD',
+            payload: { lastTextsLength: chats.texts.length, lastMessage, lastSent: chats.sent },
+         });
+         // setMessages({ lastSent: chats.sent, texts: chats.texts });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [chats]);
+   }, []);
+   console.log(state);
 
    return (
       <Box
@@ -97,10 +143,10 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                <Box>
                   <DynamicText fontSize='1rem'>{conversationUser.username}</DynamicText>
                   <DynamicText color={'gray'} fontSize='12px'>
-                     {lastSender === user?.id ? 'You: ' : ''}
-                     {messages.texts.length === 0
+                     {lastSender === currentUser.id ? 'You: ' : ''}
+                     {state.lastTextsLength === 0
                         ? 'Joined ' + compareDates(+conversationUser.createdAt!).difference.humanize() + ' ago'
-                        : messages.texts.at(-1)}
+                        : state.lastMessage}
                   </DynamicText>
 
                   {/* <DynamicText fontSize={'12px'} color={messageDetails.messageStatus === 'typing' ? '#2F9167' : 'gray'}>
@@ -110,10 +156,10 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
             </Flex>
             <Flex direction={'column'} gap={'.5rem'}>
                <DynamicText fontSize='12px' color={'gray'}>
-                  {messages.lastSent}
+                  {state.lastSent}
                </DynamicText>
 
-               {!!messages.texts.length && lastSender !== user?.id && (
+               {!!state.lastTextsLength && lastSender !== currentUser.id && (
                   <Flex
                      bg={'#D34242'}
                      borderRadius={'50%'}
@@ -125,7 +171,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                   >
                      <DynamicText fontSize={'12px'} color={'#fff'}>
                         {/* {chats?.text?.length} */}
-                        {messages.texts.length}
+                        {state.lastTextsLength}
                      </DynamicText>
                   </Flex>
                )}

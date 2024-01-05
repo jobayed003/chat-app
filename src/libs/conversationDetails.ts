@@ -1,6 +1,5 @@
 import { auth, clerkClient } from '@clerk/nextjs';
 import { Db, ObjectId } from 'mongodb';
-import { revalidatePath } from 'next/cache';
 import { connectDB } from './connectDB';
 
 export const getConversationRef = async () => {
@@ -25,6 +24,10 @@ export const getConversationUser = async (id: string) => {
    const { userId } = auth();
 
    const conversationUser = conversationDetails?.users.filter((user: string) => user !== userId)[0];
+
+   if (!conversationUser) {
+      return null;
+   }
 
    const user = await clerkClient.users.getUser(conversationUser);
    return {

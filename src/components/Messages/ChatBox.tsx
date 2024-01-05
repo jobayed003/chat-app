@@ -44,7 +44,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
 
    const router = useRouter();
 
-   const { isLoading, lastSender, setMessageDetails, setIsLoading } = useContext(AppContext);
+   const { isLoading, lastSender, setMessageDetails, setIsLoading, setLastSender } = useContext(AppContext);
 
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
@@ -84,13 +84,14 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
    const sendMessage = async () => {
       const tempData = {
          conversationId,
-         user: { email: currentUserEmail, name: user?.username, imgsrc: user?.imageUrl },
-         sender: user?.id,
+         user: { email: currentUserEmail, name: user!.username, imgsrc: user!.imageUrl },
+         sender: user!.id,
          seen: false,
          message: currentMessage,
          lastSender,
          sent: moment().format('hh:mm a'),
       };
+      setLastSender(user?.id!);
 
       await fetch('/api/messages', {
          method: 'POST',

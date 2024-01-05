@@ -24,8 +24,6 @@ import SideBar from '../Dashboard/SideBar';
 const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: Conversation[] }) => {
    const { currentUser } = useContext(AuthContext);
 
-   const { lastSender } = useContext(AppContext);
-
    const { isOpen, onOpen, onClose } = useDisclosure();
 
    const borderColor = useColorModeValue('light', 'dark');

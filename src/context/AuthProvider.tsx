@@ -7,7 +7,7 @@ type ContextType = {
    setCurrentUser: Dispatch<SetStateAction<{}>>;
 };
 
-const initUser = { id: '', userName: '', firstName: '', lastName: '', imageUrl: '' };
+const initUser = { id: '', username: '', firstName: '', lastName: '', imageUrl: '' };
 const initContextType: ContextType = {
    currentUser: initUser,
 
