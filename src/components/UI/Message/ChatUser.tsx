@@ -69,11 +69,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
       const messageHandler = async (data: MessageDetails) => {
          setLastSender(data.sender);
          if (data.sender !== currentUser.id) {
-            console.log(state.lastTextsLength);
-
             if (state.lastTextsLength > 0) {
-               console.log(state.lastTextsLength, 'yes');
-
                dispatch({
                   type: 'ADD',
                   payload: { lastMessage: data.message, lastSent: data.sent, lastTextsLength: 1 },
@@ -116,7 +112,6 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
             type: 'ADD',
             payload: { lastTextsLength: chats.texts.length + 1, lastMessage, lastSent: chats.sent },
          });
-         // setMessages({ lastSent: chats.sent, texts: chats.texts });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);

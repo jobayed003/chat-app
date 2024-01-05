@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
    const userData = await getConversationUser(params?.conversationId);
 
    return {
-      title: userData?.username ?? 'Messages' + ' | chatIT',
+      title: userData ? userData.username + ' | chatIT' : 'Messages | chatIT',
       description: 'Personal chatting app created by github user jobayed003',
       keywords: 'chat app, video calling app, javascript',
    };

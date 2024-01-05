@@ -199,7 +199,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
                            name={msgCnt.user.name}
                            message={msgCnt.message}
                            // @ts-ignore
-                           key={msgCnt.docId}
+                           key={msgCnt.docId ?? msgCnt.sent + msgCnt.message}
                            isOwnMessage={currentUserEmail === msgCnt.user.email}
                            sent={msgCnt.sent}
                         />
