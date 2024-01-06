@@ -3,6 +3,7 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import DynamicText from '@components/UI/Util/DynamicText';
 import AuthContext from '@context/AuthProvider';
 import AppContext from '@context/StateProvider';
+import useConversationId from '@hooks/useConversationId';
 
 import { compareDates } from '@libs/compareDates';
 import { pusherClient } from '@libs/pusher';
@@ -10,7 +11,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { memo, useContext, useEffect, useReducer, useState } from 'react';
 
-type State = { lastSent: string; lastTextsLength: number; lastMessage: string };
+type State = { lastSent: string; lastTextsLength: number; lastMessage: string; isSeen: boolean };
 
 type Action = { type: 'ADD' | 'UPDATE'; payload: State };
 
@@ -29,9 +30,16 @@ const messageReducer = (state: State, action: Action): State => {
 };
 
 const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => {
-   const [state, dispatch] = useReducer(messageReducer, { lastSent: '', lastTextsLength: 0, lastMessage: '' });
+   const [state, dispatch] = useReducer(messageReducer, {
+      lastSent: '',
+      lastTextsLength: 0,
+      lastMessage: '',
+      isSeen: false,
+   });
+
    const { lastSender, setLastSender } = useContext(AppContext);
    const { currentUser } = useContext(AuthContext);
+   const { id } = useConversationId();
 
    const [isClicked, setIsClicked] = useState(false);
    const router = useRouter();
@@ -64,17 +72,27 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
    // }, [id]);
 
    // console.log(messageDetails);
+   const updateSeenStatus = async ({ id }: { id: string }) => {
+      await fetch('/api/messages/seen', { method: 'POST', body: JSON.stringify({ id }) });
+   };
 
    useEffect(() => {
       const messageHandler = async (data: MessageDetails) => {
          setLastSender(data.sender);
+         const seenStatus = id ? true : data.seen;
          if (data.sender !== currentUser.id) {
+            await updateSeenStatus({ id: conversationId });
+
             if (state.lastTextsLength > 0) {
                dispatch({
                   type: 'ADD',
-                  payload: { lastMessage: data.message, lastSent: data.sent, lastTextsLength: 1 },
+                  payload: {
+                     lastMessage: data.message,
+                     lastSent: data.sent,
+                     lastTextsLength: 1,
+                     isSeen: seenStatus,
+                  },
                });
-               return;
             } else {
                dispatch({
                   type: 'UPDATE',
@@ -82,13 +100,14 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                      lastMessage: data.message,
                      lastSent: data.sent,
                      lastTextsLength: 1,
+                     isSeen: seenStatus,
                   },
                });
             }
          } else {
             dispatch({
                type: 'ADD',
-               payload: { lastMessage: data.message, lastSent: data.sent, lastTextsLength: 1 },
+               payload: { lastMessage: data.message, lastSent: data.sent, lastTextsLength: 1, isSeen: false },
             });
          }
       };
@@ -102,19 +121,21 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
       };
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
+   }, [conversationId]);
 
    useEffect(() => {
       if (chats) {
          setLastSender(chats.senderId);
          const lastMessage = chats.texts.at(-1)!;
+
          dispatch({
             type: 'ADD',
-            payload: { lastTextsLength: chats.texts.length + 1, lastMessage, lastSent: chats.sent },
+            payload: { lastTextsLength: chats.texts.length + 1, lastMessage, lastSent: chats.sent, isSeen: chats.seen },
          });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
+   }, [id]);
+
    return (
       <Box
          cursor={'pointer'}
@@ -122,8 +143,9 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
          bg={isClicked ? bgColor : ''}
          borderRadius={'5px'}
          px='.5rem'
-         onClick={() => {
+         onClick={async () => {
             setIsClicked(true);
+            !id && (await updateSeenStatus({ id: conversationId }));
             router.push(`/dashboard/messages/${conversationId}`);
          }}
       >
@@ -135,7 +157,10 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
 
                <Box>
                   <DynamicText fontSize='1rem'>{conversationUser.username}</DynamicText>
-                  <DynamicText color={'gray'} fontSize='12px'>
+                  <DynamicText
+                     color={lastSender !== currentUser.id && !state.isSeen ? 'white' : 'gray'}
+                     fontSize='12px'
+                  >
                      {lastSender === currentUser.id ? 'You: ' : ''}
                      {state.lastTextsLength === 0
                         ? 'Joined ' + compareDates(+conversationUser.createdAt!).difference.humanize() + ' ago'
@@ -148,11 +173,11 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                </Box>
             </Flex>
             <Flex direction={'column'} gap={'.5rem'}>
-               <DynamicText fontSize='12px' color={'gray'}>
+               <DynamicText fontSize='12px' color={lastSender !== currentUser.id && !state.isSeen ? 'white' : 'gray'}>
                   {state.lastSent}
                </DynamicText>
 
-               {!!state.lastTextsLength && lastSender !== currentUser.id && (
+               {!state.isSeen && !!state.lastTextsLength && lastSender !== currentUser.id && (
                   <Flex
                      bg={'#D34242'}
                      borderRadius={'50%'}

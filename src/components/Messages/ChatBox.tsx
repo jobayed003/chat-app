@@ -1,4 +1,5 @@
 'use client';
+import { authToken, createMeeting } from '@api';
 import {
    Box,
    Flex,
@@ -11,11 +12,11 @@ import {
    InputRightElement,
    useColorModeValue,
 } from '@chakra-ui/react';
-import { useUser } from '@clerk/nextjs';
 import MessageBox from '@components/Messages/MessageBox';
 import Spinners from '@components/UI/Spinners';
 import DynamicText from '@components/UI/Util/DynamicText';
 import { messageDetailsInitState } from '@config/app';
+import AuthContext from '@context/AuthProvider';
 import AppContext from '@context/StateProvider';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
@@ -24,7 +25,7 @@ import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { FaArrowLeft, FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
-import { MdSend } from 'react-icons/md';
+import { MdCall, MdSend, MdVideoCall } from 'react-icons/md';
 
 type ChatBoxProps = {
    name: string;
@@ -45,6 +46,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
    const router = useRouter();
 
    const { isLoading, lastSender, setMessageDetails, setIsLoading, setLastSender } = useContext(AppContext);
+   const { currentUser } = useContext(AuthContext);
 
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
@@ -52,9 +54,6 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
    const chatBoxBG = useColorModeValue('bgWhite', 'dark');
 
    const isOnline = useIsOnline();
-   const { user } = useUser();
-
-   const currentUserEmail = user?.primaryEmailAddress?.emailAddress!;
 
    useEffect(() => {
       const messageHandler = (data: MessageDetails) => {
@@ -84,14 +83,14 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
    const sendMessage = async () => {
       const tempData = {
          conversationId,
-         user: { email: currentUserEmail, name: user!.username, imgsrc: user!.imageUrl },
-         sender: user!.id,
+         user: { email: currentUser.email, name: currentUser.username, imgsrc: currentUser.imageUrl },
+         sender: currentUser.id,
          seen: false,
          message: currentMessage,
          lastSender,
          sent: moment().format('hh:mm a'),
       };
-      setLastSender(user?.id!);
+      setLastSender(currentUser.id);
 
       await fetch('/api/messages', {
          method: 'POST',
@@ -100,36 +99,36 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
 
       setCurrentMessage('');
    };
-   // const openNewTab = async (videoCall: boolean) => {
-   //    const screenWidth = window.screen.width;
-   //    const screenHeight = window.screen.height;
+   const openNewTab = async (videoCall: boolean) => {
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height;
 
-   //    const newWidth = screenWidth * 0.5;
-   //    const newHeight = screenHeight * 0.5;
-   //    const left = (screenWidth - newWidth) / 2;
-   //    const top = (screenHeight - newHeight) / 2;
+      const newWidth = screenWidth * 0.5;
+      const newHeight = screenHeight * 0.5;
+      const left = (screenWidth - newWidth) / 2;
+      const top = (screenHeight - newHeight) / 2;
 
-   //    const windowFeatures = `width=${newWidth},height=${newHeight},left=${left},top=${top}`;
+      const windowFeatures = `width=${newWidth},height=${newHeight},left=${left},top=${top}`;
 
-   //    const callId = await createMeeting({ token: authToken });
-   //    const url = `/groupcall?conversation_id=${id}&call_id=${callId}&has_video=${videoCall}&user_to_ring=${name}&called_by=${user?.username}`;
+      const callId = await createMeeting({ token: authToken });
+      const url = `/groupcall?conversation_id=${conversationId}&call_id=${callId}&has_video=${videoCall}&user_to_ring=${name}&called_by=${currentUser.username}`;
 
-   //    await fetch('/api/video', {
-   //       method: 'POST',
-   //       body: JSON.stringify({
-   //          id,
-   //          callId,
-   //          calledBy: user?.username,
-   //          isVideo: videoCall,
-   //          userToRing: name,
-   //          url,
-   //       }),
-   //    });
+      await fetch('/api/video', {
+         method: 'POST',
+         body: JSON.stringify({
+            id: conversationId,
+            callId,
+            calledBy: currentUser.username,
+            isVideo: videoCall,
+            userToRing: name,
+            url,
+         }),
+      });
 
-   //    if (callId) {
-   //       open(window.origin + url, 'NewWindow', windowFeatures);
-   //    }
-   // };
+      if (callId) {
+         open(window.origin + url, 'NewWindow', windowFeatures);
+      }
+   };
 
    const addEmoji = (e: EmojiClickData) => {
       let sym = e.unified.split('-');
@@ -145,11 +144,11 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
          {isLoading ? (
             <Spinners />
          ) : (
-            <Grid templateRows={'100px 1fr auto'} height={'100%'}>
+            <Grid templateRows={{ md: '100px 1fr auto', sm: '70px 1fr auto' }} height={'100%'}>
                <GridItem borderBottom={borderColor}>
-                  <Flex align={'center'} gap='1rem' p='2rem 1.5rem'>
+                  <Flex align={'center'} gap='1rem' p={{ md: '2rem 1.5rem', sm: '1.2rem' }}>
                      <Box
-                        fontSize={'1.2rem'}
+                        fontSize={{ md: '1.2rem', sm: '.9rem' }}
                         color={textColor}
                         display={{ md: 'none', base: 'block' }}
                         onClick={() => {
@@ -173,7 +172,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
                            {!isOnline && !isTypingState.status && 'Offline'}
                         </DynamicText>
                      </Box>
-                     {/*     <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
+                     <Flex ml={'auto'} align='center' gap='1rem' pr='.8rem' cursor={'pointer'}>
                         <MdVideoCall
                            fontSize={'2rem'}
                            onClick={() => {
@@ -187,7 +186,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
                               openNewTab(false);
                            }}
                         />
-                     </Flex> */}
+                     </Flex>
                   </Flex>
                </GridItem>
                <Box bg={chatBoxBG} overflowY={messages.length > 0 ? 'scroll' : 'hidden'}>
@@ -200,7 +199,7 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
                            message={msgCnt.message}
                            // @ts-ignore
                            key={msgCnt.docId ?? msgCnt.sent + msgCnt.message}
-                           isOwnMessage={currentUserEmail === msgCnt.user.email}
+                           isOwnMessage={currentUser.email === msgCnt.user.email}
                            sent={msgCnt.sent}
                         />
                      ))}

@@ -32,4 +32,5 @@ interface MessageDetails {
    sender: string;
    message: string;
    sent: string;
+   seen: boolean;
 }

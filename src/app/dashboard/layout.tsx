@@ -31,6 +31,7 @@ const RootLayout = async ({ children }: ChildrenType) => {
             firstName: user.firstName!,
             lastName: user.lastName!,
             imageUrl: user.imageUrl!,
+            email: user.emailAddresses[0].emailAddress,
          }}
       >
          {children}
