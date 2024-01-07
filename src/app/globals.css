@@ -97,3 +97,11 @@ a {
     color-scheme: light;
   }
 } */
+body.light-mode {
+   --lightmode: block;
+   --darkmode: none;
+}
+
+.light {
+   display: var(--lightmode);
+}

@@ -14,10 +14,10 @@ import {
 import { UserButton, useAuth } from '@clerk/nextjs';
 import DynamicText from '@components/UI/Util/DynamicText';
 import { buttonStyles } from '@config/data';
-import AuthContext from '@context/AuthProvider';
+import { useAuthState } from '@context/AuthProvider';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { AiOutlineMessage, AiOutlineSetting } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
@@ -27,7 +27,7 @@ type SideBarProps = {
 };
 
 const SideBar = ({ user, onClose }: SideBarProps) => {
-   const { currentUser, setCurrentUser } = useContext(AuthContext);
+   const { currentUser, setCurrentUser } = useAuthState();
 
    const { colorMode, toggleColorMode } = useColorMode();
    const borderColor = useColorModeValue('light', 'dark');
@@ -48,12 +48,14 @@ const SideBar = ({ user, onClose }: SideBarProps) => {
             alignItems={'center'}
             justifyContent={'space-between'}
          >
-            <DynamicText marginLeft={'.5rem'} color={'colors.secondary'} fontFamily={'DM Sans'} fontWeight={'bold'}>
-               <Text as={'span'} color={'colors.primary'}>
-                  chat
-               </Text>
-               IT
-            </DynamicText>
+            <Link href={'/dashboard/messages'}>
+               <DynamicText marginLeft={'.5rem'} color={'colors.secondary'} fontFamily={'DM Sans'} fontWeight={'bold'}>
+                  <Text as={'span'} color={'colors.primary'}>
+                     chat
+                  </Text>
+                  IT
+               </DynamicText>
+            </Link>
             <CloseButton
                fontSize={'1rem'}
                px='2rem'

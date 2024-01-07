@@ -14,15 +14,13 @@ import {
 import ChatUser from '@components/UI/Message/ChatUser';
 import { SearchBar } from '@components/UI/Message/SearchBar';
 import DynamicText from '@components/UI/Util/DynamicText';
-import AuthContext from '@context/AuthProvider';
-import AppContext from '@context/StateProvider';
+import { useAuthState } from '@context/AuthProvider';
 import useConversationId from '@hooks/useConversationId';
-import { useContext } from 'react';
 import { MdMenu, MdMessage } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
 
 const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: Conversation[] }) => {
-   const { currentUser } = useContext(AuthContext);
+   const { currentUser } = useAuthState();
 
    const { isOpen, onOpen, onClose } = useDisclosure();
 

@@ -1,11 +1,10 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, useDisclosure } from '@chakra-ui/react';
-import useAuthState from '@hooks/useAuthState';
+import { useAuthState } from '@context/AuthProvider';
 import { pusherClient } from '@libs/pusher';
 import { useEffect, useState } from 'react';
 
 const Ringer = () => {
-   const currentUser = useAuthState();
-
+   const { currentUser } = useAuthState();
    const [callDetails, setCallDetails] = useState({
       isVideo: false,
       callId: '',

@@ -1,7 +1,7 @@
 'use client';
 
 import { messageDetailsInitState } from '@config/app';
-import { Dispatch, SetStateAction, createContext, useState } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 
 interface ContextType {
    lastSender: string;
@@ -75,4 +75,6 @@ export const AppContextProvider = ({ children }: ChildrenType) => {
    return <AppContext.Provider value={contextValue}>{children} </AppContext.Provider>;
 };
 
-export default AppContext;
+export const useAppState = () => {
+   return useContext(AppContext);
+};

@@ -1,7 +1,6 @@
 'use client';
 import { Box, Divider, Flex } from '@chakra-ui/react';
-import Layout from '@components/Layout/Layout';
-import { NavLink } from '@components/UI/NavLink';
+import { default as Layout } from '@components/Layout/HomeLayout';
 import DynamicButton from '@components/UI/Util/DynamicButton';
 import DynamicText from '@components/UI/Util/DynamicText';
 import { variants } from '@config/data';
@@ -21,12 +20,7 @@ const Footer = () => {
             {isVisibile && (
                <motion.div variants={variants} initial='hidden' animate={'visible'}>
                   <Layout sx={{ mb: '2rem' }}>
-                     <DynamicText
-                        fontSize={'2rem'}
-                        fontWeight={'700'}
-                        textAlign={'center'}
-                        px={{ base: '1rem', md: '32%' }}
-                     >
+                     <DynamicText fontSize={'2rem'} fontWeight={'700'} textAlign={'center'} px={{ md: '32%' }}>
                         Ready to grow your connection? Start with chatIT, become faster every second
                      </DynamicText>
                   </Layout>
@@ -44,6 +38,7 @@ const Footer = () => {
             )}
          </Box>
          <FooterBar />
+
          <Flex justify={'center'}>
             <Divider width={{ base: '80%', '2xl': '75%' }} />
          </Flex>
@@ -64,10 +59,9 @@ const Footer = () => {
 
 export default Footer;
 
-const Links = ['About', 'Works', 'Support'];
 const Icons = [
    { link: 'https://github.com/jobayed003', icon: <AiOutlineGithub /> },
-   { link: 'https://www.linkedin.com/in/jobayed-hossain-a2558521b/', icon: <AiFillLinkedin /> },
+   { link: 'https://www.linkedin.com/in/jobayed003', icon: <AiFillLinkedin /> },
    { link: 'https://twitter.com/jobayed803', icon: <AiOutlineTwitter /> },
 ];
 
@@ -79,7 +73,8 @@ const FooterBar = () => {
          mt='2rem'
          fontFamily={'DM Sans'}
          flexDir={{ base: 'column', md: 'row' }}
-         gap='1.9rem'
+         gap='1rem'
+         mx='-4rem'
       >
          <DynamicText color={'colors.secondary'} fontSize={'2.5rem'} fontWeight={'700'}>
             <DynamicText as={'span'} color={'colors.primary'}>
@@ -88,8 +83,8 @@ const FooterBar = () => {
             IT
          </DynamicText>
          <Flex>
-            {Links.map((link) => (
-               <NavLink key={link}>{link}</NavLink>
+            {[1, 2, 3].map((link) => (
+               <div key={link} />
             ))}
          </Flex>
          <Flex gap='1rem' cursor={'pointer'} color={'gray'}>

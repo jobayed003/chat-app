@@ -1,5 +1,5 @@
 'use client';
-import { Dispatch, SetStateAction, createContext, useState } from 'react';
+import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react';
 
 type ContextType = {
    currentUser: CurrentUser;
@@ -28,4 +28,6 @@ export const AuthContextProvider = ({ children }: ChildrenType) => {
    return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
-export default AuthContext;
+export const useAuthState = () => {
+   return useContext(AuthContext);
+};

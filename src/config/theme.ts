@@ -5,6 +5,10 @@ const colors = {
       light: '#ddd',
    },
    colors: {
+      brand: {
+         100: '#f7fafc',
+         900: '#000',
+      },
       primary: '#FB8E0B',
       // primary: '#2D5EFF',
       secondary: 'rgba(253, 96, 3, 1)',

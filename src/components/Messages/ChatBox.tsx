@@ -16,14 +16,14 @@ import MessageBox from '@components/Messages/MessageBox';
 import Spinners from '@components/UI/Spinners';
 import DynamicText from '@components/UI/Util/DynamicText';
 import { messageDetailsInitState } from '@config/app';
-import AuthContext from '@context/AuthProvider';
-import AppContext from '@context/StateProvider';
+import { useAuthState } from '@context/AuthProvider';
+import { useAppState } from '@context/StateProvider';
 import { useIsOnline } from '@hooks/useIsOnline';
 import { pusherClient } from '@libs/pusher';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaMicrophone, FaRegImage, FaRegSmile } from 'react-icons/fa';
 import { MdCall, MdSend, MdVideoCall } from 'react-icons/md';
 
@@ -45,8 +45,8 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
 
    const router = useRouter();
 
-   const { isLoading, lastSender, setMessageDetails, setIsLoading, setLastSender } = useContext(AppContext);
-   const { currentUser } = useContext(AuthContext);
+   const { isLoading, lastSender, setMessageDetails, setIsLoading, setLastSender } = useAppState();
+   const { currentUser } = useAuthState();
 
    const borderColor = useColorModeValue('light', 'dark');
    const bgColor = useColorModeValue('bgWhite', '#2E333D');
@@ -140,13 +140,13 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
    };
 
    return (
-      <GridItem height={'100dvh'}>
+      <GridItem height={'100dvh'} pos={'relative'}>
          {isLoading ? (
             <Spinners />
          ) : (
             <Grid templateRows={{ md: '100px 1fr auto', sm: '70px 1fr auto' }} height={'100%'}>
                <GridItem borderBottom={borderColor}>
-                  <Flex align={'center'} gap='1rem' p={{ md: '2rem 1.5rem', sm: '1.2rem' }}>
+                  <Flex align={'center'} gap='1rem' p={{ md: '2rem 1.5rem', base: '1rem' }}>
                      <Box
                         fontSize={{ md: '1.2rem', sm: '.9rem' }}
                         color={textColor}
@@ -198,13 +198,11 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
                            name={msgCnt.user.name}
                            message={msgCnt.message}
                            // @ts-ignore
-                           key={msgCnt.docId ?? msgCnt.sent + msgCnt.message}
+                           key={msgCnt.docId}
                            isOwnMessage={currentUser.email === msgCnt.user.email}
                            sent={msgCnt.sent}
                         />
                      ))}
-
-                  {/* {messages.length === 0 && ""} */}
                </Box>
                <GridItem>
                   <Box p={{ md: '1rem', base: '10px' }}>

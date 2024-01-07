@@ -5,4 +5,5 @@ export const messageDetailsInitState = {
    sender: '',
    user: { email: '', name: '', imgsrc: '' },
    sent: '',
+   seen: false,
 };

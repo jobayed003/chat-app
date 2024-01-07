@@ -7,10 +7,9 @@ import { variants } from '@config/data';
 import { useIsVisible } from '@hooks/useIsVisible';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
-import Layout from '../Layout/Layout';
-type Props = {};
+import Layout from '../Layout/HomeLayout';
 
-const Feature = (props: Props) => {
+const Feature = () => {
    const ref = useRef(null);
    const isVisible = useIsVisible(ref);
    return (

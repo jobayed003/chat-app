@@ -1,15 +1,15 @@
 'use client';
-import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, useColorModeValue, useToast } from '@chakra-ui/react';
 import DynamicText from '@components/UI/Util/DynamicText';
-import AuthContext from '@context/AuthProvider';
-import AppContext from '@context/StateProvider';
+import { useAuthState } from '@context/AuthProvider';
+import { useAppState } from '@context/StateProvider';
 import useConversationId from '@hooks/useConversationId';
 
 import { compareDates } from '@libs/compareDates';
 import { pusherClient } from '@libs/pusher';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { memo, useContext, useEffect, useReducer, useState } from 'react';
+import { memo, useEffect, useReducer, useState } from 'react';
 
 type State = { lastSent: string; lastTextsLength: number; lastMessage: string; isSeen: boolean };
 
@@ -36,9 +36,10 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
       lastMessage: '',
       isSeen: false,
    });
+   const toast = useToast();
 
-   const { lastSender, setLastSender } = useContext(AppContext);
-   const { currentUser } = useContext(AuthContext);
+   const { lastSender, setLastSender } = useAppState();
+   const { currentUser } = useAuthState();
    const { id } = useConversationId();
 
    const [isClicked, setIsClicked] = useState(false);
@@ -144,9 +145,16 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
          borderRadius={'5px'}
          px='.5rem'
          onClick={async () => {
-            setIsClicked(true);
-            !id && (await updateSeenStatus({ id: conversationId }));
             router.push(`/dashboard/messages/${conversationId}`);
+            setIsClicked(true);
+            // toast({
+            //    title: 'Loading',
+            //    description: '',
+            //    status: 'loading',
+            //    duration: 9000,
+            //    position: 'top-right',
+            // });
+            !id && (await updateSeenStatus({ id: conversationId }));
          }}
       >
          <Flex align={'center'} justify={'space-between'}>

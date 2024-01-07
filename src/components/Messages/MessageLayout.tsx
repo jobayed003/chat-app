@@ -3,9 +3,9 @@
 import { Flex, GridItem } from '@chakra-ui/react';
 import Chats from '@components/Messages/Chats';
 import DynamicText from '@components/UI/Util/DynamicText';
-import AppContext from '@context/StateProvider';
+import { useAppState } from '@context/StateProvider';
 import { useParams } from 'next/navigation';
-import { ReactNode, useContext, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 type MessageLayoutProps = {
    children: ReactNode;
@@ -14,7 +14,7 @@ type MessageLayoutProps = {
 };
 
 const MessageLayout = (props: MessageLayoutProps) => {
-   const { isLoading, setConversation, setLastSender } = useContext(AppContext);
+   const { isLoading, setConversation, setLastSender } = useAppState();
    const params = useParams();
 
    useEffect(() => {

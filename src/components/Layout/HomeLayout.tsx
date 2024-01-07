@@ -6,7 +6,7 @@ type Props = {
    flexOptions?: SystemStyleObject;
 };
 
-const Layout = (props: Props) => {
+const HomeLayout = (props: Props) => {
    return (
       <Box sx={props.sx} px={useBreakpointValue({ base: 1, md: 4, lg: 6 })}>
          <Flex justify={'space-around'} sx={props.flexOptions} flexDir={{ base: 'column', lg: 'row', sm: 'column' }}>
@@ -16,4 +16,4 @@ const Layout = (props: Props) => {
    );
 };
 
-export default Layout;
+export default HomeLayout;

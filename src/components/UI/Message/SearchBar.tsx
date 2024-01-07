@@ -1,7 +1,7 @@
 'use client';
 import { Box, Flex, Input, Modal, ModalBody, ModalContent, ModalOverlay, useDisclosure } from '@chakra-ui/react';
-import { useUser } from '@clerk/nextjs';
 
+import { useAuthState } from '@context/AuthProvider';
 import useSearchDebounce from '@hooks/useSearchDebounce';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { MdSearch } from 'react-icons/md';
@@ -13,9 +13,8 @@ type SearchBarProps = {
 
 export const SearchBar = ({ users }: SearchBarProps) => {
    const [searchedUsers, setSearchedUsers] = useState<CurrentUser[]>(users);
-
+   const { currentUser } = useAuthState();
    const { isOpen, onOpen, onClose } = useDisclosure();
-   const { user } = useUser();
    const [searchedUserName, setSearchedUserName] = useSearchDebounce();
 
    const filterUsers = () => {

@@ -50,6 +50,7 @@ const Hero = () => {
          templateRows={{ base: '1fr auto', sm: '1fr' }}
          gap={{ base: '2rem', md: '' }}
          px={{ base: '1rem', md: '0' }}
+         mt={'2rem'}
       >
          <GridItem display={'flex'} justifyContent={'center'} alignItems={'center'}>
             <motion.div
