@@ -52,7 +52,6 @@ const ConversationDetails = ({ chats, conversationUser, conversationId }: Conver
    useEffect(() => {
       const messageHandler = async (data: MessageDetails) => {
          setLastSender(data.sender);
-         // router.refresh();
 
          const seenStatus = id ? true : data.seen;
          if (data.sender !== currentUser.id) {
@@ -87,16 +86,17 @@ const ConversationDetails = ({ chats, conversationUser, conversationId }: Conver
          }
       };
 
-      pusherClient.subscribe(conversationId);
-      pusherClient.bind('newMessage', messageHandler);
-
+      if (id === conversationId) {
+         pusherClient.subscribe(conversationId);
+         pusherClient.bind('newMessage', messageHandler);
+      }
       return () => {
          pusherClient.unsubscribe(conversationId);
          pusherClient.unbind('newMessage', messageHandler);
       };
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [conversationId]);
+   }, [id]);
 
    useEffect(() => {
       if (chats) {
@@ -115,7 +115,7 @@ const ConversationDetails = ({ chats, conversationUser, conversationId }: Conver
       <Box
          cursor={'pointer'}
          _hover={{ bg: bgColor }}
-         bg={isClicked ? bgColor : ''}
+         bg={id && conversationId === id ? bgColor : ''}
          borderRadius={'5px'}
          px='.5rem'
          onClick={async () => {

@@ -16,9 +16,9 @@ import { SearchBar } from '@components/UI/Message/SearchBar';
 import DynamicText from '@components/UI/Util/DynamicText';
 import { useAuthState } from '@context/AuthProvider';
 import useConversationId from '@hooks/useConversationId';
+import { useEffect } from 'react';
 import { MdMenu, MdMessage } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
-import { useEffect } from 'react';
 
 const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: ConversationDetails[] }) => {
    const { currentUser } = useAuthState();
@@ -28,7 +28,16 @@ const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: 
    const borderColor = useColorModeValue('light', 'dark');
    const { id } = useConversationId();
 
-   // useEffect(() => {}, []);
+   useEffect(() => {
+      const getConversations = async () => {
+         const res = await fetch('/api/user-conversations', { next: { revalidate: 5 } });
+
+         const data = await res.json();
+         // console.log(data);
+      };
+
+      getConversations();
+   }, []);
 
    return (
       <GridItem w='100%' borderRight={borderColor} h={'100dvh'} display={{ base: id ? 'none' : 'block', md: 'block' }}>

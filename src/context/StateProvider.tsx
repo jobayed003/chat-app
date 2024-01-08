@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction, createContext, useContext, useState } from 'r
 interface ContextType {
    lastSender: string;
    isClicked: boolean;
-   conversation: Conversation;
+   conversation: ConversationDetails;
    messageDetails: MessageDetails;
    isLoading: boolean;
 
@@ -14,7 +14,7 @@ interface ContextType {
    setIsClicked: Dispatch<SetStateAction<boolean>>;
    setIsLoading: Dispatch<SetStateAction<boolean>>;
    setMessageDetails: Dispatch<SetStateAction<MessageDetails>>;
-   setConversation: Dispatch<SetStateAction<Conversation>>;
+   setConversation: Dispatch<SetStateAction<ConversationDetails>>;
 }
 
 const initConversation = {
@@ -37,7 +37,7 @@ const initConversation = {
 
 const initContextType: ContextType = {
    lastSender: '',
-   isClicked: true,
+   isClicked: false,
    isLoading: false,
    conversation: initConversation,
    messageDetails: messageDetailsInitState,
@@ -53,11 +53,11 @@ const AppContext = createContext<ContextType>(initContextType);
 
 export const AppContextProvider = ({ children }: ChildrenType) => {
    const [messageDetails, setMessageDetails] = useState(messageDetailsInitState);
-   const [conversation, setConversation] = useState<Conversation>(initConversation);
+   const [conversation, setConversation] = useState<ConversationDetails>(initConversation);
    const [lastSender, setLastSender] = useState<string>('');
 
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const [isClicked, setIsClicked] = useState<boolean>(true);
+   const [isClicked, setIsClicked] = useState<boolean>(false);
 
    const contextValue = {
       isClicked,

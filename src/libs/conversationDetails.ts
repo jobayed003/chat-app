@@ -85,7 +85,7 @@ export const getConversations = async () => {
 
    const conversationCol = doc.find({ users: { $eq: userId } });
 
-   let conversations: Conversation[] = [];
+   let conversations: ConversationDetails[] = [];
 
    for await (const doc of conversationCol) {
       const tempData = {
