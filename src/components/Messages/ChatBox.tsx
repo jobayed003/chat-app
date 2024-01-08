@@ -97,6 +97,8 @@ const ChatBox = ({ name, imageUrl, conversationId, messagesList }: ChatBoxProps)
          body: JSON.stringify(tempData),
       });
 
+      router.refresh();
+
       setCurrentMessage('');
    };
    const openNewTab = async (videoCall: boolean) => {

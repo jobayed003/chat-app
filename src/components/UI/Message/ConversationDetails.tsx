@@ -1,5 +1,5 @@
 'use client';
-import { Box, Flex, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import DynamicText from '@components/UI/Util/DynamicText';
 import { useAuthState } from '@context/AuthProvider';
 import { useAppState } from '@context/StateProvider';
@@ -7,7 +7,6 @@ import useConversationId from '@hooks/useConversationId';
 
 import { compareDates } from '@libs/compareDates';
 import { pusherClient } from '@libs/pusher';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { memo, useEffect, useReducer, useState } from 'react';
 
@@ -29,50 +28,23 @@ const messageReducer = (state: State, action: Action): State => {
    }
 };
 
-const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => {
+const ConversationDetails = ({ chats, conversationUser, conversationId }: ConversationDetails) => {
    const [state, dispatch] = useReducer(messageReducer, {
       lastSent: '',
       lastTextsLength: 0,
       lastMessage: '',
       isSeen: false,
    });
-   const toast = useToast();
+   const [isClicked, setIsClicked] = useState(false);
 
    const { lastSender, setLastSender } = useAppState();
    const { currentUser } = useAuthState();
-   const { id } = useConversationId();
-
-   const [isClicked, setIsClicked] = useState(false);
    const router = useRouter();
 
-   const bgColor = useColorModeValue('#ddd', 'blue.800');
-   // const handleClick = useCallback(async () => {
-   //    // try {
-   //    //    setIsLoading(true);
-   //    //    const res = await fetch('/api/conversation', {
-   //    //       method: 'POST',
-   //    //       body: JSON.stringify({
-   //    //          senderId: currentUser.id,
-   //    //          receiverId: userId,
-   //    //          users: [userId, currentUser.id],
-   //    //          chats: {},
-   //    //       }),
-   //    //    });
-   //    //    if (res.ok) {
-   //    //       const { conversationId } = await res.json();
-   //    //       if (conversationId === id) {
-   //    //          setIsLoading(false);
-   //    //          return;
-   //    //       }
-   //    //       router.push(`/dashboard/messages/${conversationId}`);
-   //    //    }
-   //    // } catch (error) {
-   //    //    console.log(error);
-   //    // }
-   //    // eslint-disable-next-line react-hooks/exhaustive-deps
-   // }, [id]);
+   const { id } = useConversationId();
 
-   // console.log(messageDetails);
+   const bgColor = useColorModeValue('#ddd', 'blue.800');
+
    const updateSeenStatus = async ({ id }: { id: string }) => {
       await fetch('/api/messages/seen', { method: 'POST', body: JSON.stringify({ id }) });
    };
@@ -80,6 +52,8 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
    useEffect(() => {
       const messageHandler = async (data: MessageDetails) => {
          setLastSender(data.sender);
+         // router.refresh();
+
          const seenStatus = id ? true : data.seen;
          if (data.sender !== currentUser.id) {
             await updateSeenStatus({ id: conversationId });
@@ -147,30 +121,22 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
          onClick={async () => {
             router.push(`/dashboard/messages/${conversationId}`);
             setIsClicked(true);
-            // toast({
-            //    title: 'Loading',
-            //    description: '',
-            //    status: 'loading',
-            //    duration: 9000,
-            //    position: 'top-right',
-            // });
-            !id && (await updateSeenStatus({ id: conversationId }));
+
+            !isClicked && (await updateSeenStatus({ id: conversationId }));
          }}
       >
          <Flex align={'center'} justify={'space-between'}>
             <Flex py='1rem' align={'center'} gap={'.8rem'} justify={'center'}>
-               <Box borderRadius={'50%'} overflow={'hidden'}>
-                  <Image width={45} height={40} alt='user img' src={conversationUser.imageUrl} />
-               </Box>
+               <Avatar name={conversationUser.username} src={conversationUser.imageUrl} size={'md'} />
 
                <Box>
                   <DynamicText fontSize='1rem'>{conversationUser.username}</DynamicText>
                   <DynamicText
-                     color={lastSender !== currentUser.id && !state.isSeen ? 'white' : 'gray'}
+                     color={state.lastMessage && lastSender !== currentUser.id && !state.isSeen ? 'white' : 'gray'}
                      fontSize='12px'
                   >
                      {lastSender === currentUser.id ? 'You: ' : ''}
-                     {state.lastTextsLength === 0
+                     {!state.lastMessage
                         ? 'Joined ' + compareDates(+conversationUser.createdAt!).difference.humanize() + ' ago'
                         : state.lastMessage}
                   </DynamicText>
@@ -185,7 +151,7 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                   {state.lastSent}
                </DynamicText>
 
-               {!state.isSeen && !!state.lastTextsLength && lastSender !== currentUser.id && (
+               {state.lastMessage && !state.isSeen && !!state.lastTextsLength && lastSender !== currentUser.id && (
                   <Flex
                      bg={'#D34242'}
                      borderRadius={'50%'}
@@ -196,7 +162,6 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
                      h='15px'
                   >
                      <DynamicText fontSize={'12px'} color={'#fff'}>
-                        {/* {chats?.text?.length} */}
                         {state.lastTextsLength - 1}
                      </DynamicText>
                   </Flex>
@@ -207,6 +172,6 @@ const ChatUser = ({ chats, conversationUser, conversationId }: Conversation) => 
    );
 };
 
-const MemoizeChatUser = memo(ChatUser);
+const MemoizeConversationDetails = memo(ConversationDetails);
 
-export default MemoizeChatUser;
+export default MemoizeConversationDetails;

@@ -11,21 +11,24 @@ import {
    useColorModeValue,
    useDisclosure,
 } from '@chakra-ui/react';
-import ChatUser from '@components/UI/Message/ChatUser';
+import ConversationDetails from '@components/UI/Message/ConversationDetails';
 import { SearchBar } from '@components/UI/Message/SearchBar';
 import DynamicText from '@components/UI/Util/DynamicText';
 import { useAuthState } from '@context/AuthProvider';
 import useConversationId from '@hooks/useConversationId';
 import { MdMenu, MdMessage } from 'react-icons/md';
 import SideBar from '../Dashboard/SideBar';
+import { useEffect } from 'react';
 
-const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: Conversation[] }) => {
+const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: ConversationDetails[] }) => {
    const { currentUser } = useAuthState();
 
    const { isOpen, onOpen, onClose } = useDisclosure();
 
    const borderColor = useColorModeValue('light', 'dark');
    const { id } = useConversationId();
+
+   // useEffect(() => {}, []);
 
    return (
       <GridItem w='100%' borderRight={borderColor} h={'100dvh'} display={{ base: id ? 'none' : 'block', md: 'block' }}>
@@ -58,7 +61,7 @@ const Chats = ({ users, conversations }: { users: CurrentUser[]; conversations: 
                <Box px='1rem'>
                   {currentUser &&
                      conversations.map((curConversation) => (
-                        <ChatUser key={curConversation.conversationId} {...curConversation} />
+                        <ConversationDetails key={curConversation.conversationId} {...curConversation} />
                      ))}
                </Box>
 

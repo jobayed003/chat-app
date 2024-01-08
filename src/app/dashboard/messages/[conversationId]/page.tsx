@@ -2,14 +2,14 @@ import ChatBox from '@components/Messages/ChatBox';
 
 import { getConversationUser } from '@libs/conversationDetails';
 import { getMessages } from '@libs/getMessages';
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 type Props = {
    params: { conversationId: string };
 };
 
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
    const userData = await getConversationUser(params?.conversationId);
 
    return {
@@ -42,6 +42,7 @@ const ChatBoxPage = async ({
          imageUrl={userData.imageUrl}
          userId={userData.id}
          conversationId={conversationId}
+         // @ts-expect-error
          messagesList={messages}
       />
    );

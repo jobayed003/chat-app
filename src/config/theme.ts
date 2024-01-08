@@ -7,12 +7,10 @@ const colors = {
    colors: {
       brand: {
          100: '#f7fafc',
-         900: '#000',
+         900: '#1A202C',
       },
       primary: '#FB8E0B',
-      // primary: '#2D5EFF',
       secondary: 'rgba(253, 96, 3, 1)',
-      // secondary: '#0133D9',
    },
    graytext: '#aaa',
    bgDark: '#aaa',
@@ -30,5 +28,4 @@ const config: ThemeConfig = {
    useSystemColorMode: false,
 };
 
-// 3. extend the theme
 export const theme = extendTheme({ colors, borders, config });

@@ -1,21 +1,33 @@
 'use client';
-import { Box, Flex, Input, Modal, ModalBody, ModalContent, ModalOverlay, useDisclosure } from '@chakra-ui/react';
+import {
+   Avatar,
+   Box,
+   Flex,
+   Input,
+   Modal,
+   ModalBody,
+   ModalContent,
+   ModalOverlay,
+   useColorModeValue,
+   useDisclosure,
+   useToast,
+} from '@chakra-ui/react';
 
 import { useAuthState } from '@context/AuthProvider';
+import { useAppState } from '@context/StateProvider';
+import useConversationId from '@hooks/useConversationId';
 import useSearchDebounce from '@hooks/useSearchDebounce';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { compareDates } from '@libs/compareDates';
+import { useRouter } from 'next/navigation';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { MdSearch } from 'react-icons/md';
 import DynamicText from '../Util/DynamicText';
 
-type SearchBarProps = {
-   users: CurrentUser[];
-};
-
-export const SearchBar = ({ users }: SearchBarProps) => {
+export const SearchBar = ({ users }: { users: CurrentUser[] }) => {
    const [searchedUsers, setSearchedUsers] = useState<CurrentUser[]>(users);
    const { currentUser } = useAuthState();
    const { isOpen, onOpen, onClose } = useDisclosure();
-   const [searchedUserName, setSearchedUserName] = useSearchDebounce();
+   const [searchedUserName, setSearchedUserName] = useSearchDebounce<any>();
 
    const filterUsers = () => {
       const replaceAll = /\b(?:-| |,)\b/gi;
@@ -38,44 +50,111 @@ export const SearchBar = ({ users }: SearchBarProps) => {
          <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-               {/* <ModalCloseButton /> */}
                <ModalBody>
                   <Flex flexDir={'column'} gap='1rem' py={'1rem'}>
                      <Input
                         placeholder='Type a user name'
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                           // @ts-expect-error
-                           setSearchedUserName(e.target.value)
-                        }
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchedUserName(e.target.value)}
                      />
                      <DynamicText px='.5rem'>Select a user to start a conversation</DynamicText>
                      <Box onClick={onClose}>
-                        {/* {searchedUsers.map((signedUser) => (
-                           <ChatUser
-                              key={Math.random()}
+                        {searchedUsers.map((signedUser) => (
+                           <UserDetails
+                              key={signedUser.id}
                               name={signedUser.username}
-                              email={signedUser.email!}
-                              status={'Offline'}
-                              img={signedUser.imageUrl}
-                              messageDetails={{
-                                 lastMessage:
-                                    'Joined ' + compareDates(+signedUser.createdAt!).difference.humanize() + ' ago',
-                              }}
+                              joinedAt={+signedUser.createdAt!}
+                              imgUrl={signedUser.imageUrl}
                               userId={signedUser.id}
-                              currentUser={user}
+                              currentUser={currentUser}
                            />
-                        ))} */}
+                        ))}
                      </Box>
                   </Flex>
                </ModalBody>
-               {/* 
-               <ModalFooter>
-                  <Button colorScheme='blue' mr={3} onClick={onClose}>
-                     Close
-                  </Button>
-               </ModalFooter> */}
             </ModalContent>
          </Modal>
       </>
+   );
+};
+
+interface SearchedUser {
+   name: string;
+   imgUrl: string;
+   joinedAt: number;
+   userId: string;
+   currentUser: CurrentUser;
+}
+
+const UserDetails = ({ name, imgUrl, joinedAt, userId, currentUser }: SearchedUser) => {
+   const router = useRouter();
+   const { id } = useConversationId();
+   const { isLoading, setIsLoading } = useAppState();
+   const toast = useToast();
+   const bgColor = useColorModeValue('#ddd', 'blue.800');
+
+   const handleClick = useCallback(async () => {
+      try {
+         setIsLoading(true);
+
+         const res = await fetch('/api/conversation', {
+            method: 'POST',
+            body: JSON.stringify({
+               users: [userId, currentUser.id],
+               chats: {
+                  seen: false,
+                  senderId: '',
+                  sent: '',
+                  texts: [],
+               },
+            }),
+         });
+         if (res.ok) {
+            const { conversationId } = await res.json();
+
+            if (conversationId === id) {
+               setIsLoading(false);
+               return;
+            }
+            router.push(`/dashboard/messages/${conversationId}`);
+            router.refresh();
+         }
+      } catch (error) {
+         toast({
+            title: 'Something went wrong!',
+            description: 'Please try again',
+            isClosable: true,
+            position: 'top-right',
+         });
+      }
+   }, [id]);
+
+   return (
+      <Box
+         cursor={'pointer'}
+         _active={{ bg: bgColor }}
+         _hover={{ bg: bgColor }}
+         px={'.5rem'}
+         onClick={(e) => {
+            !isLoading && handleClick();
+         }}
+      >
+         <Flex align={'center'}>
+            <Flex py='1rem' align={'center'} gap={'.8rem'} justify={'center'}>
+               <Avatar name={name} src={imgUrl} size={'md'} />
+
+               {/* <Box borderRadius={'50%'} overflow={'hidden'}>
+                  <Image width={50} height={50} alt='user img' src={imgUrl} />
+               </Box> */}
+
+               <Box>
+                  <DynamicText fontSize='1rem'>{name}</DynamicText>
+                  <DynamicText color={'gray'} fontSize='12px'>
+                     {'Joined ' + compareDates(joinedAt).difference.humanize() + ' ago'}
+                  </DynamicText>
+               </Box>
+            </Flex>
+            <Flex direction={'column'}></Flex>
+         </Flex>
+      </Box>
    );
 };
